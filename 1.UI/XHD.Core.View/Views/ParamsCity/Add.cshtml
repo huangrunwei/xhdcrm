@@ -1,0 +1,84 @@
+﻿@{
+    ViewData["Title"] = "MenuAdd";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("Provinces_id")
+
+    <div class="layui-card">
+        <div class="layui-card-header">城市</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">城市名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="City" id="City" autocomplete="off" placeholder="城市名称" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">所属省份</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="Provinces" id="Provinces" autocomplete="off" placeholder="所属省份" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">排序</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="City_order" id="City_order" autocomplete="off" placeholder="排序" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+    <script>
+        var id = null;
+        layui.use(['form', 'layer', 'tableSelect'], function () {
+            var form = layui.form,
+                layer = layui.layer,
+                $ = layui.$;
+            var tableSelect = layui.tableSelect;
+
+            tableSelect.render({
+                elem: '#Provinces',
+                checkedKey: 'id',
+                table: {
+                    url: '/ParamsProvince/grid',
+                    cols: [[
+                        { type: 'radio' },
+                        { field: 'Provinces', title: '省份', width: 120 },
+                        { field: 'Provinces_order', title: '排序', width: 120 }
+                    ]]
+                },
+                done: function (elem, data) {
+                    var NEWJSON = [];
+                    var ids = [];
+
+                    layui.each(data.data, function (index, item) {
+                        NEWJSON.push(item.Provinces);
+                        ids.push(item.id);
+                    })
+                    elem.val(NEWJSON.join(","))
+
+                    $("#Provinces_id").val(ids.join(','));
+
+
+                }
+            })
+
+
+        });
+
+
+    </script>

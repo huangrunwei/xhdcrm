@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span {
+        line-height: 38px;
+    }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover {
+        background-color: inherit;
+    }
+
+    #treeclass {
+        width: 190px;
+    }
+
+    body .layui-layer-content {
+        overflow: visible;
+    }
+
+    #toolbar {
+        padding: 5px 0;
+    }
+</style>
+
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+
+    <div class="layui-card">
+        <div class="layui-card-header">修改密码</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-form-item">
+                    <label class="layui-form-label required">新密码</label>
+                    <div class="layui-input-inline">
+                        <input type="password" name="password" id="password" autocomplete="off" placeholder="密码" class="layui-input" lay-verify="required|pwd">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label required">确认密码</label>
+                    <div class="layui-input-inline">
+                        <input type="password" name="password1" id="password1" autocomplete="off" placeholder="确认密码" class="layui-input" lay-verify="required|pwd">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-hide">
+                    <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    layui.use(['tree', 'form', 'layer'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+          form.verify({
+              pwd: function(value, item){ //value：表单的值、item：表单的DOM对象
+                var password=$("#password").val();
+                var password1=$("#password1").val();
+
+                if(password!=password1)
+                {
+                    return "两次输入必须一致！";
+                }
+              }
+            });
+    });
+</script>

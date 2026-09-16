@@ -1,0 +1,33 @@
+/* note.css - 便签组件样式（不包含弹窗样式，弹窗由外部自定义） */
+.note-card { position: absolute; width: 260px; min-height: 200px; background-color: #fff9e8; border-radius: 12px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25); display: flex; flex-direction: column; overflow: hidden; transition: box-shadow 0.2s; cursor: default; z-index: 10; }
+
+    .note-card:hover { box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35); }
+
+.note-header { padding: 8px 12px; background-color: rgba(0, 0, 0, 0.05); display: flex; justify-content: flex-end; align-items: center; gap: 10px; cursor: grab; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+
+    .note-header:active { cursor: grabbing; }
+
+.note-actions { display: flex; gap: 14px; }
+
+    .note-actions i { cursor: pointer; font-size: 18px; color: #555; transition: 0.1s; }
+
+        .note-actions i:hover { color: #000; transform: scale(1.1); }
+
+    .note-actions .layui-icon-delete:hover { color: #ff4d4f; }
+
+    .note-actions .layui-icon-edit:hover { color: #2d8cf0; }
+
+.note-content { flex: 1; padding: 14px 12px; font-size: 14px; line-height: 1.5; word-wrap: break-word; white-space: pre-wrap; overflow-y: auto; max-height: 220px; color: #1f2d3d; cursor: text; user-select: text; }
+
+    .note-content::-webkit-scrollbar { width: 5px; }
+    .note-content::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 10px; }
+    .note-content::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+
+/* 颜色选择器样式（供外部弹窗使用） */
+.color-palette { display: flex; gap: 12px; flex-wrap: wrap; margin: 15px 0 10px 0; padding: 10px 0; border-top: 1px solid #eee; }
+
+.color-item { width: 42px; height: 42px; border-radius: 50%; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; border: 2px solid transparent; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+
+    .color-item:hover { transform: scale(1.08); }
+
+    .color-item.active { border-color: #2d8cf0; box-shadow: 0 0 0 2px rgba(45,140,240,0.3); transform: scale(1.05); }

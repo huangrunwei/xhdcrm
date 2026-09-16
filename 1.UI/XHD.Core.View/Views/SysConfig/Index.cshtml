@@ -1,0 +1,273 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+
+    #treeclass { width: 190px; }
+
+    body .layui-layer-content { overflow: visible; }
+
+    #toolbar { padding: 5px 0; }
+</style>
+
+<div class="layui-form-item layui-hide">
+    <input type="text" name="isConfig" id="isConfig" value="@ViewData["isConfig"]">
+</div>
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-fluid">
+            <div class="layui-card" id="div_welcome">
+                <div class="layui-card-body">
+                    <div class="layui-form layui-form-pane" action="" style="margin: 0 auto;max-width: 460px;padding-top: 40px;text-align:center;">
+                        <p>
+                            <i class="layui-icon layui-icon-tips" style="font-size: 46px; color: #F00;"></i>
+                        </p>
+                        <p>
+                            您的系统已配置，请勿重复操作！
+                        </p>
+                        <p>
+                            如需重新配置，请手动修改appsettings.json里的isConfig节为0。
+                        </p>
+                        <p>
+                            请谨慎操作！由此造成的损失，小黄豆CRM概不负责！
+                        </p>
+                        <a href="/home/index" class="layui-btn">回首页</a>
+                    </div>
+
+                </div>
+            </div>
+            <div class="layui-card layui-hide" id="div_Config">
+                <div class="layui-card-header">系统配置</div>
+                <div class="layui-card-body">
+                    <div class="layui-form layui-form-pane" action="" style="margin: 0 auto;max-width: 460px;padding-top: 40px;">
+                        <!--<div class="layui-form-item">
+        <label class="layui-form-label required" style="padding-left:0px;">数据库类型</label>
+        <div class="layui-input-block">
+            <select id="ServerType" name="ServerType" autocomplete="off" class="layui-input" lay-filter="ServerType" lay-verify="required">
+                <option value="">请选择</option>
+                <option value=0>MySql</option>
+                <option value=1>SqlServer</option>
+                <option value=2>PostgreSql</option>
+                @* <option value=3>Oracle</option> *@
+                <!--<option value=4>SQLite</option>
+            </select>
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required" style="padding-left:0px;">数据库主机</label>
+        <div class="layui-input-block">
+            <input type="text" name="server_name" id="server_name" placeholder="数据库主机" lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required" style="padding-left:0px;">数据库端口</label>
+        <div class="layui-input-block">
+            <input type="text" name="server_port" id="server_port" placeholder="数据库端口" lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required" style="padding-left:0px;">数据库账号</label>
+        <div class="layui-input-block">
+            <input type="text" name="server_uid" id="server_uid" placeholder="数据库账号" lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required" style="padding-left:0px;">数据库密码</label>
+        <div class="layui-input-block">
+            <input type="password" name="server_pwd" id="server_pwd" placeholder="数据库密码" lay-verify="required" autocomplete="off" class="layui-input">
+        </div>
+    </div>
+    <div class="layui-form-item">
+        <label class="layui-form-label required" style="padding-left:0px;">数据库实例</label>
+        <div class="layui-input-block">
+            <select id="server_table" name="server_table" lay-verify="required">
+                <option value="">请选择</option>
+            </select>
+        </div>
+    </div>-->
+                        <div class="layui-form-item">
+                            欢迎使用小黄豆CRM，现在开始为您配置，请点击开始配置按钮！
+                        </div>
+
+                        <div class="layui-form-item ">
+                            @*<button type="button" class="layui-btn" id="btn_connect">测试连接</button>*@
+                            <button type="button" class="layui-btn layui-btn-normal" id="btn_config">开始配置</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var id = null;
+
+    layui.use(['tree', 'form', 'layer', 'tableSelect', 'table', 'laydate', 'numberInput'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var numberInput = layui.numberInput;
+        var tableSelect = layui.tableSelect;
+
+        var isConfig = $("#isConfig").val();
+
+        console.log(isConfig);
+
+        if (isConfig == 0) {
+            $("#div_welcome").addClass("layui-hide");
+            $("#div_Config").removeClass("layui-hide");
+        }
+        else {
+            $("#div_welcome").removeClass("layui-hide");
+            $("#div_Config").addClass("layui-hide");
+        }
+
+        form.on('select(ServerType)', function (data) {
+            // console.log(data.elem); //得到select原始DOM对象
+            //console.log(data.value); //得到被选中的值
+            // console.log(data.othis); //得到美化后的DOM对象
+            var port = 3306;
+            switch (data.value) {
+                case "0": port = 3306; break;
+                case "1": port = 1433; break;
+                case "2": port = 5432; break;
+                case "3": port = 1521; break;
+                //case "4": port = 1521; break;
+            }
+            //console.log(port);
+            $("#server_port").val(port);
+
+            var category = $('#server_table');
+            category.html("");
+            form.render("select");
+
+            $("#btn_config").addClass("layui-btn-disabled");
+        });
+
+        $("#btn_connect").on("click", function () {
+            $.ajax({
+                type: 'POST',
+                url: 'tryConnect',
+                data: {
+                    servertype: $("#ServerType").val(),
+                    servername: $("#server_name").val(),
+                    serverport: $("#server_port").val(),
+                    serveruid: $("#server_uid").val(),
+                    serverpwd: $("#server_pwd").val()
+                },
+                dataType: "json",
+                //headers: {
+                //    "X-CSRF-TOKEN-XHD": $("input[name='AntiforgeryKey_XHD']").val()
+                //},
+                success: function (res) {//res为相应体,function为回调函数
+                    console.log(res);
+                    if (res.code === 0) {
+                        layer.alert("连接成功！", { icon: 1 });
+
+                        var data = res.data;
+
+                        var category = $('#server_table');
+                        category.html("");
+                        for (var i = 0; i < data.length; i++) {
+
+                            console.log(data[i]);
+                            category.append("<option value='" + data[i]["table"] + "'>" + data[i]["table"] + "</option>");
+
+                            form.render("select");
+                        }
+
+                        $("#btn_config").removeClass("layui-btn-disabled");
+                    }
+                    else {
+                        layer.alert(res.msg, { icon: 5 });
+                    }
+
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        });
+
+        $("#btn_config").on("click", function () {
+            if ($(this).hasClass("layui-btn-disabled")) {
+                return;
+            }
+
+            layer.confirm('开始配置吗？', { icon: 3, title: '提示信息' }, function (curr) {
+                //del(data.id);
+                layer.close(curr);
+
+                $("#btn_config").addClass("layui-btn-disabled");
+
+                var index = layer.load();
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'tryConfig',
+                    data: {
+                        servertype: $("#ServerType").val(),
+                        servername: $("#server_name").val(),
+                        serverport: $("#server_port").val(),
+                        serveruid: $("#server_uid").val(),
+                        serverpwd: $("#server_pwd").val(),
+                        database: $("#server_table").val()
+                    },
+                    dataType: "json",
+                    //headers: {
+                    //    "X-CSRF-TOKEN-XHD": $("input[name='AntiforgeryKey_XHD']").val()
+                    //},
+                    success: function (res) {//res为相应体,function为回调函数
+                        console.log(res);
+
+                        setTimeout(function () {
+                            window.location.href = "/";
+                        }, 3000)
+
+                        if (res.code != 0)
+                        {
+                            layer.alert(res.msg, { icon: 5 });
+                        }
+                        else
+                        {
+                            layer.alert("配置成功！", { icon: 1 });
+
+                            setTimeout(function () {
+                                window.location.href = "/";
+                            }, 3000)
+
+                            
+                        }
+
+                        //if (res.code === 0) {
+                        //    layer.alert("配置成功！", { icon: 1 });
+
+                        //    window.location.href = "/";
+                        //}
+                        //else {
+                        //    layer.alert(res.msg, { icon: 5 });
+                        //}
+
+
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                    }
+                });
+            });
+        });
+    });
+</script>

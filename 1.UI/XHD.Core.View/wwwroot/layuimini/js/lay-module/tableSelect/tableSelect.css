@@ -1,0 +1,10 @@
+﻿/* 输入框容器（带下拉箭头） */
+.table-select { position: relative; width: 300px; }
+.table-select-input { width: 100%; border: 1px solid #e6e6e6 !important; border-radius: 2px !important; padding: 0 30px 0 10px !important; height: 38px; line-height: 38px; cursor: pointer; box-sizing: border-box; }
+/* 下拉箭头（纯样式） */
+.table-select::after { content: "▼"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #999; pointer-events: none; }
+.table-select-input:focus { outline: none; border-color: #5FB878 !important; }
+/* 弹窗样式 */
+.table-select-popup { padding: 10px; }
+.table-btn-group button { margin-left: 10px; }
+.tableSelectBar { padding-bottom:5px;}

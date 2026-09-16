@@ -1,0 +1,222 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    /* --- 样式区域 --- */
+    .downpanel .layui-select-title span { line-height: 38px; }
+    .downpanel dl dd:hover { background-color: inherit; }
+    #treeclass { width: 190px; }
+    body .layui-layer-content { overflow: visible; }
+    #toolbar { padding: 5px 0; }
+
+    /* 头像上传样式美化 */
+    .avatar-upload { position: relative; width: 120px; height: 120px; margin: 0 auto; }
+    .avatar-preview { width: 120px; height: 120px; border-radius: 50%; border: 2px solid #e6e6e6; overflow: hidden; background-color: #f8f8f8; transition: all 0.3s ease; }
+        .avatar-preview:hover { border-color: #1687ff; box-shadow: 0 0 8px rgba(22, 135, 255, 0.3); }
+        .avatar-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .avatar-upload-btn { position: absolute; bottom: 0; left: 0; width: 100%; height: 35px; line-height: 35px; text-align: center; background-color: rgba(0,0,0,0.6); color: #fff; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.3s ease; }
+    .avatar-upload:hover .avatar-upload-btn { opacity: 1; }
+    .avatar-default { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #999; font-size: 14px; }
+
+    /* 左右布局适配 */
+    .form-layout-row { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-start; }
+    .form-left-col { flex: 1; min-width: 700px; }
+    .form-right-col { width: 180px; padding: 20px; border-left: 1px solid #e6e6e6; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .avatar-title { font-size: 14px; color: #333; margin-bottom: 15px; font-weight: 500; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("customer_id")
+
+    <div class="layui-card">
+        <div class="layui-card-header">联系人信息</div>
+        <div class="layui-card-body">
+            <!-- 核心：左右布局容器 -->
+            <div class="form-layout-row">
+                <!-- 左侧：输入框区域 -->
+                <div class="form-left-col">
+                    <!-- 第一行：基本信息 -->
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label required" style="padding-left:0px;">姓名</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_name" id="C_name" placeholder="姓名" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label required" style="padding-left:0px;">客户</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="customer_name" id="customer_name" placeholder="客户" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">性别</label>
+                            <div class="layui-input-inline">
+                                <select id="C_sex" name="C_sex" autocomplete="off" class="layui-input">
+                                    <option value="">请选择</option>
+                                    <option value="1">男</option>
+                                    <option value="2">女</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第二行：工作信息 -->
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">部门</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_department" id="C_department" placeholder="部门" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">职务</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_position" id="C_position" placeholder="职务" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">生日</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_birthday" id="C_birthday" placeholder="生日" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第三行：联系方式 -->
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label required" style="padding-left:0px;">电话</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_tel" id="C_tel" placeholder="电话" lay-verify="required" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">手机</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_mob" id="C_mob" placeholder="手机" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">微信</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_weichat" id="C_weichat" placeholder="微信" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第四行：其他信息 -->
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">邮箱</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_email" id="C_email" placeholder="邮箱" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                        <div class="layui-inline">
+                            <label class="layui-form-label" style="padding-left:0px;">QQ</label>
+                            <div class="layui-input-inline">
+                                <input type="text" name="C_QQ" id="C_QQ" placeholder="QQ" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 长文本输入 -->
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">爱好</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="C_hobby" id="C_hobby" placeholder="爱好" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">地址</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="C_add" id="C_add" placeholder="地址" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">备注</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="C_remarks" id="C_remarks" placeholder="备注" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                    <!-- 隐藏提交按钮 -->
+                    <div class="layui-form-item layui-hide">
+                        <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+                    </div>
+                </div>
+                <!-- 右侧：头像区域（预留） -->
+                <div class="form-right-col">
+                    <!-- 这里可以放头像上传组件 -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'layer', 'tableSelect', 'table', 'laydate', 'upload'], function () {
+        const form = layui.form;
+        const layer = layui.layer;
+        const $ = layui.$;
+        const table = layui.table;
+        const tableSelect = layui.tableSelect;
+
+        // 获取隐藏的 ID 值
+        const hiddenId = $("#customer_id").val();
+
+        // --- 客户选择逻辑 ---
+        if (hiddenId) {
+            // 如果是编辑模式，禁用输入框
+            $("#customer_name").addClass("layui-disabled").attr("readonly", true);
+        } else {
+            // 如果是添加模式，初始化 tableSelect
+            tableSelect.render({
+                elem: '#customer_name',
+                checkedKey: 'id',
+                table: {
+                    url: '/Customer/grid',
+                    cols: [[
+                        { type: 'radio' },
+                        { field: 'cus_name', width: 250, title: '客户姓名' },
+                        {
+                            field: 'isPrivate', width: 80, title: '类型', align: "center",
+                            templet: function(d) {
+                                if (d.isPrivate === 1) return '<span style="color:red;">公客</span>';
+                                if (d.isPrivate === 0) return '<span style="color:green;">私客</span>';
+                                return "";
+                            }
+                        },
+                        {
+                            field: 'cus_tel', width: 150, title: '电话',
+                            templet: function(d) {
+                                return d.cus_tel ? '<i class="fa fa-phone"></i> ' + d.cus_tel : '';
+                            }
+                        },
+                        {
+                            field: 'employee', width: 150, title: '员工',
+                            templet: function(d) {
+                                if (d.Employee) {
+                                    const dept = d.Employee.department ? "【" + d.Employee.department.dep_name + "】" : "";
+                                    return dept + d.Employee.name;
+                                }
+                                return "";
+                            }
+                        },
+                    ]]
+                },
+                done: function (elem, data) {
+                    // 处理选中后的回调
+                    const names = data.data.map(item => item.cus_name).join(",");
+                    const ids = data.data.map(item => item.id).join(',');
+                
+                    elem.val(names);
+                    $("#customer_id").val(ids);
+                }
+            });
+        }
+    });
+</script>

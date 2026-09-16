@@ -1,0 +1,22 @@
+[
+  {
+    "sys_key": "sys_name",
+    "sys_value": "小黄豆CRM",
+    "sys_remark": ""
+  },
+  {
+    "sys_key": "sys_logo",
+    "sys_value": "../layuimini/images/logo.png",
+    "sys_remark": ""
+  },
+  {
+    "sys_key": "sys_version",
+    "sys_value": "v3.1.20260827.0",
+    "sys_remark": ""
+  },
+  {
+    "sys_key": "map_key",
+    "sys_value": "",
+    "sys_remark": "天地图key"
+  }
+]

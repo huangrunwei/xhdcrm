@@ -1,0 +1,41 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("customer_id")
+
+
+    <div class="layui-card">
+        <div style="width:160px;float:left;text-align:center;font-size:14px;line-height:26px;">
+            <img src="/images/hrw_wechat.png" style="width:160px;" />
+            <b>我的微信，欢迎来撩~~</b>
+        </div>
+        <div style="width:350px;float:left;margin-left:15px;line-height:26px;font-size:14px;">
+            <span style="font-size:28px;line-height:35px;"><b>小黄豆CRM全新3.0来了！</b></span><br/>
+            此页面为管理页面的演示，如您需要更多了解，请加我微信！<br/>
+            我可以给您安装部署，并提出专业指导。<br/>
+            当然，您有其他想法，我也能帮您开发。<br/>
+            比如微信小程序，比如APP等。<br/>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var id = null;
+    layui.use(['tree', 'form', 'layer', 'tableSelect', 'table',  'laydate'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+            var table=layui.table;
+        var laydate = layui.laydate;
+        var numberInput = layui.numberInput;
+        var tableSelect = layui.tableSelect;
+
+        
+
+    });
+</script>

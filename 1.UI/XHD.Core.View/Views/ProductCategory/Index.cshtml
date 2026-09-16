@@ -1,0 +1,191 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="layuimini-card">
+    <div class="layui-card-body">
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加</button>
+                <button class="layui-btn layui-btn-sm " lay-event="btn-expand">全部展开</button>
+                <button class="layui-btn layui-btn-sm " lay-event="btn-fold">全部折叠</button>
+            </div>
+        </script>
+
+        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+
+<script>
+    layui.use(['table', 'treetable'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+
+        // 渲染表格
+        layer.load(2);
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: 'root',
+            treeIdName: 'id',
+            treePidName: 'parentid',
+            elem: '#munu-table',
+            url: 'Grid',
+            page: false,
+            toolbar: '#toolbarDemo',
+            cols: [[
+                { type: 'numbers' ,title:"序号" },
+                { field: 'category_name', minWidth: 200, title: '类别名称' },
+                { templet: '#auth-state', width: 200, align: 'center', title: '操作' }
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#munu-table');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#munu-table');
+        });
+
+        /**
+        * toolbar监听事件
+        */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                add();
+                return;
+            }
+            if (obj.event === 'btn-expand') {
+                treetable.expandAll('#munu-table');
+                return;
+            }
+
+            if (obj.event === 'btn-fold') {
+                treetable.foldAll('#munu-table');
+                return;
+            }
+        });
+
+        //监听工具条
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                    del(data.id);
+                    layer.close(index);
+                });
+
+                //layer.msg('删除' + data.id);
+            }
+            else if (layEvent === 'edit') {
+               
+                add(data);
+            }
+            
+        });
+
+        function del(id) {
+            $.ajax({
+                type: 'POST',
+                url: "Delete",
+                data: { id: id },
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                    if (res.code == 0) {
+                        window.location.reload();
+                    }
+                    else {
+                        layer.alert(res.msg, { icon: 5 });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        }
+
+
+        //添加目录
+        function add(edit) {
+            var tit = "添加";
+            if (edit) {
+                tit = "编辑";
+            }
+            var id = null;
+
+            if (edit) {
+                id = edit.id;
+            }
+
+            var index = layui.layer.open({
+                title: tit,
+                type: 2,
+                anim: 1,
+                area: ['600px', '550px'],
+                maxmin: true,
+                content: "Add?id=" + id,
+                btn: ['确定', '关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+                    if (edit) {
+                        body.find("#id").val(edit.id);
+                        body.find("#category_name").val(edit.category_name);
+                        body.find("#parentid").val(edit.parentid);
+                    }
+                },
+                yes: function (index, layero) {
+                    //var res = window["layui-layer-iframe" + index].callbackdata();
+                    ////打印返回的值，看是否有我们想返回的值。
+                    //console.log(res);
+                    //layer.close(index);
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'LAY-user-front-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                    //监听提交
+                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                        var field = data.field; //获取提交的字段
+
+                        console.log(data.field);
+
+                        layer.close(index); //关闭弹层
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Save',
+                            data: data.field,
+                            dataType: "json",
+                            success: function (res) {//res为相应体,function为回调函数
+                                window.location.reload();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    });
+
+                    submit.trigger('click');
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+    });
+</script>

@@ -1,0 +1,101 @@
+﻿/* calendar.css - 日历组件样式（独立时间线版本） */
+.calendar-container { background-color: white; border-radius: 8px; box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); padding: 20px; min-height: 800px; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #e6e6e6; }
+.calendar-title { font-size: 24px; font-weight: bold; color: #333; }
+.calendar-actions { display: flex; align-items: center; gap: 10px; }
+.calendar-view-buttons { margin-right: 20px; }
+.calendar-nav-buttons { display: flex; align-items: center; gap: 5px; }
+.view-container { display: none; }
+    .view-container.active { display: block; }
+
+/* 月视图样式 */
+.month-view { border: 1px solid #e6e6e6; border-radius: 4px; overflow: hidden; }
+.month-weekdays { display: grid; grid-template-columns: repeat(7, 1fr); background-color: #f8f8f8; border-bottom: 1px solid #e6e6e6; }
+.month-weekday { padding: 15px 10px; text-align: center; font-weight: bold; color: #666; border-right: 1px solid #e6e6e6; }
+    .month-weekday:last-child { border-right: none; }
+.month-days { display: grid; grid-template-columns: repeat(7, 1fr); }
+.month-day { height: 130px; overflow-y: auto; border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; padding: 8px; position: relative; background-color: white; }
+    .month-day:nth-child(7n) { border-right: none; }
+.month-day-header { text-align: right; margin-bottom: 5px; padding-right: 5px;}
+.month-day-number { display: inline-block; width: 30px; height: 30px; line-height: 30px; text-align: center; border-radius: 50%; font-size: 14px; font-weight: 500; }
+.month-day.today .month-day-number { background-color: #1E9FFF; color: white; }
+.month-day.other-month { background-color: #fafafa; color: #ccc; }
+    .month-day.other-month .month-day-number { color: #ccc; }
+
+/* 周视图样式 */
+.week-view { border: 1px solid #e6e6e6; border-radius: 4px; overflow: hidden; position: relative; }
+.week-header { display: grid; grid-template-columns: 80px repeat(7, 1fr); background-color: #f8f8f8; border-bottom: 1px solid #e6e6e6; }
+.week-time-label { padding: 15px 10px; text-align: center; font-weight: bold; color: #666; border-right: 1px solid #e6e6e6; }
+.week-day-header { padding: 15px 10px; text-align: center; font-weight: bold; color: #666; border-right: 1px solid #e6e6e6; }
+    .week-day-header:last-child { border-right: none; }
+.week-content { display: grid; grid-template-columns: 80px repeat(7, 1fr); grid-template-rows: auto 1fr; position: relative; min-height: 1440px; /* 24小时 * 60px = 1440px */ }
+/* 修复周视图全天任务区域样式 */
+.week-all-day-label { padding: 10px; font-weight: bold; color: #666; text-align: center; border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; background-color: #f8f8f8; grid-column: 1; grid-row: 1; }
+.week-all-day-content { display: flex; flex-direction: column; padding: 5px; gap: 2px; overflow-y: auto; border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; background-color: #f9f9f9; height: 60px; }
+
+#weekAllDay6 { border-right:none;}
+
+.week-time-slots { display: flex; flex-direction: column; grid-row: 2; grid-column: 1; }
+.week-time-slot { height: 60px; border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; position: relative; padding-left: 5px; font-size: 12px; color: #999; }
+.week-day-column { display: flex; flex-direction: column; position: relative; grid-row: 2; }
+.week-day-slot { height: 60px; border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; position: relative; cursor: pointer; }
+    .week-day-slot:hover { background-color: #f9f9f9; }
+.week-day-column:last-child .week-day-slot { border-right: none; }
+
+/* 日视图样式 */
+.day-view { border: 1px solid #e6e6e6; border-radius: 4px; overflow: hidden; position: relative; }
+.day-header { display: grid; grid-template-columns: 80px 1fr; background-color: #f8f8f8; border-bottom: 1px solid #e6e6e6; }
+.day-content { display: grid; grid-template-columns: 80px 1fr; grid-template-rows: auto 1fr; position: relative; min-height: 1440px; /* 24小时 * 60px = 1440px */ }
+/* 日视图全天任务区域样式 */
+.day-all-day-label { padding: 10px; font-weight: bold; color: #666; text-align: center; border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; background-color: #f8f8f8; grid-column: 1; grid-row: 1; }
+.day-all-day-content { display: flex; flex-wrap: wrap; align-content: flex-start; padding: 5px; gap: 5px; overflow-y: auto; border-bottom: 1px solid #e6e6e6; background-color: #f9f9f9; grid-column: 2; grid-row: 1; min-height: 60px; max-height: 120px; }
+.day-time-slots { display: flex; flex-direction: column; grid-column: 1; grid-row: 2; }
+.day-time-slot { height: 60px; border-right: 1px solid #e6e6e6; border-bottom: 1px solid #e6e6e6; position: relative; padding-left: 5px; font-size: 12px; color: #999; }
+.day-slot-column { display: flex; flex-direction: column; position: relative; grid-column: 2; grid-row: 2; }
+.day-slot { height: 60px; border-bottom: 1px solid #e6e6e6; position: relative; cursor: pointer; }
+    .day-slot:hover { background-color: #f9f9f9; }
+
+/* 任务样式 */
+.calendar-task { padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-bottom: 2px; cursor: pointer; overflow: hidden; text-overflow: ellipsis; color: white; position: relative; border-left: 3px solid transparent; box-sizing: border-box; }
+    .calendar-task:hover { opacity: 0.9; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .calendar-task .task-title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .calendar-task .task-time { font-size: 11px; opacity: 0.9; display: block; white-space: nowrap; }
+    .calendar-task.all-day { border-left-width: 4px; border-left-style: solid; flex-shrink: 0; min-width: 100px; max-width: 200px; }
+
+/* 时间槽内的任务 - 修复定位 */
+.time-slot-task { position: absolute; left: 2px; right: 2px; border-radius: 3px; padding: 2px 4px; font-size: 11px; z-index: 10; overflow: hidden; box-sizing: border-box; cursor: pointer; }
+    .time-slot-task .task-title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .time-slot-task .task-time { font-size: 10px; opacity: 0.8; }
+
+/* 周视图跨天任务 - 跨越多列 */
+.week-multi-day-task { position: absolute; border-radius: 3px; padding: 2px 4px; font-size: 11px; z-index: 10; overflow: hidden; box-sizing: border-box; cursor: pointer; }
+    .week-multi-day-task .task-title { font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .week-multi-day-task .task-time { font-size: 10px; opacity: 0.8; }
+
+/* 任务颜色类 */
+.task-color-1 { background-color: #5FB878; border-left-color: #4CAF50; }
+.task-color-2 { background-color: #1E9FFF; border-left-color: #2196F3; }
+.task-color-3 { background-color: #FFB800; border-left-color: #FF9800; }
+.task-color-4 { background-color: #FF5722; border-left-color: #F44336; }
+.task-color-5 { background-color: #009688; border-left-color: #009688; }
+.task-color-6 { background-color: #673AB7; border-left-color: #673AB7; color: #fff; }
+.task-color-7 { background-color: #E91E63; border-left-color: #E91E63; }
+.task-color-8 { background-color: #3F51B5; border-left-color: #3F51B5; }
+
+/* 当前时间线样式 - 独立版本 */
+.current-time-line { position: absolute; height: 2px; background-color: #FF5722; z-index: 1000; pointer-events: none; }
+
+.current-time-dot { position: absolute; width: 10px; height: 10px; background-color: #FF5722; border-radius: 50%; z-index: 1001; pointer-events: none; }
+
+.current-time-line-label { position: absolute; background-color: #FF5722; color: white; padding: 2px 6px; border-radius: 3px; font-size: 11px; font-weight: bold; white-space: nowrap; z-index: 1002; pointer-events: none; }
+
+/* 响应式调整 */
+@media (max-width: 1200px) {
+    .calendar-actions { flex-wrap: wrap; }
+    .calendar-view-buttons { margin-right: 10px; }
+}
+
+@media (max-width: 768px) {
+    .calendar-header { flex-direction: column; align-items: flex-start; }
+    .calendar-actions { margin-top: 10px; width: 100%; justify-content: space-between; }
+}

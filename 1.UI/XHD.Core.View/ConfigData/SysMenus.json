@@ -1,0 +1,282 @@
+[
+  {
+    "id": "mytable",
+    "Menu_name": "工作台",
+    "Menu_url": null,    
+    "Menu_icon": "fa-user-circle-o",    
+    "parentid": "root",
+    "Menu_order": 10
+  },
+  {
+    "id": "mynote",
+    "Menu_name": "我的便签",
+    "Menu_url": "mynote/index",    
+    "Menu_icon": "fa-bookmark",    
+    "parentid": "mytable",
+    "Menu_order": 10
+  },
+  {
+    "id": "mycalendar",
+    "Menu_name": "我的日程",
+    "Menu_url": "MyCalendar/Index",    
+    "Menu_icon": "fa-calendar",    
+    "parentid": "mytable",
+    "Menu_order": 20
+  },
+  {
+    "id": "Message_News",
+    "Menu_name": "新闻公告",
+    "Menu_url": "MessageNews/Index",    
+    "Menu_icon": "fa-newspaper-o",    
+    "parentid": "mytable",
+    "Menu_order": 40
+  },
+  {
+    "id": "CRM_Manager",
+    "Menu_name": "客户管理",
+    "Menu_url": null,    
+    "Menu_icon": "fa-user",    
+    "parentid": "root",
+    "Menu_order": 30
+  },
+  {
+    "id": "CRM_Customer",
+    "Menu_name": "客户管理",
+    "Menu_url": "Customer/Index",    
+    "Menu_icon": "fa-user",    
+    "parentid": "CRM_Manager",
+    "Menu_order": 10
+  },
+  {
+    "id": "crm_contact",
+    "Menu_name": "联系人管理",
+    "Menu_url": "CRM_Contact/Index",    
+    "Menu_icon": "fa-user-circle",    
+    "parentid": "CRM_Manager",
+    "Menu_order": 20
+  },
+  {
+    "id": "CRM_Follow",
+    "Menu_name": "跟进管理",
+    "Menu_url": "CRMFollow/Index",    
+    "Menu_icon": "fa-phone-square",    
+    "parentid": "CRM_Manager",
+    "Menu_order": 30
+  },
+  {
+    "id": "CRM_map",
+    "Menu_name": "客户地图",
+    "Menu_url": "Customer/CustomerMap",    
+    "Menu_icon": "fa-map",    
+    "parentid": "CRM_Manager",
+    "Menu_order": 50
+  },
+  {
+    "id": "CRM_bath",
+    "Menu_name": "批量转客户",
+    "Menu_url": "CustomerBatch/Index",    
+    "Menu_icon": "fa-arrow-circle-right",    
+    "parentid": "CRM_Manager",
+    "Menu_order": 60
+  },
+  {
+    "id": "ProductManager",
+    "Menu_name": "产品管理",
+    "Menu_url": null,    
+    "Menu_icon": "fa-cubes",    
+    "parentid": "root",
+    "Menu_order": 50
+  },
+  {
+    "id": "Product_Category",
+    "Menu_name": "产品类别",
+    "Menu_url": "ProductCategory/Index",    
+    "Menu_icon": "fa-delicious",    
+    "parentid": "ProductManager",
+    "Menu_order": 10
+  },
+  {
+    "id": "Product",
+    "Menu_name": "产品列表",
+    "Menu_url": "Product/Index",    
+    "Menu_icon": "fa-cube",    
+    "parentid": "ProductManager",
+    "Menu_order": 20
+  },
+  {
+    "id": "SaleManager",
+    "Menu_name": "销售管理",
+    "Menu_url": null,    
+    "Menu_icon": "fa-balance-scale",    
+    "parentid": "root",
+    "Menu_order": 60
+  },
+  {
+    "id": "Sale_Menu_order",
+    "Menu_name": "订单管理",
+    "Menu_url": "SaleMenu_order/Index",    
+    "Menu_icon": "fa-copy",    
+    "parentid": "SaleManager",
+    "Menu_order": 10
+  },
+  {
+    "id": "Sale_Contract",
+    "Menu_name": "合同管理",
+    "Menu_url": "SaleContract/Index",    
+    "Menu_icon": "fa-edit",    
+    "parentid": "SaleManager",
+    "Menu_order": 20
+  },
+  {
+    "id": "FinanceManager",
+    "Menu_name": "财务管理",
+    "Menu_url": "",    
+    "Menu_icon": "fa-rmb",    
+    "parentid": "root",
+    "Menu_order": 70
+  },
+  {
+    "id": "Finance_Receive",
+    "Menu_name": "收款管理",
+    "Menu_url": "FinanceReceive/Index",    
+    "Menu_icon": "fa-rmb",    
+    "parentid": "FinanceManager",
+    "Menu_order": 10
+  },
+  {
+    "id": "Finance_Invoice",
+    "Menu_name": "发票管理",
+    "Menu_url": "FinanceInvoice/Index",    
+    "Menu_icon": "fa-folder-o",    
+    "parentid": "FinanceManager",
+    "Menu_order": 20
+  },
+  {
+    "id": "ReportManager",
+    "Menu_name": "报表管理",
+    "Menu_url": "",    
+    "Menu_icon": "fa-bar-chart-o",    
+    "parentid": "root",
+    "Menu_order": 80
+  },
+  {
+    "id": "Report_Customer",
+    "Menu_name": "客户报表",
+    "Menu_url": "Report_Customer/Index",    
+    "Menu_icon": "fa-user",    
+    "parentid": "ReportManager",
+    "Menu_order": 10
+  },
+  {
+    "id": "Report_Menu_order",
+    "Menu_name": "订单报表",
+    "Menu_url": "Report_Menu_order/Index",    
+    "Menu_icon": "fa-balance-scale",    
+    "parentid": "ReportManager",
+    "Menu_order": 20
+  },
+  {
+    "id": "Report_Finance",
+    "Menu_name": "财务报表",
+    "Menu_url": "Report_Finance/Index",    
+    "Menu_icon": "fa-rmb",    
+    "parentid": "ReportManager",
+    "Menu_order": 30
+  },
+  {
+    "id": "Sys_Manager",
+    "Menu_name": "系统管理",
+    "Menu_url": "",    
+    "Menu_icon": "fa-gear",    
+    "parentid": "root",
+    "Menu_order": 999
+  },
+  {
+    "id": "sys_role",
+    "Menu_name": "角色权限",
+    "Menu_url": "SysRole/Index",    
+    "Menu_icon": "fa-unlock-alt",    
+    "parentid": "Sys_Manager",
+    "Menu_order": 10
+  },
+  {
+    "id": "hrmanager",
+    "Menu_name": "组织架构",
+    "Menu_url": "",    
+    "Menu_icon": "fa-list-ul",    
+    "parentid": "Sys_Manager",
+    "Menu_order": 10
+  },
+  {
+    "id": "hr_department",
+    "Menu_name": "组织架构",
+    "Menu_url": "HrDepartment/Index",    
+    "Menu_icon": "fa-sitemap",    
+    "parentid": "hrmanager",
+    "Menu_order": 20
+  },
+  {
+    "id": "hr_post",
+    "Menu_name": "职务管理",
+    "Menu_url": "HrPosition/Index",    
+    "Menu_icon": "fa-graduation-cap",    
+    "parentid": "hrmanager",
+    "Menu_order": 30
+  },
+  {
+    "id": "hr_employee",
+    "Menu_name": "用户管理",
+    "Menu_url": "HrEmployee/Index",    
+    "Menu_icon": "fa-user-circle",    
+    "parentid": "hrmanager",
+    "Menu_order": 40
+  },
+  {
+    "id": "paramsmanager",
+    "Menu_name": "参数字典",
+    "Menu_url": "",    
+    "Menu_icon": "fa-book",    
+    "parentid": "Sys_Manager",
+    "Menu_order": 50
+  },
+  {
+    "id": "sys_params",
+    "Menu_name": "【参数】字典",
+    "Menu_url": "SysParam/Index",    
+    "Menu_icon": "fa-link",    
+    "parentid": "paramsmanager",
+    "Menu_order": 10
+  },
+  {
+    "id": "params_provinces",
+    "Menu_name": "【参数】省份",
+    "Menu_url": "ParamsProvince/Index",    
+    "Menu_icon": "fa-plus",    
+    "parentid": "paramsmanager",
+    "Menu_order": 20
+  },
+  {
+    "id": "params_city",
+    "Menu_name": "【参数】城市",
+    "Menu_url": "ParamsCity/Index",    
+    "Menu_icon": "fa-minus",    
+    "parentid": "paramsmanager",
+    "Menu_order": 30
+  },
+  {
+    "id": "sysconfig",
+    "Menu_name": "系统配置",
+    "Menu_url": "Sysinfo/Index",    
+    "Menu_icon": "fa-book",    
+    "parentid": "Sys_Manager",
+    "Menu_order": 60
+  },
+  {
+    "id": "sys_logs",
+    "Menu_name": "日志管理",
+    "Menu_url": "SysLog/Index",    
+    "Menu_icon": "fa-file-o",    
+    "parentid": "Sys_Manager",
+    "Menu_order": 90
+  }
+]

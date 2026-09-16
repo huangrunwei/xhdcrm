@@ -1,0 +1,329 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span {
+        line-height: 38px;
+    }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover {
+        background-color: inherit;
+    }
+
+    #treeclass {
+        width: 190px;
+    }
+
+    body .layui-layer-content {
+        overflow: visible;
+    }
+
+    #toolbar{
+        padding:5px 0;
+    }
+</style>
+
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("dep")
+    @Html.Hidden("position_val")
+    @Html.Hidden("role_val")
+    @Html.Hidden("T_data")
+
+    <div class="layui-card">
+        <div class="layui-card-header">员工信息</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">账号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="uid" id="uid" placeholder="账号" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" id="name" placeholder="姓名" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline ">
+                    <label class="layui-form-label required" style="padding-left:0px;">角色</label>
+                    <div class="layui-input-inline">
+                        <select id="role_id" name="role_id" lay-verify="required">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">身份证</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="idcard" id="idcard" placeholder="身份证" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">生日</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="birthday" id="birthday" placeholder="生日" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">部门</label>
+                    <div class="layui-input-block" style="margin-right:9px;">
+                        <div class="layui-unselect layui-form-select downpanel">
+                            <div class="layui-select-title">
+                                <span class="layui-input layui-unselect" id="treeclass">选择部门</span>
+                                <input type="hidden" name="dep_id" id="dep_id" value="root" lay-verify="required">
+                                <i class="layui-edge"></i>
+                            </div>
+                            <dl class="layui-anim layui-anim-upbit">
+                                <dd>
+                                    <ul id="classtree"></ul>
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">职务</label>
+                    <div class="layui-input-inline">
+                        <select id="position_id" name="position_id" lay-verify="required">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">性别</label>
+                    <div class="layui-input-inline">
+                        <select id="sex" name="sex" autocomplete="off" class="layui-input">
+                            <option value="">请选择</option>
+                            <option value=1>男</option>
+                            <option value=2>女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">状态</label>
+                    <div class="layui-input-inline">
+                        <select id="status" name="status" lay-verify="required" autocomplete="off" class="layui-input">
+                            <option value="">请选择</option>
+                            <option value=1>在职</option>
+                            <option value=0>离职</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">邮件</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="email" id="email" placeholder="邮件" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">电话</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="tel" id="tel" placeholder="电话" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">入职日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="EntryDate" id="EntryDate" placeholder="入职日期" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">住址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="address" id="address" placeholder="住址" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">学历</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="education" id="education" placeholder="学历" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">专业</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="professional" id="professional" placeholder="专业" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">毕业院校</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="schools" id="schools" placeholder="毕业院校" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="sort" id="sort" placeholder="排序" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">是否登录</label>
+                    <div class="layui-input-inline">
+                        <select id="canlogin" name="canlogin" lay-verify="required" autocomplete="off" class="layui-input">
+                            <option value="">请选择</option>
+                            <option value=1>是</option>
+                            <option value=0>否</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">备注</label>
+                <div class="layui-input-block">
+                    <input type="text" name="remarks" id="remarks" placeholder="备注" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var id = null;
+    layui.use(['tree', 'form', 'layer', 'tableSelect', 'table',  'laydate'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+            var table=layui.table;
+        var laydate = layui.laydate;
+        var numberInput = layui.numberInput;
+        var tableSelect = layui.tableSelect;
+
+        //日期
+        laydate.render({
+            elem: '#birthday'
+            , trigger: 'click' //采用click弹出
+        });
+
+        laydate.render({
+            elem: '#EntryDate'
+            , trigger: 'click' //采用click弹出
+        });
+
+
+
+
+        //下拉
+        $.ajax({
+            url: "/HrPosition/Combo",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var category = $('#position_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["text"] + "</option>");
+                }
+                if ($("#position_val").val()) {
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#position_val").val() + ']';
+                        $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+                }
+
+                form.render("select");
+            },
+        });
+
+        //下拉
+        $.ajax({
+            url: "/SysRole/Combo",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var category = $('#role_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["text"] + "</option>");
+                }
+                if ($("#role_val").val()) {
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#role_val").val() + ']';
+                        $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+                }
+
+                form.render("select");
+            },
+        });
+
+
+        $.ajax({
+            type: 'POST',
+            url: '/HrDepartment/Combo',
+            dataType: "json",
+            success: function (res) {//res为相应体,function为回调函数
+                tree.render({
+                    elem: "#classtree",
+                    data: res.data,
+                    //showLine: false,
+                    click: function (node) {
+                        console.log(node);
+                        var $select = $($(this)[0].elem).parents(".layui-form-select");
+                        $select.removeClass("layui-form-selected").find(".layui-select-title span").html(node.data.title).end().find("input:hidden[name='dep_id']").val(node.data.id);
+                    }
+                });
+                 $(".downpanel").on("click", ".layui-select-title", function (e) {
+                    $(".layui-form-select").not($(this).parents(".layui-form-select")).removeClass("layui-form-selected");
+                    $(this).parents(".downpanel").toggleClass("layui-form-selected");
+                    layui.stope(e);
+                }).on("click", "dl i", function (e) {
+                    layui.stope(e);
+                });
+                //$(document).on("click", function (e) {
+                //    $(".layui-form-select").removeClass("layui-form-selected");
+                //});
+
+                //var data = findPathByLeafId($("#parentid").val(), res.data);
+                 var data = findPathByLeafId($("#dep_id").val(), res.data);
+                $("#treeclass").text(data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                console.log('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus);
+            }
+        });
+
+        function findPathByLeafId(leafId, nodes, path) {
+
+            if (path === undefined) {
+                path = [];
+            }
+            for (var i = 0; i < nodes.length; i++) {
+                var tmpPath = path.concat();
+                tmpPath.push(nodes[i].id);
+                if (leafId == nodes[i].id) {
+                    return nodes[i].title;
+                }
+                if (nodes[i].children) {
+                    var findResult = findPathByLeafId(leafId, nodes[i].children, tmpPath);
+                    if (findResult) {
+                        return findResult;
+                    }
+                }
+            }
+        }
+
+        
+    });
+</script>

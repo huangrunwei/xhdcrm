@@ -1,0 +1,162 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span {
+        line-height: 38px;
+    }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover {
+        background-color: inherit;
+    }
+
+    #treeclass {
+        width: 190px;
+    }
+
+    body .layui-layer-content {
+        overflow: visible;
+    }
+
+    #toolbar {
+        padding: 5px 0;
+    }
+</style>
+
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("customer_id")
+
+
+    <div class="layui-card">
+        <div class="layui-card-header">待办</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">标题</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="job_title" id="job_title" lay-verify="required" placeholder="标题" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">待办时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="executive_time" id="executive_time" lay-verify="required" placeholder="待办时间" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                @*<div class="layui-inline">
+                    <label class="layui-form-label" style="padding-left:0px;">客户</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="customer_name" id="customer_name" placeholder="客户" autocomplete="off" class="layui-input">
+                    </div>
+                </div>*@
+
+
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">优先级</label>
+                    <div class="layui-input-inline">
+                        <select id="priority" name="priority" lay-verify="required">
+                            <option value="">请选择</option>
+                            <option value="3">高</option>
+                            <option value="2">中</option>
+                            <option value="1">低</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <div class="layui-input-block">
+                    <textarea id="job_content" name="job_content" placeholder="请输入待办内容" lay-verify="required" class="layui-textarea"></textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var id = null;
+
+    layui.use(['tree', 'form', 'layer', 'tableSelect', 'table',  'laydate'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+            var table=layui.table;
+        var laydate = layui.laydate;
+        
+        var tableSelect = layui.tableSelect;
+
+        laydate.render({
+            elem: '#executive_time' //指定元素
+            , trigger: 'click'
+        });
+
+        
+            tableSelect.render({
+                elem: '#customer_name',
+                checkedKey: 'id',
+                table: {
+                    url: '/Customer/grid',
+                    cols: [[
+                        { type: 'radio' },
+                        { field: 'cus_name', width: 250, title: '客户姓名' },
+                        { field: 'isPrivate', width: 80, title: '类型' ,align:"center",templet:function(t){
+                            switch(t.isPrivate)
+                            {
+                                case 1:return '<div style="background:#F00;Color:#FFF;">公客</div>';
+                                case 0:return '<div style="background:#0F0;Color:#000;">私客</div>';
+                                default:return "";
+                            }
+                        } },
+                        {
+                        field: 'cus_tel', width: 150, title: '电话', templet:function(item) {
+                            var html = "<i class='fa fa-phone'></i>";
+                            if (item.cus_tel)
+                                html += item.cus_tel;
+
+                            return html;
+                        }},
+                        { field: 'employee', width: 150, title: '员工' ,templet:function(t){
+                            if(t.Employee)
+                            {
+                                if(t.Employee.department)
+                                {
+                                    return "【" + t.Employee.department.dep_name + "】" + t.Employee.name;
+                                }
+                                return t.Employee.name;
+                            }
+                            return "";
+                        }},
+
+                    ]]
+                },
+                done: function (elem, data) {
+                    var NEWJSON = [];
+                    var ids = [];
+
+                    layui.each(data.data, function (index, item) {
+                        NEWJSON.push(item.cus_name);
+                        ids.push(item.id);
+                    })
+                    elem.val(NEWJSON.join(","))
+
+                    $("#customer_id").val(ids.join(','));
+
+                    tableSelectContact();
+                }
+            })
+        
+
+       
+
+    });
+</script>

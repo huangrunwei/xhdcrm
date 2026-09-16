@@ -1,0 +1,297 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; background: #f8f9fa; font-family: "Helvetica Neue","PingFang SC","Microsoft YaHei",sans-serif; margin: 0px !important; }
+    .map-search-bar { padding: 10px 15px; background: #f8f8f8; border-bottom: 1px solid #eee; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .map-search-bar .layui-input { flex: 1; min-width: 180px; height: 38px; border-radius: 6px; border: 1px solid #d9d9d9; padding: 0 12px; font-size: 14px; }
+            .map-search-bar .layui-input:focus { border-color: #5fb878; outline: none; box-shadow: 0 0 0 3px rgba(95,184,120,0.12); }
+    .search-wrapper { position: relative; flex: 1; min-width: 200px; }
+    .search-result-list { width: 100%; max-height: 200px; overflow-y: auto; background: #fff; border: 1px solid #e6e6e6; border-radius: 6px; margin-top: 6px; display: none; position: absolute; top: 100%; left: 0; z-index: 999; box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        .search-result-list li { padding: 8px 14px; cursor: pointer; border-bottom: 1px solid #f2f2f2; font-size: 14px; transition: background 0.12s; }
+            .search-result-list li:last-child { border-bottom: none; }
+            .search-result-list li:hover { background: #e8f4ff; }
+        .search-result-list .empty-tip, .search-result-list .search-loading { padding: 12px 14px; color: #999; text-align: center; cursor: default; }
+    #mapPop { width: 100%; height: calc(100% - 70px); min-height: 400px; background: #e9edf2; }
+    .map-search-bar .layui-btn-sm { height: 36px; line-height: 36px; padding: 0 18px; border-radius: 6px; flex-shrink: 0; }
+    .map-search-bar .layui-btn-primary { background: #fff; border: 1px solid #d9d9d9; color: #555; }
+        .map-search-bar .layui-btn-primary:hover { border-color: #5fb878; color: #5fb878; }
+</style>
+
+
+<div class="map-search-bar">
+    <div class="search-wrapper">
+        <input id="searchAddr" class="layui-input" placeholder="输入城市、小区、公司名称搜索">
+        <ul id="resultBox" class="search-result-list"></ul>
+    </div>
+    <button class="layui-btn layui-btn-sm" id="searchBtn"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+    <button class="layui-btn layui-btn-sm layui-btn-primary" id="clearSearchBtn"><i class="layui-icon layui-icon-close"></i></button>
+</div>
+
+<div id="mapPop"></div>
+
+<script src="https://api.tianditu.gov.cn/api?v=4.0&tk=0267810f3111fb11793fbb516ca78e92"></script>
+<script>
+    var f_save;
+layui.use(['layer', 'jquery'], function() {
+    var layer = layui.layer;
+    var $ = layui.jquery;
+    var TK = '0267810f3111fb11793fbb516ca78e92';
+
+    // ---- 地图相关 ----
+    var map = null;
+    var pointMarker = null;
+    var selectLngLat = null;          // 选中的经纬度 {lng, lat}
+    var selectedAddress = '';         // 当前搜索框地址（用于回传）
+
+    var mapContainerId = 'mapPop';
+
+    // ========== 工具函数 ==========
+    function getMapBound() {
+        if (!map) return null;
+        try {
+            var bounds = map.getBounds();
+            if (!bounds) return null;
+            var sw = bounds.getSouthWest();
+            var ne = bounds.getNorthEast();
+            if (!sw || !ne) return null;
+            return sw.lng + ',' + sw.lat + ',' + ne.lng + ',' + ne.lat;
+        } 
+        catch(e) 
+        { console.warn('获取边界失败:', e); return null; }
+    }
+
+    function clearMapRes() {
+        if (map) {
+            if (pointMarker) { map.removeOverLay(pointMarker); pointMarker = null; }
+            map.removeEventListener('click', mapClickHandle);
+            map = null;
+        }
+        selectLngLat = null;
+    }
+
+    function mapClickHandle(e) {
+        setMarker(e.lnglat);
+        //layer.msg('已选中：' + e.lnglat.lng.toFixed(4) + ',' + e.lnglat.lat.toFixed(4), { time:1200, icon:1 });
+    }
+
+    function setMarker(lnglat) {
+        selectLngLat = { lng: lnglat.lng, lat: lnglat.lat };
+        if (pointMarker) map.removeOverLay(pointMarker);
+        var icon = new T.Icon({
+            iconUrl: "/images/mark_red.png",
+            iconSize: new T.Point(19,25),
+            iconAnchor: new T.Point(9,25)
+        });
+        pointMarker = new T.Marker(lnglat, { icon: icon });
+        map.addOverLay(pointMarker);
+    }
+
+    function parseTdtResponse(text) {
+        var cleaned = text.replace(/^var\s+tdt_loadResult\s*=\s*/, '').replace(/;\s*$/, '');
+        try { return JSON.parse(cleaned); } catch(e) {
+            console.error('解析失败，原始文本:', text);
+            throw new Error('响应格式非预期');
+        }
+    }
+
+    function extractItems(jsonData) {
+        var items = [];
+        if (jsonData.area && jsonData.area.lonlat) {
+            var coords = jsonData.area.lonlat.split(',');
+            if (coords.length === 2) {
+                var lng = parseFloat(coords[0]), lat = parseFloat(coords[1]);
+                if (!isNaN(lng) && !isNaN(lat)) items.push({ name: '🏛️ ' + jsonData.area.name, lng:lng, lat:lat });
+            }
+        }
+        if (jsonData.pois && jsonData.pois.length) {
+            jsonData.pois.forEach(function(item) {
+                if (item.lonlat) {
+                    var coords = item.lonlat.split(',');
+                    if (coords.length === 2) {
+                        var lng = parseFloat(coords[0]), lat = parseFloat(coords[1]);
+                        if (!isNaN(lng) && !isNaN(lat)) {
+                            var name = item.name || '未命名';
+                            var addr = item.address ? ' (' + item.address + ')' : '';
+                            items.push({ name: '📍 ' + name + addr, lng:lng, lat:lat });
+                        }
+                    }
+                }
+            });
+        }
+        if (jsonData.statistics && jsonData.statistics.allAdmins && jsonData.statistics.allAdmins.length) {
+            jsonData.statistics.allAdmins.forEach(function(adm) {
+                if (adm.lonlat) {
+                    var coords = adm.lonlat.split(',');
+                    if (coords.length === 2) {
+                        var lng = parseFloat(coords[0]), lat = parseFloat(coords[1]);
+                        if (!isNaN(lng) && !isNaN(lat)) {
+                            var name = adm.adminName || '未知行政区';
+                            var countInfo = adm.count ? ' (' + adm.count + '个)' : '';
+                            items.push({ name: '🏛️ ' + name + countInfo, lng:lng, lat:lat });
+                        }
+                    }
+                }
+            });
+        }
+        return items;
+    }
+
+    // ========== 搜索 ==========
+    function searchAddress() {
+        var keyword = $('#searchAddr').val().trim();
+        var $resultBox = $('#resultBox');
+        $resultBox.hide();
+        if (!keyword) { layer.msg('请输入地名/城市名称', { icon:7 }); return; }
+
+        // 更新当前地址文本（用于回传）
+        selectedAddress = keyword;
+
+        var mapBound = getMapBound() || '73.5,3.8,135.1,53.6';
+        var postObj = { keyWord: keyword, level:1, queryType:1, start:0, count:20, mapBound:mapBound };
+        var postStr = JSON.stringify(postObj);
+        var originSearchUrl = 'https://api.tianditu.gov.cn/v2/search?type=query&postStr=' + encodeURIComponent(postStr) + '&tk=' + TK;
+        var proxyUrl = 'https://api.tianditu.gov.cn/apiserver/ajaxproxy?proxyReqUrl=' + encodeURIComponent(originSearchUrl);
+
+        $resultBox.html('<li class="search-loading"><i class="layui-icon layui-icon-loading layui-anim layui-anim-rotate layui-anim-loop"></i> 搜索中…</li>').show();
+
+        $.ajax({
+            url: proxyUrl,
+            dataType: 'text',
+            timeout: 15000,
+            success: function(text) {
+                var jsonData;
+                try { jsonData = parseTdtResponse(text); } catch(err) {
+                    layer.msg('数据解析异常：' + err.message, { icon:7, time:3000 });
+                    $resultBox.html('<li class="empty-tip">解析失败</li>').show();
+                    return;
+                }
+                if (!jsonData || jsonData.status.infocode !== 1000) {
+                    var errMsg = jsonData?.status?.cndesc || '未知错误';
+                    layer.msg('搜索失败：' + errMsg, { icon:7, time:2500 });
+                    $resultBox.html('<li class="empty-tip">搜索无结果 (' + errMsg + ')</li>').show();
+                    return;
+                }
+
+                var items = extractItems(jsonData);
+                if (items.length === 0) {
+                    var tip = '未找到包含坐标的结果，请尝试更具体的关键词';
+                    if (jsonData.resultType === 2) tip = '该关键词匹配到多个行政区，但未返回具体坐标，请尝试更精确的名称';
+                    $resultBox.html('<li class="empty-tip">' + tip + '</li>').show();
+                    return;
+                }
+
+                var MAX_DISPLAY = 50;
+                var displayItems = items.slice(0, MAX_DISPLAY);
+                var totalCount = items.length;
+                var html = '<li class="empty-tip" style="background:#fafafa;color:#666;border-bottom:1px solid #eee;text-align:left;font-size:13px;">找到 ' + totalCount + ' 个匹配项，点击定位</li>';
+                displayItems.forEach(function(item) {
+                    html += '<li data-lng="' + item.lng + '" data-lat="' + item.lat + '">' + item.name + '</li>';
+                });
+                if (totalCount > MAX_DISPLAY) {
+                    html += '<li class="empty-tip" style="color:#888;">… 还有 ' + (totalCount - MAX_DISPLAY) + ' 个结果，请缩小搜索范围</li>';
+                }
+                $resultBox.html(html).show();
+
+                $('#resultBox li[data-lng]').off('click').on('click', function() {
+                    var lng = Number($(this).data('lng')), lat = Number($(this).data('lat'));
+                    if (isNaN(lng) || isNaN(lat)) { layer.msg('坐标无效', {icon:7}); return; }
+                    var target = new T.LngLat(lng, lat);
+                    map.centerAndZoom(target, 14);
+                    setMarker(target);
+                    $resultBox.hide();
+                    //layer.msg('已定位到：' + lng.toFixed(4) + ',' + lat.toFixed(4), { time:1000, icon:1 });
+                });
+            },
+            error: function() {
+                layer.msg('网络请求失败，请重试', { icon:2, time:2500 });
+                $resultBox.html('<li class="empty-tip">请求失败，请重试</li>').show();
+            }
+        });
+    }
+
+    // ========== 初始化地图 ==========
+    function initMap() {
+        console.log("地图初始化开始");
+        var mapDom = document.getElementById(mapContainerId);
+        if (!mapDom) return;
+        if (map) clearMapRes();
+
+        map = new T.Map(mapContainerId);
+        var center = new T.LngLat(112.9338, 28.2282);
+        var zoom = 11;
+
+        // 解析 URL 参数
+        var urlParams = new URLSearchParams(window.location.search);
+        var x = urlParams.get('x');
+        var y = urlParams.get('y');
+        var address = urlParams.get('address') || '';
+
+        var hasCoord = false;
+        if (x && y) {
+            var lng = parseFloat(x), lat = parseFloat(y);
+            if (!isNaN(lng) && !isNaN(lat)) {
+                center = new T.LngLat(lng, lat);
+                zoom = 14;
+                hasCoord = true;
+            }
+        }
+
+        map.centerAndZoom(center, zoom);
+        map.enableScrollWheelZoom(true);
+        map.checkResize();
+        map.addEventListener('click', mapClickHandle);
+
+        if (hasCoord) {
+            var pt = new T.LngLat(parseFloat(x), parseFloat(y));
+            setMarker(pt);
+        }
+
+        // 填充地址并自动搜索
+        if (address) {
+            $('#searchAddr').val(address);
+            selectedAddress = address;
+            //setTimeout(function() { searchAddress(); }, 500);
+        }
+
+        // 绑定搜索事件
+        $('#searchBtn').off('click').on('click', searchAddress);
+        $('#searchAddr').off('keydown').on('keydown', function(e) {
+            if (e.keyCode === 13) { e.preventDefault(); searchAddress(); }
+        });
+        $('#clearSearchBtn').off('click').on('click', function() {
+            $('#searchAddr').val('');
+            selectedAddress = '';
+            $('#resultBox').hide();
+        });
+
+        $(mapDom).off('click').on('click', function() { $('#resultBox').hide(); });
+        $(document).off('click.mapSearch').on('click.mapSearch', function(e) {
+            if (!$(e.target).closest('.search-wrapper').length && !$(e.target).closest('#searchBtn').length) {
+                $('#resultBox').hide();
+            }
+        });
+
+        console.log("地图初始化完成");
+    }
+
+    // ========== 暴露给父页面的方法 ==========
+    f_save = function() {
+        if (!selectLngLat) return null;
+        return {
+            x: selectLngLat.lng.toFixed(6),
+            y: selectLngLat.lat.toFixed(6)
+        };
+    };
+
+    
+    setTimeout(initMap, 500);
+    
+
+    window.addEventListener('beforeunload', function() {
+        clearMapRes();
+    });
+});
+</script>

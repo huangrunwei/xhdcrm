@@ -1,0 +1,111 @@
+﻿
+@{
+    ViewData["Title"] = "MenuAdd";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    <div class="layui-card">
+        <div class="layui-card-header">产品类别信息</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">类别名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="category_name" id="category_name" autocomplete="off" placeholder="类别名称" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">上级类别</label>
+                <div class="layui-input-block">
+                    <div class="layui-unselect layui-form-select downpanel">
+                        <div class="layui-select-title">
+                            <span class="layui-input layui-unselect" id="treeclass">选择上级类别</span>
+                            <input type="hidden" name="parentid" id="parentid" value="root" lay-verify="required">
+                            <i class="layui-edge"></i>
+                        </div>
+                        <dl class="layui-anim layui-anim-upbit">
+                            <dd>
+                                <ul id="classtree"></ul>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var id = null;
+    layui.use(['iconPickerFa', 'tree', 'form', 'layer'], function () {
+        var iconPickerFa = layui.iconPickerFa,
+            tree = layui.tree,
+            form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+
+        $.ajax({
+            type: 'POST',
+            url: 'Tree?id='+getparastr("id"),           
+            dataType: "json",
+            success: function (res) {//res为相应体,function为回调函数
+                tree.render({
+                    elem: "#classtree",
+                    data: res,
+                    //showLine: false,
+                    click: function (node) {
+                        console.log(node);
+                        var $select = $($(this)[0].elem).parents(".layui-form-select");
+                        $select.removeClass("layui-form-selected").find(".layui-select-title span").html(node.data.title).end().find("input:hidden[name='parentid']").val(node.data.id);
+                    }
+                });
+                $(".downpanel").on("click", ".layui-select-title", function (e) {
+                    $(".layui-form-select").not($(this).parents(".layui-form-select")).removeClass("layui-form-selected");
+                    $(this).parents(".downpanel").toggleClass("layui-form-selected");
+                    layui.stope(e);
+                }).on("click", "dl i", function (e) {
+                    layui.stope(e);
+                });
+                
+                var data = findPathByLeafId($("#parentid").val(), res);
+                $("#treeclass").text(data);
+                //console.log($("#parentid").val()+":"+data);
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+            }
+        });
+
+
+        function findPathByLeafId(leafId, nodes, path) {
+
+            if (path === undefined) {
+                path = [];
+            }
+            for (var i = 0; i < nodes.length; i++) {
+                var tmpPath = path.concat();
+                tmpPath.push(nodes[i].id);
+                if (leafId == nodes[i].id) {
+                    return nodes[i].title;
+                }
+                if (nodes[i].children) {
+                    var findResult = findPathByLeafId(leafId, nodes[i].children, tmpPath);
+                    if (findResult) {
+                        return findResult;
+                    }
+                }
+            }
+        }
+    });
+</script>

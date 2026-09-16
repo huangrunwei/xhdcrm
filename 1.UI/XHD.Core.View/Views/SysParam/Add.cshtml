@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("params_type_id")
+
+    <div class="layui-card">
+        <div class="layui-card-header">参数</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required">参数名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="params_name" id="params_name" placeholder="参数编号" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+
+                    <label class="layui-form-label required">参数类别</label>
+                    <div class="layui-input-inline">
+                        <select id="params_type" name="params_type" lay-filter="T_type" lay-verify="required" autocomplete="off" class="layui-input">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-inline">
+
+                    <label class="layui-form-label required">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="params_order" id="params_order" placeholder="请排序" autocomplete="off" class="layui-input" lay-verify="required" value="20">
+                    </div>
+                </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var id = null;
+        layui.use(['iconPickerFa', 'tree', 'form', 'layer', 'tableSelect'], function () {
+            var iconPickerFa = layui.iconPickerFa,
+                tree = layui.tree,
+                form = layui.form,
+                layer = layui.layer,
+                tableSelect = layui.tableSelect,
+                $ = layui.$;
+            //下拉
+            $.ajax({
+                url: "/SysParamType/Tree",
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    var category = $('#params_type');
+                    category.html("");
+                    category.append('<option value="">请选择</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        console.log(data[i]);
+                        category.append("<option value='" + data[i]["id"] + "'>" + data[i]["title"] + "</option>");
+                    }
+
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#params_type_id").val() + ']';
+                        $('#params_type').siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+
+                    form.render("select");
+                },
+            });
+        });
+    </script>

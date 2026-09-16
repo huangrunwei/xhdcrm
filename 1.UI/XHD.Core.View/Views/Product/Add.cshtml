@@ -1,0 +1,138 @@
+﻿@{
+    ViewData["Title"] = "MenuAdd";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    <div class="layui-card">
+        <div class="layui-card-header">产品</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">产品名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="product_name" id="product_name" autocomplete="off" placeholder="请输入产品名称" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">产品类别</label>
+                <div class="layui-input-inline">
+                    <div class="layui-unselect layui-form-select downpanel">
+                        <div class="layui-select-title">
+                            <span class="layui-input layui-unselect" id="treeclass">选择产品类别</span>
+                            <input type="hidden" name="category_id" id="category_id" value="root" lay-verify="required">
+                            <i class="layui-edge"></i>
+                        </div>
+                        <dl class="layui-anim layui-anim-upbit">
+                            <dd>
+                                <ul id="classtree"></ul>
+                            </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label required">产品价格</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="price" id="price" autocomplete="off" placeholder="请输入价格" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">产品单位</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="unit" id="unit" autocomplete="off" placeholder="请输入产品单位" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">产品规格</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="specifications" id="specifications" autocomplete="off" placeholder="请输入产品规格" class="layui-input" lay-verify="required">
+                </div>
+
+                @*<label class="layui-form-label required">排序</label>
+                    <div class="layui-input-inline">
+                    <input type="number" name="T_order" id="T_order" autocomplete="off" placeholder="请输入排序" class="layui-input" lay-verify="required">
+                    </div>*@
+
+            </div>
+            <div class="layui-form-item layui-form-text">
+                <div class="layui-input-block">
+                    <textarea id="remarks" name="remarks" placeholder="请输入备注" class="layui-textarea"></textarea>
+                </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+    <script>
+        var id = null;
+        layui.use(['iconPickerFa', 'tree', 'form', 'layer'], function () {
+            var iconPickerFa = layui.iconPickerFa,
+                tree = layui.tree,
+                form = layui.form,
+                layer = layui.layer,
+                $ = layui.$;
+
+            $.ajax({
+                type: 'POST',
+                url: '/ProductCategory/TreeAll',
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                    tree.render({
+                        elem: "#classtree",
+                        data: res,
+                        //showLine: false,
+                        click: function (node) {
+                            console.log(node);
+                            var $select = $($(this)[0].elem).parents(".layui-form-select");
+                            $select.removeClass("layui-form-selected").find(".layui-select-title span").html(node.data.title).end().find("input:hidden[name='category_id']").val(node.data.id);
+                        }
+                    });
+                    $(".downpanel").on("click", ".layui-select-title", function (e) {
+                        $(".layui-form-select").not($(this).parents(".layui-form-select")).removeClass("layui-form-selected");
+                        $(this).parents(".downpanel").toggleClass("layui-form-selected");
+                        layui.stope(e);
+                    }).on("click", "dl i", function (e) {
+                        layui.stope(e);
+                    });
+
+                    var data = findPathByLeafId($("#category_id").val(), res);
+                    $("#treeclass").text(data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+
+            function findPathByLeafId(leafId, nodes, path) {
+
+                if (path === undefined) {
+                    path = [];
+                }
+                for (var i = 0; i < nodes.length; i++) {
+                    var tmpPath = path.concat();
+                    tmpPath.push(nodes[i].id);
+                    if (leafId == nodes[i].id) {
+                        return nodes[i].title;
+                    }
+                    if (nodes[i].children) {
+                        var findResult = findPathByLeafId(leafId, nodes[i].children, tmpPath);
+                        if (findResult) {
+                            return findResult;
+                        }
+                    }
+                }
+            }
+
+        });
+
+
+    </script>

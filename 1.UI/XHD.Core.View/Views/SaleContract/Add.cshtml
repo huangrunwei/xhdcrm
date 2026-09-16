@@ -1,0 +1,437 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+
+    #treeclass { width: 190px; }
+
+    body .layui-layer-content { overflow: visible; }
+
+    #toolbar { padding: 5px 0; }
+</style>
+
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("customer_id")
+    @Html.Hidden("Our_Contractor_id")
+
+
+    <div class="layui-card">
+        <div class="layui-card-header">合同信息</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">客户</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="customer_name" id="customer_name" placeholder="客户" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">合同编号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="sn" id="sn" placeholder="合同编号" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">合同名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Contract_name" id="Contract_name" placeholder="合同名称" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label  required" style="padding-left:0px;">开始时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Start_date" id="Start_date" placeholder="开始时间" autocomplete="off" lay-verify="required" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label  required" style="padding-left:0px;">结束时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="End_date" id="End_date" placeholder="结束时间" autocomplete="off" lay-verify="required" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required " style="padding-left:0px;">签订时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Sign_date" id="Sign_date" placeholder="签订时间" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required">合同金额</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="Contract_amount" id="Contract_amount" autocomplete="off" placeholder="合同金额" class="layui-input" lay-verify="required" value="0">
+                    </div>
+                </div>
+                @*<div class="layui-inline">
+                    <label class="layui-form-label required">支付周期</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="Order_amount" id="Order_amount" autocomplete="off" placeholder="支付周期" class="layui-input" lay-verify="required" value="0">
+                    </div>
+                </div>*@
+
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">我方签约</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="employee" id="employee" placeholder="我方签约" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                @*<div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">客户签约人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="Customer_Contractor" id="Customer_Contractor" placeholder="客户签约人" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>*@
+
+            </div>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">主要条款</div>
+        <div class="layui-form-item layui-form-text">
+            <div class="layui-input-block">
+                <textarea id="Main_Content" name="Main_Content" placeholder="请输入主要条款" class="layui-textarea"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="layui-card">
+        <div class="layui-card-header">备注</div>
+        <div class="layui-form-item layui-form-text">
+            <div class="layui-input-block">
+                <textarea id="Remarks" name="Remarks" placeholder="请输入备注" class="layui-textarea"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-upload" style="background:#fff;">
+        <button type="button" class="layui-btn layui-btn-normal" id="testList">选择文件</button>
+        <div class="layui-upload-list">
+            <table class="layui-table">
+                <thead>
+                    <tr>
+                        <th>文件名</th>
+                        <th>大小</th>
+                        <th>时间</th>
+                        <th>上传人</th>
+                        <th>状态</th>
+                        <th style="width:80px;">操作</th>
+                    </tr>
+                </thead>
+                <tbody id="demoList3">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+    </div>
+
+
+
+</div>
+
+<link href="~/layuimini/js/lay-module/webuploader/webuploader.css" rel="stylesheet" />
+
+
+<script>
+    var id = null;
+    var f_upload;
+    var f_list;
+    layui.use(['tree', 'form', 'layer', 'tableSelect', 'table', 'laydate', 'webuploader', 'element'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            upload = layui.upload,
+            $ = layui.$;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var numberInput = layui.numberInput;
+        var tableSelect = layui.tableSelect;
+        var webuploader = layui.webuploader;
+        var element = layui.element;
+        if ($("#customer_id").val()) {
+            $("#customer_name").addClass("layui-disabled").attr("readonly", true);
+        }
+        else {
+            tableSelect.render({
+                elem: '#customer_name',
+                checkedKey: 'id',
+                table: {
+                    url: '/Customer/grid',
+                    cols: [[
+                        { type: 'radio' },
+                        { field: 'cus_name', width: 250, title: '客户姓名' },
+                        {
+                            field: 'isPrivate', width: 80, title: '类型', align: "center", templet: function (t) {
+                                switch (t.isPrivate) {
+                                    case 1: return '<div style="background:#F00;Color:#FFF;">公客</div>';
+                                    case 0: return '<div style="background:#0F0;Color:#000;">私客</div>';
+                                    default: return "";
+                                }
+                            }
+                        },
+                        {
+                            field: 'cus_tel', width: 150, title: '电话', templet: function (item) {
+                                var html = "<i class='fa fa-phone'></i>";
+                                if (item.cus_tel)
+                                    html += item.cus_tel;
+
+                                return html;
+                            }
+                        },
+                        {
+                            field: 'employee', width: 150, title: '员工', templet: function (t) {
+                                if (t.Employee) {
+                                    if (t.Employee.department) {
+                                        return "【" + t.Employee.department.dep_name + "】" + t.Employee.name;
+                                    }
+                                    return t.Employee.name;
+                                }
+                                return "";
+                            }
+                        },
+
+                    ]]
+                },
+                done: function (elem, data) {
+                    var NEWJSON = [];
+                    var ids = [];
+
+                    layui.each(data.data, function (index, item) {
+                        NEWJSON.push(item.cus_name);
+                        ids.push(item.id);
+                    })
+                    elem.val(NEWJSON.join(","))
+
+                    $("#customer_id").val(ids.join(','));
+
+
+                }
+            })
+        }
+
+        tableSelect.render({
+            elem: '#employee',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#Our_Contractor_id").val(ids.join(','));
+
+
+            }
+        })
+
+        laydate.render({
+            elem: '#Start_date' //指定元素
+            , trigger: 'click'
+        });
+
+        laydate.render({
+            elem: '#End_date' //指定元素
+            , trigger: 'click'
+        });
+
+        laydate.render({
+            elem: '#Sign_date' //指定元素
+            , trigger: 'click'
+        });
+
+        //////////////////////
+        ///Grid
+
+        $.ajax({
+            type: 'POST',
+            url: '/SaleContractAtta/Grid?id=' + getparastr("id")
+            //, data: { id:$('#T_id').val()  }
+            , dataType: "json"
+            , success: function (res) {//res为相应体,function为回调函数
+
+                var data = res.data;
+
+                for (var i = 0; i < data.length; i++) {
+                    var tr = $(['<tr id = "' + data[i].id + '">'
+                        , '<td>' + data[i].file_name + '</td>'
+                        , '<td>' + (data[i].file_size / 1024).toFixed(1) + 'kb</td>'
+
+                        , '<td>' + data[i].create_time + '</td>'
+                        , '<td>' + data[i].creater.name + '</td>'
+                        , '<td></td>'
+                        , '<td style="width:120px;">'
+                        , '<a class="layui-btn layui-btn-xs" href="/upload/contract/' + data[i].contract_id +"/" + data[i].real_name + '" target="_blank">下载</a>'
+                        , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete" onclick=f_delete("' + data[i].id + '")>删除</button>'
+                        , '</td>'
+                        , '</tr>'].join(''));
+                    $('#demoList3').append(tr);
+                }
+            }
+
+        });
+
+        f_delete = function (id) {
+            if (getparastr("view") == 1) {
+                return;
+            }
+            layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/SaleContractAtta/Del'
+                    , data: { id: id }
+                    , dataType: "json"
+                    , success: function (res) {//res为相应体,function为回调函数
+                        if (res.code == 0) {
+                            $("#" + id).remove();
+                        }
+                        else {
+                            layer.alert(res.Message, { icon: 5 });
+                        }
+                    }
+
+                });
+                layer.close(index);
+            });
+
+        }
+
+        ///////////////////////////
+        var guid3 = webuploader.Base.guid();
+        var uploader3;
+        uploader3 = webuploader.create({
+            swf: "../../js/webuploader/uploader.swf",
+            server: "/SaleContractAtta/Upload",
+            pick: "#testList",
+            resize: false,
+            formData: { guid: guid3, contract_id: getparastr("id") },
+            chunked: true,
+            //accept: {
+            //    title: '图片'
+            //    , extensions: 'jpg,png,jpeg,gif,img'
+            //    , mimeTypes: "image/*"
+            //}
+        });
+
+        uploader3.on('fileQueued', function (file) {
+            d3 = 0;
+            var tr = $(['<tr id="upload-' + file.id + '" class="uplist">'
+                , '<td>' + file.name + '</td>'
+                , '<td>' + (file.size / 1024).toFixed(1) + 'kb</td>'
+                , '<td></td>'
+                , '<td></td>'
+                , '<td><div class="layui-progress" lay-filter="progress-demo-' + file.id + '"><div class="layui-progress-bar" lay-percent=""></div></div></td>'
+                , '<td>'
+                //, '<button class="layui-btn layui-btn-xs demo-reload layui-hide">重传</button>'
+                , '<button class="layui-btn layui-btn-xs layui-btn-danger demo-delete" id="' + file.id + '">删除</button>'
+                , '</td>'
+                , '</tr>'].join(''));
+
+
+
+            //删除
+            tr.find('.demo-delete').on('click', function () {
+
+                var id = $(this).attr("id");
+
+                console.log(id);
+                //return;
+
+                uploader3.removeFile(id);
+
+                tr.remove();
+
+            });
+
+            $('#demoList3').append(tr);
+        });
+        // 文件上传过程中创建进度条实时显示。
+        uploader3.on('uploadProgress', function (file, percentage) {
+            element.progress('progress-demo-' + file.id, percentage * 100 + '%'); //执行进度条。n 即为返回的进度百分比
+        });
+
+        uploader3.on('uploadSuccess', function (file) {
+            $.ajax({
+                type: 'POST',
+                url: '/SaleContractAtta/Meger'
+                , data: {
+                    //ext: file.ext,
+                    name: file.name,
+                    id: file.id,
+                    guid: guid3,
+                    contract_id: getparastr("id"),
+                    file_type: 3
+                }
+                , dataType: "json"
+                , success: function (res) {//res为相应体,function为回调函数
+
+                }
+
+            });
+        });
+
+        uploader3.on('uploadError', function (file) {
+        });
+
+        uploader3.on('uploadFinished', function (file) {
+            d3 = 1;
+            f_done();
+        });
+
+        f_upload = function () {
+            uploader3.upload();
+
+            if ($(".uplist").length == 0) {
+                f_done();
+            }
+        };
+
+        f_list = function () {
+            return $(".uplist").length;
+        }
+
+        ///上传完成
+        var d3 = 1;
+        function f_done() {
+            if (d3) {
+                var index = parent.layer.getFrameIndex(window.name);
+                parent.layer.close(index);//关闭当
+            }
+        }
+
+    });
+</script>

@@ -1,0 +1,250 @@
+﻿<style>
+    body { overflow: hidden; margin: 0; height: 100vh; }
+    #note-desktop { width: 100%; height: 100%; position: relative; overflow: hidden; /* background: url('/images/note_bg.png'); */ background-size: 100% 100%; }
+    .demo-toolbar { position: fixed; bottom: 30px; right: 30px; z-index: 10000; }
+    .add-btn { width: 60px; height: 60px; background-color: #ffc107; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); font-size: 28px; color: #333; }
+        .add-btn:hover { background-color: #ffcd38; transform: scale(1.05); }
+    .info-tip { position: fixed; bottom: 20px; left: 20px; background: rgba(0,0,0,0.6); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 12px; z-index: 9999; pointer-events: none; }
+    /* 外部弹窗自定义样式（可选） */
+    .custom-editor { padding: 15px 20px; }
+        .custom-editor textarea { min-height: 120px; resize: vertical; }
+</style>
+
+<div id="note-desktop"></div>
+<div class="demo-toolbar">
+    <div class="add-btn" id="addNoteBtn">
+        <i class="layui-icon layui-icon-add-1"></i>
+    </div>
+</div>
+
+
+<script>
+    layui.use(['note', 'layer'], function() {
+        var Note = layui.note;
+        var layer = layui.layer;
+        var $ = layui.jquery;
+
+        // 模拟后端 ID 生成（实际应由后端返回）
+        function mockGenerateId() {
+            return 'note_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
+        }
+
+        // 颜色列表（供外部弹窗使用）
+        //var colorList = ['#FFF2CC', '#FADADD', '#D5E8D4', '#D9E1F2', '#F9E0BB', '#E3D7FF', '#FFD9B5'];
+        var colorList = ['#FDFB8C', '#A6E3FC', '#A5F88B', '#D9E1F2', '#F9E0BB', '#E3D7FF', '#FFD9B5'];
+        var currentColor = colorList[0];
+
+        // 渲染颜色选择器（通用函数）
+        function renderColorPalette(container, onChange, activeColor) {
+            container.innerHTML = '';
+            colorList.forEach(function(color) {
+                var div = document.createElement('div');
+                div.className = 'color-item';
+                div.style.backgroundColor = color;
+                if (color === activeColor) div.classList.add('active');
+                div.addEventListener('click', function() {
+                    Array.from(container.children).forEach(function(child) {
+                        child.classList.remove('active');
+                    });
+                    div.classList.add('active');
+                    onChange(color);
+                });
+                container.appendChild(div);
+            });
+        }
+
+        // 初始化组件
+        var noteApp = new Note({
+            container: '#note-desktop',
+            onDelete: function(id, callback) {
+                // 模拟删除确认框和 AJAX 请求
+                layer.confirm('确定要删除这张便签吗？', {
+                    icon: 3,
+                    title: '删除确认'
+                }, function(index) {
+                    layer.close(index);
+                   
+                    $.ajax({
+                        type: 'POST',
+                        url: 'Delete',
+                        data: { id:id },
+                        dataType: "json",
+                        success: function (res) {//res为相应体,function为回调函数
+                            callback(true);   // 确认删除
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                       
+                        }
+                    });
+                }, function() {
+                    callback(false);  // 取消删除
+                });
+            },
+            onEdit: function(id, noteData) {
+                // 打开外部自定义编辑弹窗
+                currentColor = noteData.color;
+                var content = `
+                    <div class="custom-editor">
+                        <textarea id="editContent" placeholder="编辑内容..." class="layui-textarea" rows="5">${escapeHtml(noteData.content)}</textarea>
+                        <div style="margin-top: 12px; font-size: 14px; color: #5F5F5F;">
+                            <i class="layui-icon layui-icon-color-fill"></i> 选择便签颜色
+                        </div>
+                        <div class="color-palette" id="editPalette"></div>
+                    </div>
+                `;
+                layer.open({
+                    type: 1,
+                    title: '✏️ 编辑便签',
+                    area: ['520px', '440px'],
+                    content: content,
+                    btn: ['保存修改', '取消'],
+                    success: function(layero, index) {
+                        var paletteDiv = layero.find('#editPalette')[0];
+                        renderColorPalette(paletteDiv, function(color) {
+                            currentColor = color;
+                        }, currentColor);
+                    },
+                    yes: function(index, layero) {
+                        var newContent = layero.find('#editContent').val().trim();
+                        if (!newContent) {
+                            layer.msg('内容不能为空', { icon: 2 });
+                            return false;
+                        }
+                        
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Update',
+                            data: {id:id,content:newContent,color:currentColor},
+                            dataType: "json",
+                            success: function (res) {//res为相应体,function为回调函数
+                                noteApp.updateNote(id, {
+                                    content: newContent,
+                                    color: currentColor
+                                });
+                                layer.close(index);
+                                layer.msg('便签已更新', { icon: 1 });
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                        
+                        return false;
+                    }
+                });
+            },
+            onMove: function(id, left, top) {
+                // 移动结束后调用接口保存位置
+                console.group('📍 AJAX 模拟 - 保存位置');
+                console.log('PATCH /api/notes/' + id + '/position', { left: left, top: top });
+                console.groupEnd();
+
+                $.ajax({
+                    type: 'POST',
+                    url: 'UpdateXY',
+                    data: {id:id,left:left,top:top},
+                    dataType: "json",
+                    success: function (res) {//res为相应体,function为回调函数
+                        
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                       
+                    }
+                });
+            }
+        });
+
+        // 加载初始数据（模拟 GET /api/notes）
+        function loadInitialData() {
+            $.ajax({
+                type: 'POST',
+                url: 'grid',
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                     noteApp.setData(res.data);
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+           
+        }
+        loadInitialData();
+
+        // 新增按钮：打开外部新增弹窗
+        document.getElementById('addNoteBtn').addEventListener('click', function() {
+            currentColor = colorList[0];
+            var content = `
+                <div class="custom-editor">
+                    <textarea id="addContent" placeholder="写下你想记录的内容..." class="layui-textarea" rows="5"></textarea>
+                    <div style="margin-top: 12px; font-size: 14px; color: #5F5F5F;">
+                        <i class="layui-icon layui-icon-color-fill"></i> 选择便签颜色
+                    </div>
+                    <div class="color-palette" id="addPalette"></div>
+                </div>
+            `;
+            layer.open({
+                type: 1,
+                title: '📌 新增便签',
+                area: ['520px', '400px'],
+                content: content,
+                btn: ['确定', '取消'],
+                success: function(layero, index) {
+                    var paletteDiv = layero.find('#addPalette')[0];
+                    renderColorPalette(paletteDiv, function(color) {
+                        currentColor = color;
+                    }, currentColor);
+                    layero.find('#addContent').focus();
+                },
+                yes: function(index, layero) {
+                    var content = layero.find('#addContent').val().trim();
+                    if (!content) {
+                        layer.msg('请填写便签内容~', { icon: 2 });
+                        return false;
+                    }
+                    // 获取随机位置
+                    var pos = noteApp.getRandomPosition();
+
+                    var newNote = {
+                            content: content,
+                            color: currentColor,
+                            left: pos.left,
+                            top: pos.top,
+                            zIndex: 20
+                        };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: 'Save',
+                        data: newNote,
+                        dataType: "json",
+                        success: function (res) {//res为相应体,function为回调函数
+                            newNote.id=res.msg;
+                            noteApp.addNote(newNote);
+                            layer.close(index);
+                            layer.msg('便签创建成功', { icon: 1 });
+                        },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                            layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                        }
+                    });
+
+                    return false;
+                }
+            });
+        });
+
+        // 辅助函数：防XSS
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function(m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        console.log('组件已启动，所有弹窗由外部控制，控制台可见完整 AJAX 模拟日志');
+    });
+</script>

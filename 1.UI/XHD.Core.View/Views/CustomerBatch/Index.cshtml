@@ -1,0 +1,307 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <!-- 搜索区域 -->
+        <fieldset class="table-search-fieldset">
+            <legend>搜索信息</legend>
+            <form class="layui-form layui-form-pane" action="">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">转出人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="old_emp" id="old_emp" autocomplete="off" class="layui-input">
+                        <input type="text" name="old_emp_id" id="old_emp_id" style="display:none;">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label">接收人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="new_emp" id="new_emp" autocomplete="off" class="layui-input">
+                        <input type="text" name="new_emp_id" id="new_emp_id" style="display:none;">
+                    </div>
+                </div>
+
+                <!-- 按钮组 + 展开/折叠，单独一个行内块容器 -->
+                <div class="btn-group-inline">
+                    <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                    <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon layui-icon-error"></i> 重置</button>
+                    <!-- 展开/折叠按钮 -->
+                    <a id="toggleBtn" style="cursor:pointer;">
+                        <i class="layui-icon layui-icon-down"></i>
+                        <span>展开</span>
+                    </a>
+                </div>
+                
+                <!-- 展开/折叠区域 -->
+                <div id="extraConditions" style="display: none;">
+                    <div class="layui-inline">
+                        <label class="layui-form-label">转移时间</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="date1" id="date1" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="date2" id="date2" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                </div>
+
+               
+
+            </form>
+        </fieldset>
+
+        <!-- 表格工具栏 -->
+        <script type="text/html" id="toolbarDemo">
+                    <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加</button>
+                    </div>
+        </script>
+
+        <!-- 表格主体 -->
+        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+
+        <!-- 行操作模板 -->
+        @*  <script type="text/html" id="auth-state">
+                    <a class="layui-btn layui-btn-xs" lay-event="info">详情</a>
+                    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+                    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script> *@
+
+        <!-- 隐藏的导出表单 -->
+        @*  <form id="form_excel" style="display:none;"></form> *@
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form', 'layer','laydate', 'tableSelect'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var tableSelect = layui.tableSelect;
+
+        //日期
+        laydate.render({
+            elem: '#date1'
+            , trigger: 'click' //采用click弹出
+        });
+
+        laydate.render({
+            elem: '#date2'
+            , trigger: 'click' //采用click弹出
+        });
+
+        // --- 1. 表格渲染 ---
+        // 使用变量存储表格配置，便于后续调用
+        var tableOptions = {
+            elem: '#munu-table',
+            url: 'Grid',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter'],
+            id: "mainGrid4",
+            cols: [[
+               { type: 'numbers', fixed: 'left',title:"序号" },
+
+                {
+                    field: 'OldEmp', width: 120, title: '转出人', templet: function (t) {
+                        if (t.OldEmp) {
+                            return t.OldEmp.name;
+                        }
+                        return "";
+                    }
+                },
+               
+                {
+                    field: 'NewEmp', width: 120, title: '接收人', templet: function (t) {
+                        if (t.NewEmp) {
+                            return t.NewEmp.name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'Creater', width: 120, title: '操作人', templet: function (t) {
+                        if (t.Creater) {
+                            return t.Creater.name;
+                        }
+                        return "";
+                    }
+                },
+                { field: 'create_time', width: 180, title: '转移时间' },
+                { field: 'cus_count', width: 120, title: '转出数量' }
+            ]],
+            page: true,
+            limit: 15,
+            limits: [10, 15, 20, 25, 50, 100]
+        };
+
+        // 渲染表格
+        table.render(tableOptions);
+
+        // --- 2. 事件监听 ---
+
+        // 搜索提交
+        form.on('submit(data-search-btn)', function (data) {
+            table.reload('mainGrid4', {
+                page: { curr: 1 }, // 搜索时重置到第一页
+                where: data.field
+            });
+            return false; // 阻止表单默认提交
+        });
+
+         // 表格头部工具栏
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {
+                openAddEditModal();
+            } 
+        });
+
+        // 展开/折叠搜索条件
+        $('#toggleBtn').on('click', function () {
+            var $extra = $('#extraConditions');
+            var $icon = $(this).find('i');
+            var $span = $(this).find('span');
+        
+            if ($extra.is(':visible')) {
+                $extra.slideUp(200);
+                $icon.removeClass('layui-icon-up').addClass('layui-icon-down');
+                $span.text('展开');
+            } else {
+                $extra.slideDown(200, function () {
+                    form.render(); // 重新渲染表单元素
+                });
+                $icon.removeClass('layui-icon-down').addClass('layui-icon-up');
+                $span.text('收起');
+            }
+        });
+
+       
+
+        // 打开添加/编辑弹窗
+        function openAddEditModal(editData) {
+            var isEdit = !!editData;
+            var title = "批量转客户" ;
+
+            var index = layer.open({
+                title: title,
+                type: 2,
+                anim: 1,
+                area: ['80%', '80%'],
+                maxmin: true,
+                content: "Add",
+                btn: ['确定', '关闭'],
+                success: function (layero, index) {
+                    if (isEdit) {
+                        populateIframeData(layero, index, editData);
+                    }
+                },
+                yes: function (index, layero) {
+                    var res = window["layui-layer-iframe" + index].f_save();  
+
+                    if(res)
+                    {
+                        layer.close(index); //关闭弹层
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Save',
+                            data: res,
+                            dataType: "json",
+                            success: function (res) {//res为相应体,function为回调函数
+                                $("#btn_serch").click();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    }
+                }
+            });
+        }
+
+         tableSelect.render({
+            elem: '#old_emp',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#old_emp_id").val(ids.join(','));
+            }
+        })
+
+        tableSelect.render({
+            elem: '#new_emp',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#new_emp_id").val(ids.join(','));
+            }
+        })
+
+    });
+</script>

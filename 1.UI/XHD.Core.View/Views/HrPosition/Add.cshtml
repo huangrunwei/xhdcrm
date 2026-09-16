@@ -1,0 +1,45 @@
+﻿
+@{
+    ViewData["Title"] = "MenuAdd";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    <div class="layui-card">
+        <div class="layui-card-header">职务</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <label class="layui-form-label required">职务名称</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="position_name" id="position_name" autocomplete="off" placeholder="请输入职务名称" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label required">职务级别</label>
+                <div class="layui-input-inline">
+                    <input type="number" name="position_level" id="position_level" autocomplete="off" placeholder="请输入级别" class="layui-input" lay-verify="required">
+                </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var id = null;
+        layui.use(['iconPickerFa', 'tree', 'form', 'layer'], function () {
+            var iconPickerFa = layui.iconPickerFa,
+                tree = layui.tree,
+                form = layui.form,
+                layer = layui.layer,
+                $ = layui.$;
+        });
+    </script>

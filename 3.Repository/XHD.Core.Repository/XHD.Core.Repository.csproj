@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FreeSql" Version="3.5.310" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="IRepository\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\4.Entity\XHD.Core.Models\XHD.Core.Models.csproj" />
+    <ProjectReference Include="..\..\5.Infrastructure\XHD.Core.Common\XHD.Core.Common.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,338 @@
+[
+  {
+    "id": "sys_role|add",
+    "title": "新增",
+    "menu_id": "sys_role",
+    "order": 10    
+  },
+  {
+    "id": "sys_role|edit",
+    "title": "修改",
+    "menu_id": "sys_role",
+    "order": 20    
+  },
+  {
+    "id": "sys_role|del",
+    "title": "删除",
+    "menu_id": "sys_role",
+    "order": 30    
+  },
+  {
+    "id": "sys_role|auth",
+    "title": "权限",
+    "menu_id": "sys_role",
+    "order": 60    
+  },
+  {
+    "id": "sys_params|add",
+    "title": "新增",
+    "menu_id": "sys_params",
+    "order": 10    
+  },
+  {
+    "id": "sys_params|edit",
+    "title": "修改",
+    "menu_id": "sys_params",
+    "order": 20    
+  },
+  {
+    "id": "sys_params|del",
+    "title": "删除",
+    "menu_id": "sys_params",
+    "order": 30    
+  },
+  {
+    "id": "CRM_Customer|add",
+    "title": "新增",
+    "menu_id": "CRM_Customer",
+    "order": 10    
+  },
+  {
+    "id": "CRM_Customer|edit",
+    "title": "修改",
+    "menu_id": "CRM_Customer",
+    "order": 20    
+  },
+  {
+    "id": "CRM_Customer|del",
+    "title": "删除",
+    "menu_id": "CRM_Customer",
+    "order": 30    
+  },
+  {
+    "id": "CRM_Customer|import",
+    "title": "导入",
+    "menu_id": "CRM_Customer",
+    "order": 40    
+  },
+  {
+    "id": "CRM_Customer|export",
+    "title": "导出",
+    "menu_id": "CRM_Customer",
+    "order": 50    
+  },
+  {
+    "id": "Product_Category|add",
+    "title": "新增",
+    "menu_id": "Product_Category",
+    "order": 10    
+  },
+  {
+    "id": "Product_Category|edit",
+    "title": "修改",
+    "menu_id": "Product_Category",
+    "order": 20    
+  },
+  {
+    "id": "Product_Category|del",
+    "title": "删除",
+    "menu_id": "Product_Category",
+    "order": 30    
+  },
+  {
+    "id": "Sale_Order|add",
+    "title": "新增",
+    "menu_id": "Sale_Order",
+    "order": 10    
+  },
+  {
+    "id": "Sale_Order|edit",
+    "title": "修改",
+    "menu_id": "Sale_Order",
+    "order": 20    
+  },
+  {
+    "id": "Sale_Order|del",
+    "title": "删除",
+    "menu_id": "Sale_Order",
+    "order": 30    
+  },
+  {
+    "id": "Finance_Receive|add",
+    "title": "新增",
+    "menu_id": "Finance_Receive",
+    "order": 10    
+  },
+  {
+    "id": "Finance_Receive|edit",
+    "title": "修改",
+    "menu_id": "Finance_Receive",
+    "order": 20    
+  },
+  {
+    "id": "Finance_Receive|del",
+    "title": "删除",
+    "menu_id": "Finance_Receive",
+    "order": 30    
+  },
+  {
+    "id": "hr_department|add",
+    "title": "新增",
+    "menu_id": "hr_department",
+    "order": 10    
+  },
+  {
+    "id": "hr_department|edit",
+    "title": "修改",
+    "menu_id": "hr_department",
+    "order": 20    
+  },
+  {
+    "id": "hr_department|del",
+    "title": "删除",
+    "menu_id": "hr_department",
+    "order": 30    
+  },
+  {
+    "id": "params_provinces|add",
+    "title": "新增",
+    "menu_id": "params_provinces",
+    "order": 10    
+  },
+  {
+    "id": "params_provinces|edit",
+    "title": "修改",
+    "menu_id": "params_provinces",
+    "order": 20    
+  },
+  {
+    "id": "params_provinces|del",
+    "title": "删除",
+    "menu_id": "params_provinces",
+    "order": 30    
+  },
+  {
+    "id": "Product|add",
+    "title": "新增",
+    "menu_id": "Product",
+    "order": 10    
+  },
+  {
+    "id": "Product|edit",
+    "title": "修改",
+    "menu_id": "Product",
+    "order": 20    
+  },
+  {
+    "id": "Product|del",
+    "title": "删除",
+    "menu_id": "Product",
+    "order": 30    
+  },
+  {
+    "id": "Sale_Contract|add",
+    "title": "新增",
+    "menu_id": "Sale_Contract",
+    "order": 10    
+  },
+  {
+    "id": "Sale_Contract|edit",
+    "title": "修改",
+    "menu_id": "Sale_Contract",
+    "order": 20    
+  },
+  {
+    "id": "Sale_Contract|del",
+    "title": "删除",
+    "menu_id": "Sale_Contract",
+    "order": 30    
+  },
+  {
+    "id": "Finance_Invoice|add",
+    "title": "新增",
+    "menu_id": "Finance_Invoice",
+    "order": 10    
+  },
+  {
+    "id": "Finance_Invoice|edit",
+    "title": "修改",
+    "menu_id": "Finance_Invoice",
+    "order": 20    
+  },
+  {
+    "id": "Finance_Invoice|del",
+    "title": "删除",
+    "menu_id": "Finance_Invoice",
+    "order": 30    
+  },
+  {
+    "id": "crm_contact|add",
+    "title": "新增",
+    "menu_id": "crm_contact",
+    "order": 10    
+  },
+  {
+    "id": "crm_contact|edit",
+    "title": "修改",
+    "menu_id": "crm_contact",
+    "order": 20    
+  },
+  {
+    "id": "crm_contact|del",
+    "title": "删除",
+    "menu_id": "crm_contact",
+    "order": 30    
+  },
+  {
+    "id": "hr_post|add",
+    "title": "新增",
+    "menu_id": "hr_post",
+    "order": 10    
+  },
+  {
+    "id": "hr_post|edit",
+    "title": "修改",
+    "menu_id": "hr_post",
+    "order": 20    
+  },
+  {
+    "id": "hr_post|del",
+    "title": "删除",
+    "menu_id": "hr_post",
+    "order": 30    
+  },
+  {
+    "id": "CRM_Follow|add",
+    "title": "新增",
+    "menu_id": "CRM_Follow",
+    "order": 10    
+  },
+  {
+    "id": "CRM_Follow|edit",
+    "title": "修改",
+    "menu_id": "CRM_Follow",
+    "order": 20    
+  },
+  {
+    "id": "CRM_Follow|del",
+    "title": "删除",
+    "menu_id": "CRM_Follow",
+    "order": 30    
+  },
+  {
+    "id": "params_city|add",
+    "title": "新增",
+    "menu_id": "params_city",
+    "order": 10    
+  },
+  {
+    "id": "params_city|edit",
+    "title": "修改",
+    "menu_id": "params_city",
+    "order": 20    
+  },
+  {
+    "id": "params_city|del",
+    "title": "删除",
+    "menu_id": "params_city",
+    "order": 30    
+  },
+  {
+    "id": "hr_employee|add",
+    "title": "新增",
+    "menu_id": "hr_employee",
+    "order": 10    
+  },
+  {
+    "id": "hr_employee|edit",
+    "title": "修改",
+    "menu_id": "hr_employee",
+    "order": 20    
+  },
+  {
+    "id": "hr_employee|del",
+    "title": "删除",
+    "menu_id": "hr_employee",
+    "order": 30    
+  },
+  {
+    "id": "hr_employee|pwd",
+    "title": "修改密码",
+    "menu_id": "hr_employee",
+    "order": 60    
+  },
+  {
+    "id": "Message_News|add",
+    "title": "新增",
+    "menu_id": "Message_News",
+    "order": 10    
+  },
+  {
+    "id": "Message_News|edit",
+    "title": "修改",
+    "menu_id": "Message_News",
+    "order": 20    
+  },
+  {
+    "id": "Message_News|del",
+    "title": "删除",
+    "menu_id": "Message_News",
+    "order": 30    
+  },
+  {
+    "id": "CRM_bath|add",
+    "title": "新增",
+    "menu_id": "CRM_bath",
+    "order": 10    
+  }
+]

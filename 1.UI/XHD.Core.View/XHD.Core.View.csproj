@@ -1,0 +1,243 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ApplicationIcon>wwwroot\favicon.ico</ApplicationIcon>
+		<SatelliteResourceLanguages>zh-Hans;en</SatelliteResourceLanguages>
+
+
+		<!-- 移除调试符号pdb，减少多余文件 -->
+		<TrimmerRemoveSymbols>true</TrimmerRemoveSymbols>
+
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Compile Remove="wwwroot\layuimini\js\lay-module\cropper\**" />
+	  <Compile Remove="wwwroot\layuimini\js\lay-module\videoJS\**" />
+	  <Content Remove="wwwroot\layuimini\js\lay-module\cropper\**" />
+	  <Content Remove="wwwroot\layuimini\js\lay-module\videoJS\**" />
+	  <EmbeddedResource Remove="wwwroot\layuimini\js\lay-module\cropper\**" />
+	  <EmbeddedResource Remove="wwwroot\layuimini\js\lay-module\videoJS\**" />
+	  <None Remove="wwwroot\layuimini\js\lay-module\cropper\**" />
+	  <None Remove="wwwroot\layuimini\js\lay-module\videoJS\**" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Remove="wwwroot\layuimini\js\lay-module\tableSelect\tableSelect.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<TrimmerRootAssembly Include="Microsoft.AspNetCore.Mvc.Core" />		
+	</ItemGroup>
+	<ItemGroup>
+		<!-- 业务依赖（保留，版本已较新） -->
+		<PackageReference Include="FreeSql" Version="3.5.310" />
+		<PackageReference Include="FreeSql.Provider.MySqlConnector" Version="3.5.310" />
+		<PackageReference Include="FreeSql.Provider.SqlServer" Version="3.5.310" />
+		<PackageReference Include="FreeSql.Provider.PostgreSQL" Version="3.5.310" />
+		<PackageReference Include="FreeSql.Provider.Sqlite" Version="3.5.310" />
+		<PackageReference Include="MiniExcel" Version="1.46.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+		<PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
+		<PackageReference Include="UUIDNext" Version="4.1.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation"
+                  Version="8.0.28"
+                  Condition="'$(Configuration)'=='Debug'" />
+
+		<!-- ===== 以下全部调整为仅开发环境 ===== -->
+		<!-- 1. 删除 Microsoft.AspNetCore.HttpOverrides（.NET 8 框架已内置，无需显式引用） -->
+
+		
+
+		<!-- 3. 删除手动引用的 Microsoft.CodeAnalysis.Common（它是 RuntimeCompilation 的依赖，会自动带入正确版本） -->
+
+		<!-- 4. 设计时工具（代码生成）-> 仅 Debug，且禁止传播到发布目录 -->
+		<PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.0" Condition="'$(Configuration)' == 'Debug'">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
+		<!-- 5. 删除 Microsoft.NET.ILLink.Tasks（.NET 8 SDK 已内置，无需手动引用） -->
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="wwwroot\Pages\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="wwwroot\layuimini\js\lay-config.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\citypicker\citypicker.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\echarts\echarts.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\echarts\echartsTheme.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\iconPicker\iconPickerFa.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\interact\interact.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\layarea\layarea.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\layuimini\miniAdmin.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\layuimini\miniMenu.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\layuimini\miniTab.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\layuimini\miniTheme.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\layuimini\miniTongji.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\numberInput\css\theme.css.map" />
+		<None Include="wwwroot\layuimini\js\lay-module\numberInput\css\theme.less" />
+		<None Include="wwwroot\layuimini\js\lay-module\numberInput\js\index.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\openTable\icon\right.svg" />
+		<None Include="wwwroot\layuimini\js\lay-module\openTable\openTable.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\step-lay\step.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\tableSelect\tableSelect.js">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+		<None Include="wwwroot\layuimini\js\lay-module\tableSelect\tableSelect1.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\treetable-lay\treetable.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\wangEditor\wangEditor.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\wangEditor\wangEditor.min.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\wangEditor\wangEditor.min.js.map" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\Uploader.swf" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.custom.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.custom.min.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.fis.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.flashonly.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.flashonly.min.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.html5only.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.html5only.min.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.min.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.noimage.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.noimage.min.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.nolog.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.nolog.min.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.withoutimage.js" />
+		<None Include="wwwroot\layuimini\js\lay-module\webuploader\webuploader.withoutimage.min.js" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\fonts\fontawesome-webfont.svg" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\fonts\fontawesome-webfont.woff2" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\animated.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\bordered-pulled.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\core.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\fixed-width.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\font-awesome.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\icons.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\larger.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\list.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\mixins.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\path.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\rotated-flipped.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\screen-reader.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\stacked.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\less\variables.less" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\font-awesome.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_animated.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_bordered-pulled.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_core.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_fixed-width.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_icons.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_larger.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_list.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_mixins.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_path.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_rotated-flipped.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_screen-reader.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_stacked.scss" />
+		<None Include="wwwroot\layuimini\lib\font-awesome-4.7.0\scss\_variables.scss" />
+		<None Include="wwwroot\layuimini\lib\jq-module\jquery.particleground.min.js" />
+		<None Include="wwwroot\layuimini\lib\jq-module\paigusu.min.js" />
+		<None Include="wwwroot\layuimini\lib\jq-module\zyupload\zyupload-1.0.0.min.js" />
+		<None Include="wwwroot\layuimini\lib\jquery-3.4.1\jquery-3.4.1.min.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\font\iconfont.svg" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\font\iconfont.woff2" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\layui.all.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\layui.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\carousel.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\code.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\colorpicker.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\element.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\flow.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\form.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\jquery.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\laydate.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\layedit.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\layer.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\laypage.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\laytpl.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\mobile.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\rate.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\slider.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\table.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\transfer.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\tree.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\upload.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.5.5\lay\modules\util.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\font\iconfont.svg" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\font\iconfont.woff2" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\layui.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\all.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\carousel.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\code.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\colorpicker.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\dropdown.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\element.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\flow.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\form.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\jquery.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\lay.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\laydate.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\layer.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\laypage.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\laytpl.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\layui.all.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\mobile.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\rate.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\slider.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\table.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\transfer.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\tree.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\treeTable.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\upload.js" />
+		<None Include="wwwroot\layuimini\lib\layui-v2.9.6\modules\util.js" />
+		<None Include="wwwroot\layuimini\LICENSE" />
+		<None Include="wwwroot\layuimini\README.md" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Update="ConfigData\HrEmployees.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="ConfigData\SysButtons.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="ConfigData\SysInfo.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="ConfigData\SysMenus.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="ConfigData\SysParamCities.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="ConfigData\SysParamProvinces.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="ConfigData\SysParamTypes.json">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+		<Content Update="Views\Jobs\Index.cshtml">
+			<ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+			<CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<UpToDateCheckInput Remove="Views\Jobs\Add.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<_ContentIncludedByDefault Remove="Views\Jobs\Add.cshtml" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\2.Application\XHD.Core.Services\XHD.Core.Services.csproj" />
+	  <ProjectReference Include="..\..\3.Repository\XHD.Core.Repository\XHD.Core.Repository.csproj" />
+	  <ProjectReference Include="..\..\4.Entity\XHD.Core.Models\XHD.Core.Models.csproj" />
+	  <ProjectReference Include="..\..\5.Infrastructure\XHD.Core.Common\XHD.Core.Common.csproj" />
+	</ItemGroup>
+
+</Project>

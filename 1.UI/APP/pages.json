@@ -1,0 +1,192 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+		{
+			"path": "pages/Login/Login",
+
+			"style": {
+				"navigationStyle": "custom", // 隐藏默认导航栏
+				"navigationBarTitleText": "登录"
+			}
+		},
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "CRM"
+			}
+		},
+
+
+		{
+			"path": "pages/my/my",
+
+			"style": {
+				"navigationStyle": "custom", // 隐藏默认导航栏
+				"navigationBarTitleText": "我的"
+			}
+		},
+		{
+			"path": "pages/my/password",
+			"style": {
+				"navigationBarTitleText": "修改密码"
+			}
+		},
+		{
+			"path": "pages/CRM/CRM",
+			"style": {
+				"navigationBarTitleText": "客户"
+			}
+		},
+		{
+			"path": "pages/CRM/CusInfo",
+			"style": {
+				"navigationBarTitleText": "客户详情"
+			}
+		},
+		{
+			"path": "pages/CRM/edit",
+			"style": {
+				"navigationBarTitleText": "客户编辑"
+			}
+		},
+		{
+			"path": "pages/follow/follow",
+			"style": {
+				"navigationBarTitleText": "跟进"
+			}
+		},
+		{
+			"path": "pages/follow/edit",
+			"style": {
+				"navigationBarTitleText": "编辑跟进"
+			}
+		},
+		{
+			"path": "pages/follow/info",
+			"style": {
+				"navigationBarTitleText": "跟进详情"
+			}
+		},
+		{
+			"path": "pages/Contact/Contact",
+			"style": {
+				"navigationBarTitleText": "联系人"
+			}
+		},
+		{
+			"path": "pages/Contact/info",
+			"style": {
+				"navigationBarTitleText": "联系人详情"
+			}
+		},
+		{
+			"path": "pages/Contact/edit",
+			"style": {
+				"navigationBarTitleText": "联系人编辑"
+			}
+		},
+		{
+			"path": "pages/Order/Order",
+			"style": {
+				"navigationBarTitleText": "订单列表"
+			}
+		},
+		{
+			"path": "pages/Order/info",
+			"style": {
+				"navigationBarTitleText": "订单详情"
+			}
+		},
+		{
+			"path": "pages/Order/edit",
+			"style": {
+				"navigationBarTitleText": "订单编辑"
+			}
+		},
+		{
+			"path": "pages/Contract/Contract",
+			"style": {
+				"navigationBarTitleText": "合同列表"
+			}
+		},
+		{
+			"path": "pages/Contract/info",
+			"style": {
+				"navigationBarTitleText": "合同详情"
+			}
+		},
+		{
+			"path": "pages/Contract/edit",
+			"style": {
+				"navigationBarTitleText": "合同编辑"
+			}
+		},
+		{
+			"path": "pages/Receive/Receive",
+			"style": {
+				"navigationBarTitleText": "收款列表"
+			}
+		},
+		{
+			"path": "pages/Receive/info",
+			"style": {
+				"navigationBarTitleText": "收款详情"
+			}
+		},
+		{
+			"path": "pages/Receive/edit",
+			"style": {
+				"navigationBarTitleText": "收款编辑"
+			}
+		},
+		{
+			"path": "pages/test/test",
+			"style": {
+				"navigationBarTitleText": "测试"
+			}
+		},
+		{
+			"path": "pages/webview/webview",
+			"style": {
+				"navigationBarTitleText": "新闻"
+			}
+		}
+
+	],
+	"globalStyle": {
+		//"navigationStyle": "custom",  // 隐藏默认导航栏
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "客户关系管理系统",
+		"navigationBarBackgroundColor": "#1677ff",
+		"backgroundColor": "#FFFFFF"
+	},
+	"uniIdRouter": {},
+	"tabBar": {
+		"color": "#999999",
+		"selectedColor": "#007AFF",
+		"backgroundColor": "#FFFFFF",
+		"borderStyle": "black",
+		"list": [{
+				"pagePath": "pages/index/index",
+				"text": "首页",
+				"iconPath": "/static/image/1-001.png",
+				"selectedIconPath": "/static/image/1-002.png"
+			},
+			{
+				"pagePath": "pages/CRM/CRM",
+				"text": "客户",
+				"iconPath": "/static/image/2-001.png",
+				"selectedIconPath": "/static/image/2-002.png"
+			},
+			{
+				"pagePath": "pages/my/my",
+				"text": "我的",
+				"iconPath": "/static/image/5-001.png",
+				"selectedIconPath": "/static/image/5-002.png"
+			}
+		]
+	},
+	"h5": {
+		"title": "小黄豆CRM",
+		"favicon": "/static/favicon.ico" // 配置favicon路径
+	}
+}

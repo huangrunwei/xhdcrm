@@ -1,0 +1,206 @@
+[
+  {
+    "id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+    "Provinces": "北京",
+    "Provinces_order": 10,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+    "Provinces": "上海",
+    "Provinces_order": 20,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+    "Provinces": "天津",
+    "Provinces_order": 29,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+    "Provinces": "重庆",
+    "Provinces_order": 40,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+    "Provinces": "黑龙江",
+    "Provinces_order": 50,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+    "Provinces": "吉林",
+    "Provinces_order": 60,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+    "Provinces": "辽宁",
+    "Provinces_order": 70,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+    "Provinces": "内蒙古",
+    "Provinces_order": 80,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "09E6B810-BB48-4C9D-A51D-392393C82CF8",
+    "Provinces": "宁夏",
+    "Provinces_order": 90,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+    "Provinces": "新疆",
+    "Provinces_order": 100,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+    "Provinces": "青海",
+    "Provinces_order": 110,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+    "Provinces": "甘肃",
+    "Provinces_order": 120,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+    "Provinces": "陕西",
+    "Provinces_order": 130,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+    "Provinces": "河北",
+    "Provinces_order": 140,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+    "Provinces": "河南",
+    "Provinces_order": 150,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+    "Provinces": "山东",
+    "Provinces_order": 160,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+    "Provinces": "山西",
+    "Provinces_order": 170,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+    "Provinces": "湖北",
+    "Provinces_order": 180,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+    "Provinces": "湖南",
+    "Provinces_order": 190,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+    "Provinces": "安徽",
+    "Provinces_order": 200,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+    "Provinces": "江苏",
+    "Provinces_order": 210,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "73A643D6-A528-46D1-933C-985A832646C7",
+    "Provinces": "浙江",
+    "Provinces_order": 220,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+    "Provinces": "江西",
+    "Provinces_order": 230,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "E6E267E9-12EA-4026-B830-806A502214A7",
+    "Provinces": "广东",
+    "Provinces_order": 240,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+    "Provinces": "广西",
+    "Provinces_order": 250,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+    "Provinces": "福建",
+    "Provinces_order": 260,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+    "Provinces": "四川",
+    "Provinces_order": 270,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+    "Provinces": "云南",
+    "Provinces_order": 280,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+    "Provinces": "贵州",
+    "Provinces_order": 290,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+    "Provinces": "西藏",
+    "Provinces_order": 300,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "2E2C5725-CC26-491A-B3E3-92D81B585F12",
+    "Provinces": "海南",
+    "Provinces_order": 310,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "877347E3-B5DA-4302-9268-515E5EDE2E88",
+    "Provinces": "香港",
+    "Provinces_order": 320,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "DB047952-B531-493D-BC0B-017AD809054E",
+    "Provinces": "澳门",
+    "Provinces_order": 330,
+    "Provinces_type": "sys"
+  },
+  {
+    "id": "2E853679-F1CE-409E-BC4D-0AD028F3B03E",
+    "Provinces": "台湾",
+    "Provinces_order": 340,
+    "Provinces_type": "sys"
+  }
+]

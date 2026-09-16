@@ -1,0 +1,1116 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+
+    #treeclass { width: 190px; }
+
+    body .layui-layer-content { overflow: visible; }
+
+    #toolbar { padding: 5px 0; }
+</style>
+
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("emp_id")
+
+
+    <div class="layui-card">
+        <div class="layui-card-header">客户信息</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">客户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_name" id="cus_name" placeholder="客户名" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">电话</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_tel" id="cus_tel" placeholder="电话" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">传真</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_fax" id="cus_fax" placeholder="传真" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">网站</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_website" id="cus_website" placeholder="网站" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">行业</label>
+                    <div class="layui-input-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="cus_industry_val" id="cus_industry_val" placeholder="行业" autocomplete="off" class="layui-input" disabled>
+                        </div>
+                        @*<select id="cus_industry_id" name="cus_industry_id" >
+                            <option value="">请选择</option>
+                            </select>*@
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">类型</label>
+                    <div class="layui-input-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="cus_type_val" id="cus_type_val" placeholder="类型" autocomplete="off" class="layui-input" disabled>
+                        </div>
+                        @*<select id="cus_type_id" name="cus_type_id">
+                            <option value="">请选择</option>
+                            </select>*@
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">级别</label>
+                    <div class="layui-input-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="cus_level_val" id="cus_level_val" placeholder="级别" autocomplete="off" class="layui-input" disabled>
+                        </div>
+                        @* <select id="cus_level_id" name="cus_level_id">
+                            <option value="">请选择</option>
+                            </select>*@
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">来源</label>
+                    <div class="layui-input-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="cus_source_val" id="cus_source_val" placeholder="来源" autocomplete="off" class="layui-input" disabled>
+                        </div>
+                        @*<select id="cus_source_id" name="cus_source_id">
+                            <option value="">请选择</option>
+                            </select>*@
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">省份</label>
+                    <div class="layui-input-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="Provinces_val" id="Provinces_val" placeholder="省份" autocomplete="off" class="layui-input" disabled>
+                        </div>
+                        @*<select id="Provinces_id" name="Provinces_id" lay-filter="Provinces">
+                            <option value="">请选择</option>
+                            </select>*@
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">城市</label>
+                    <div class="layui-input-inline">
+                        <div class="layui-input-inline">
+                            <input type="text" name="City_val" id="City_val" placeholder="城市" autocomplete="off" class="layui-input" disabled>
+                        </div>
+                        @*<select id="City_id" name="City_id">
+                            <option value="">请选择</option>
+                            </select>*@
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">状态</label>
+                    <div class="layui-input-inline">
+                        <select id="isPrivate" name="isPrivate" autocomplete="off" class="layui-input  layui-disabled" disabled>
+                            <option value="">请选择</option>
+                            <option value=0>私客</option>
+                            <option value=1>公客</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">归属</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="employee" id="employee" placeholder="归属" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">描述</label>
+                <div class="layui-input-block">
+                    <input type="text" name="DesCripe" id="DesCripe" placeholder="描述" autocomplete="off" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cus_add" id="cus_add" placeholder="地址" autocomplete="off" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">备注</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Remarks" id="Remarks" placeholder="备注" autocomplete="off" class="layui-input" disabled>
+                </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="layui-tab layui-tab-card" style="background:#fff;" id="colcse" lay-filter="xhdtab">
+        <ul class="layui-tab-title"></ul>
+        <div class="layui-tab-content">
+        </div>
+    </div>
+
+</div>
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加</button>
+    </div>
+</script>
+
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    var id = null;
+    var customer_id = null;
+    var customer_name = null;
+    layui.use(['tree', 'form', 'layer', 'tableSelect', 'table', 'laydate', 'element','openTable'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var element = layui.element;
+        var tableSelect = layui.tableSelect;
+        var openTable=layui.openTable;
+
+        //下拉
+        $.ajax({
+            url: "Grid",
+            data: { id: getparastr("id") },
+            type: "get",
+            dataType: "json",
+            success: function (data) {
+                if (data.count > 0) {
+                    var edit = data.data[0];
+                    for (var val in edit) {
+                        var value = edit[val];
+                        if (isNaN(value) && !isNaN(Date.parse(value))) {
+                            value = value.replace(' 00:00:00', '');
+                        }
+                        $("#" + val).val(value);
+                    }
+                    edit.cus_industry && $("#cus_industry_val").val(edit.cus_industry.params_name);
+                    edit.cus_type && $("#cus_type_val").val(edit.cus_type.params_name);
+                    edit.cus_level && $("#cus_level_val").val(edit.cus_level.params_name);
+                    edit.cus_source && $("#cus_source_val").val(edit.cus_source.params_name);
+                    edit.Provinces && $("#Provinces_val").val(edit.Provinces.Provinces);
+                    edit.City && $("#City_val").val(edit.City.City);
+                    edit.Employee && $("#employee").val(edit.Employee.name);
+
+                    customer_id = edit.id;
+                    customer_name = edit.cus_name;
+                }
+                form.render();
+            },
+        });
+
+        var active = {
+            tabAdd: function (title, id) {
+                element.tabAdd("xhdtab", {
+                    title: title,
+                    content: "",
+                    id: id
+                });
+            },
+            tabChange: function (id) {
+                //切换到指定Tab项
+                element.tabChange('xhdtab', id); //根据传入的id传入到指定的tab项
+
+
+            },
+        }
+
+        element.on('tab(xhdtab)', function () {
+            var id = this.getAttribute('lay-id');
+
+            console.log(id);
+
+            switch (id) {
+                case "contact": create_contact(); break;
+                case "follow": create_follow(); break;
+                case "order": create_order(); break;
+                case "contract": create_contract(); break;
+                case "atta": create_atta(); break;
+                case "log": create_log(); break;
+            }
+        });
+        active.tabAdd("日志", "log");
+        active.tabAdd("联系人", "contact");
+        active.tabAdd("跟进", "follow");
+        active.tabAdd("订单", "order");
+        active.tabAdd("合同", "contract");
+        //active.tabAdd("附件", "atta");
+        //active.tabAdd("收款", "receive");
+        //active.tabAdd("发票", "invoice");
+        //active.tabAdd("任务", "task");
+        active.tabChange("log");
+
+
+        function create_log()
+        {
+            if ($("#table_log").length == 0) {
+                $(".layui-show").append("<div id='table_log' lay-filter='table_log_Filter'></div>");
+            }
+
+            // 渲染表格
+            layer.load(2);
+            openTable.render({
+                elem: '#table_log',
+                url: '/SysLog/Grid?customer_id=' + getparastr("id"),
+                //toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter'],
+                id: "mainGrid1",
+                cols: [[
+                    //{ type: "checkbox", width: 50, fixed: "left" },
+                    //{ field: 'id', width: 80, title: 'ID', sort: true },
+                    { type: 'numbers' },
+                    { field: 'EventType', width: 180, title: '日志类型' },
+                    { field: 'EventTitle', minWidth: 180, title: '标题' },
+                    { field: 'UserName', width: 180, title: '操作人' },
+                    { field: 'EventDate', width: 180, title: '操作时间' },
+                    { field: 'IPStreet', width: 180, title: 'IP' },
+                    //{ field: 'Log_Content', title: '内容', minWidth: 150 }
+                    //{ templet: '#auth-state', width: 80, align: 'center', title: '操作'}
+
+                ]],
+                openCols: [
+                    { field: 'Log_Content', title: '内容' }
+                ],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true,
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        function create_contact() {
+            if ($("#table_contact").length == 0) {
+                $(".layui-show").append("<div id='table_contact' lay-filter='table_contact_Filter'></div>");
+            }
+
+            // 渲染表格
+            layer.load(2);
+            table.render({
+                elem: '#table_contact',
+                url: '/CRM_Contact/Grid?customer_id=' + getparastr("id"),
+                id: 'table_contact',
+                page: false,
+                toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter'],
+                cols: [[
+                    { type: 'numbers', fixed: 'left' ,title:"序号" },
+                    { field: 'C_name', width: 100, title: '联系人', fixed: 'left' },
+                    {
+                        field: 'C_tel', width: 150, title: '电话', templet: function (item) {
+                            var html = "<i class='fa fa-phone'></i>";
+                            if (item.C_tel)
+                                html += item.C_tel;
+
+                            return html;
+                        }
+                    },
+                    {
+                        field: 'cus_name', width: 250, title: '客户', templet: function (t) {
+                            if (t.customer) {
+                                return t.customer.cus_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'C_weichat', width: 180, title: '微信', templet: function (item) {
+                            var html = "<i class='fa fa-comments'></i>";
+                            if (item.C_weichat)
+                                html += item.C_weichat;
+
+                            return html;
+                        }
+                    },
+                    {
+                        field: 'C_email', width: 180, title: '邮箱', templet: function (item) {
+                            var html = "<i class='fa fa-envelope'></i>";
+                            if (item.C_weichat)
+                                html += item.C_weichat;
+
+                            return html;
+                        }
+                    },
+                    { field: 'create_time', width: 180, title: '创建时间' },
+                    {
+                        field: 'Creater', width: 150, title: '创建人', templet: function (t) {
+                            if (t.Creater) {
+                                return t.Creater.name;
+                            }
+                            return "";
+                        }
+                    },
+                    { templet: '#auth-state', width: 200, align: 'center', fixed: "right", title: '操作' }
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true,
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+
+            /**
+      * toolbar监听事件
+      */
+            table.on('toolbar(table_contact_Filter)', function (obj) {
+                if (obj.event === 'add') {  // 监听添加操作
+                    contact_add();
+                    return;
+                }
+            });
+
+            //监听工具条
+            table.on('tool(table_contact_Filter)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event;
+
+                if (layEvent === 'del') {
+                    layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                        contact_del(data.id);
+                        layer.close(index);
+                    });
+
+                    //layer.msg('删除' + data.id);
+                }
+                else if (layEvent === 'edit') {
+                    contact_add(data);
+                }
+
+            });
+
+            function contact_del(id) {
+                $.ajax({
+                    type: 'POST',
+                    url: "CRM_Contact/del",
+                    data: { id: id },
+                    dataType: "json",
+                    success: function (res) {//res为相应体,function为回调函数
+                        f_reload("table_contact");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                    }
+                });
+            }
+
+
+            //添加目录
+            function contact_add(edit) {
+                var tit = "添加";
+                if (edit) {
+                    tit = "编辑";
+                }
+                var index = layui.layer.open({
+                    title: tit,
+                    type: 2,
+                    anim: 1,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+                    content: "/CRM_Contact/Add",
+                    btn: ['确定', '关闭'],
+                    success: function (layero, index) {
+                        var iframe = window["layui-layer-iframe" + index];
+                        var body = layui.layer.getChildFrame('body', index);
+                        if (edit) {
+                            for (var val in edit) {
+                                var value = edit[val];
+                                if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                    value = value.replace(' 00:00:00', '');
+                                }
+                                body.find("#" + val).val(value);
+                            }
+                            //body.find("#customer_val").val(edit.customer_id);
+                            body.find("#customer_name").val(edit.customer.cus_name);
+                        }
+                        else {
+                            body.find("#customer_id").val(customer_id);
+                            body.find("#customer_name").val(customer_name);
+                        }
+                    },
+                    yes: function (index, layero) {
+                        //var res = window["layui-layer-iframe" + index].callbackdata();
+                        ////打印返回的值，看是否有我们想返回的值。
+                        //console.log(res);
+                        //layer.close(index);
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-front-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+
+                            console.log(data.field);
+
+                            layer.close(index); //关闭弹层
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/CRM_Contact/Save',
+                                data: data.field,
+                                dataType: "json",
+                                success: function (res) {//res为相应体,function为回调函数
+                                    f_reload("table_contact");
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    },
+                    btn2: function (index, layero) {
+                        layer.close(index);
+                    }
+
+                });
+            }
+
+
+        }
+
+        function create_follow() {
+            if ($("#table_follow").length == 0) {
+                $(".layui-show").append("<div id='table_follow' lay-filter='table_follow_Filter'></div>");
+            }
+
+            // 渲染表格
+            layer.load(2);
+            table.render({
+                elem: '#table_follow',
+                url: '/CRMFollow/Grid?customer_id=' + getparastr("id"),
+                id: 'table_follow',
+                page: false,
+                toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter'],
+                cols: [[
+                    { type: 'numbers', fixed: 'left' ,title:"序号" },
+                    {
+                        field: 'cus_name', width: 250, title: '客户', templet: function (t) {
+                            if (t.customer) {
+                                return t.customer.cus_name;
+                            }
+                            return "";
+                        }
+                    },
+                    { field: 'follow_content', width: 300, title: '跟进' },
+                    {
+                        field: 'contact_id', width: 120, title: '联系人', templet: function (t) {
+                            if (t.contact) {
+                                return t.contact.C_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'follow_aim_id', width: 120, title: '跟进目的', templet: function (t) {
+                            if (t.FollowAim) {
+                                return t.FollowAim.params_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'follow_type_id', width: 120, title: '跟进方式', templet: function (t) {
+                            if (t.FollowType) {
+                                return t.FollowType.params_name;
+                            }
+                            return "";
+                        }
+                    },
+                    { field: 'follow_time', width: 180, title: '跟进时间' },
+                    {
+                        field: 'employee', width: 150, title: '跟进人', templet: function (t) {
+                            if (t.employee) {
+                                return t.employee.name;
+                            }
+                            return "";
+                        }
+                    },
+                    { templet: '#auth-state', width: 200, align: 'center', fixed: "right", title: '操作' }
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true,
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+
+            /**
+      * toolbar监听事件
+      */
+            table.on('toolbar(table_follow_Filter)', function (obj) {
+                if (obj.event === 'add') {  // 监听添加操作
+                    follow_add();
+                    return;
+                }
+            });
+
+            //监听工具条
+            table.on('tool(table_follow_Filter)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event;
+
+                if (layEvent === 'del') {
+                    layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                        follow_del(data.id);
+                        layer.close(index);
+                    });
+
+                    //layer.msg('删除' + data.id);
+                }
+                else if (layEvent === 'edit') {
+                    follow_add(data);
+                }
+
+            });
+
+            function follow_del(id) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: "/CRMFollow/del",
+                    data: { id: id },
+                    dataType: "json",
+                    success: function (res) {//res为相应体,function为回调函数
+                        f_reload("table_follow");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                    }
+                });
+            }
+
+
+            //添加目录
+            function follow_add(edit) {
+                var tit = "添加";
+                if (edit) {
+                    tit = "编辑";
+                }
+                var index = layui.layer.open({
+                    title: tit,
+                    type: 2,
+                    anim: 1,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+                    content: "/CRMFollow/Add",
+                    btn: ['确定', '关闭'],
+                    success: function (layero, index) {
+                        var iframe = window["layui-layer-iframe" + index];
+                        var body = layui.layer.getChildFrame('body', index);
+                        if (edit) {
+                            for (var val in edit) {
+                                var value = edit[val];
+                                if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                    value = value.replace(' 00:00:00', '');
+                                }
+                                body.find("#" + val).val(value);
+                            }
+                            body.find("#customer_id").val(edit.customer_id);
+                            body.find("#customer_name").val(edit.customer.cus_name);
+                            body.find("#contact_id").val(edit.contact_id);
+                            body.find("#contact_name").val(edit.contact.C_name);
+                            body.find("#follow_aim_val").val(edit.follow_aim_id);
+                            body.find("#follow_type_val").val(edit.follow_type_id);
+                        }
+                        else {
+                            body.find("#customer_id").val(customer_id);
+                            body.find("#customer_name").val(customer_name);
+                        }
+                    },
+                    yes: function (index, layero) {
+                        //var res = window["layui-layer-iframe" + index].callbackdata();
+                        ////打印返回的值，看是否有我们想返回的值。
+                        //console.log(res);
+                        //layer.close(index);
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-front-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+
+                            console.log(data.field);
+
+                            layer.close(index); //关闭弹层
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/CRMFollow/Save',
+                                data: data.field,
+                                dataType: "json",
+                                success: function (res) {//res为相应体,function为回调函数
+                                    f_reload("table_follow");
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    },
+                    btn2: function (index, layero) {
+                        layer.close(index);
+                    }
+
+                });
+            }
+
+
+        }
+
+        function create_order() {
+            if ($("#table_order").length == 0) {
+                $(".layui-show").append("<div id='table_order' lay-filter='table_order_Filter'></div>");
+            }
+
+            // 渲染表格
+            layer.load(2);
+            table.render({
+                elem: '#table_order',
+                url: '/SaleOrder/Grid?customer_id=' + getparastr("id"),
+                id: 'table_order',
+                page: false,
+                toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter'],
+                cols: [[
+                    { type: 'numbers', fixed: 'left' ,title:"序号" },
+                    {
+                        field: 'cus_name', width: 250, title: '客户', fixed: 'left', templet: function (t) {
+                            if (t.customer) {
+                                return t.customer.cus_name;
+                            }
+                            return "";
+                        }
+                    },
+                    { field: 'sn', width: 220, title: '订单号' },
+                    {
+                        field: 'Order_date', width: 120, title: '订单时间', templet: function (item) {
+                            var value = item.Order_date;
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'Order_status_id', width: 120, title: '订单状态', templet: function (item) {
+                            if (item.PayType) {
+                                return item.OrderStatus.params_name;
+                            }
+                        }
+                    },
+                    {
+                        field: 'pay_type_id', width: 120, title: '支付类别', templet: function (item) {
+                            if (item.PayType) {
+                                return item.PayType.params_name;
+                            }
+                        }
+                    },
+                    { field: 'Order_amount', width: 100, title: '订单金额', align: 'right' },
+                    { field: 'create_time', width: 180, title: '创建时间' },
+                    {
+                        field: 'Creater', width: 150, title: '创建人', templet: function (t) {
+                            if (t.creator) {
+                                return t.creator.name;
+                            }
+                            return "";
+                        }
+                    },
+                    { templet: '#auth-state', width: 200, align: 'center', fixed: 'right', title: '操作' }
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true,
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+
+            /**
+      * toolbar监听事件
+      */
+            table.on('toolbar(table_order_Filter)', function (obj) {
+                if (obj.event === 'add') {  // 监听添加操作
+                    order_add();
+                    return;
+                }
+            });
+
+            //监听工具条
+            table.on('tool(table_order_Filter)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event;
+
+                if (layEvent === 'del') {
+                    layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                        order_del(data.id);
+                        layer.close(index);
+                    });
+
+                    //layer.msg('删除' + data.id);
+                }
+                else if (layEvent === 'edit') {
+                    order_add(data);
+                }
+
+            });
+
+            function order_del(id) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: "/SaleOrder/del",
+                    data: { id: id },
+                    dataType: "json",
+                    success: function (res) {//res为相应体,function为回调函数
+                        f_reload("table_order");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                    }
+                });
+            }
+
+
+            //添加目录
+            function order_add(edit) {
+                var tit = "添加";
+                if (edit) {
+                    tit = "编辑";
+                }
+                var index = layui.layer.open({
+                    title: tit,
+                    type: 2,
+                    anim: 1,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+                    content: "/SaleOrder/Add",
+                    btn: ['确定', '关闭'],
+                    success: function (layero, index) {
+                        var iframe = window["layui-layer-iframe" + index];
+                        var body = layui.layer.getChildFrame('body', index);
+                        if (edit) {
+                            for (var val in edit) {
+                                var value = edit[val];
+                                if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                    value = value.replace(' 00:00:00', '');
+                                }
+                                body.find("#" + val).val(value);
+                            }
+                            //body.find("#customer_id").val(edit.customer_id);
+                            body.find("#customer_name").val(edit.customer.cus_name);
+                            body.find("#pay_type_val").val(edit.pay_type_id);
+                            body.find("#Order_status_val").val(edit.Order_status_id);
+                            body.find("#employee").val(edit.employee.name);
+                        }
+                        else {
+                            body.find("#customer_id").val(customer_id);
+                            body.find("#customer_name").val(customer_name);
+                        }
+                    },
+                    yes: function (index, layero) {
+                        //var res = window["layui-layer-iframe" + index].callbackdata();
+                        ////打印返回的值，看是否有我们想返回的值。
+                        //console.log(res);
+                        //layer.close(index);
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-front-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+
+                            console.log(data.field);
+
+                            layer.close(index); //关闭弹层
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Sale_Order/Save',
+                                data: data.field,
+                                dataType: "json",
+                                success: function (res) {//res为相应体,function为回调函数
+                                    f_reload("table_order");
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    },
+                    btn2: function (index, layero) {
+                        layer.close(index);
+                    }
+
+                });
+            }
+
+
+        }
+
+        function create_contract() {
+            if ($("#table_contract").length == 0) {
+                $(".layui-show").append("<div id='table_contract' lay-filter='table_contract_Filter'></div>");
+            }
+
+            // 渲染表格
+            layer.load(2);
+            table.render({
+                elem: '#table_contract',
+                url: '/SaleContract/Grid?customer_id=' + getparastr("id"),
+                id: 'table_contract',
+                page: false,
+                toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter'],
+                cols: [[
+                    { type: 'numbers', fixed: 'left' ,title:"序号" },
+                    {
+                        field: 'cus_name', width: 250, title: '客户', fixed: 'left', templet: function (t) {
+                            if (t.customer) {
+                                return t.customer.cus_name;
+                            }
+                            return "";
+                        }
+                    },
+                    { field: 'sn', width: 120, title: '合同编号' },
+                    { field: 'Contract_name', width: 120, title: '合同名字' },
+                    {
+                        field: 'Start_date', width: 120, title: '开始时间', templet: function (item) {
+                            var value = item.Start_date;
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'End_date', width: 120, title: '结束时间', templet: function (item) {
+                            var value = item.End_date;
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            return value;
+                        }
+                    },
+                    {
+                        field: 'Sign_date', width: 120, title: '签订时间', templet: function (item) {
+                            var value = item.Sign_date;
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            return value;
+                        }
+                    },
+                    { field: 'Contract_amount', width: 100, title: '合同金额', align: 'right' },
+                    { field: 'create_time', width: 180, title: '创建时间' },
+                    {
+                        field: 'Creater', width: 150, title: '创建人', templet: function (t) {
+                            if (t.creater) {
+                                return t.creater.name;
+                            }
+                            return "";
+                        }
+                    },
+                    { templet: '#auth-state', width: 200, align: 'center', fixed: 'right', title: '操作' }
+                ]],
+                limits: [10, 15, 20, 25, 50, 100],
+                limit: 15,
+                page: true,
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+
+            /**
+      * toolbar监听事件
+      */
+            table.on('toolbar(table_contract_Filter)', function (obj) {
+                if (obj.event === 'add') {  // 监听添加操作
+                    contract_add();
+                    return;
+                }
+            });
+
+            //监听工具条
+            table.on('tool(table_contract_Filter)', function (obj) {
+                var data = obj.data;
+                var layEvent = obj.event;
+
+                if (layEvent === 'del') {
+                    layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                        contract_del(data.id);
+                        layer.close(index);
+                    });
+
+                    //layer.msg('删除' + data.id);
+                }
+                else if (layEvent === 'edit') {
+                    contract_add(data);
+                }
+
+            });
+
+            function contract_del(id) {
+
+                $.ajax({
+                    type: 'POST',
+                    url: "/SaleContract/del",
+                    data: { id: id },
+                    dataType: "json",
+                    success: function (res) {//res为相应体,function为回调函数
+                        f_reload("table_contract");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                    }
+                });
+            }
+
+
+            //添加目录
+            function contract_add(edit) {
+                var tit = "添加";
+                if (edit) {
+                    tit = "编辑";
+                }
+                var index = layui.layer.open({
+                    title: tit,
+                    type: 2,
+                    anim: 1,
+                    area: ['80%', '80%'],
+                    maxmin: true,
+                    content: "/SaleContract/Add",
+                    btn: ['确定', '关闭'],
+                    success: function (layero, index) {
+                        var iframe = window["layui-layer-iframe" + index];
+                        var body = layui.layer.getChildFrame('body', index);
+                        if (edit) {
+                            for (var val in edit) {
+                                var value = edit[val];
+                                if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                    value = value.replace(' 00:00:00', '');
+                                }
+                                body.find("#" + val).val(value);
+                            }
+                            body.find("#customer_id").val(customer_id);
+                            body.find("#customer_name").val(edit.customer.cus_name);
+                            body.find("#pay_type_val").val(edit.pay_type_id);
+                            body.find("#Order_status_val").val(edit.Order_status_id);
+                            body.find("#employee").val(edit.employee.name);
+                        }
+                        else {
+                            body.find("#customer_id").val(customer_id);
+                            body.find("#customer_name").val(customer_name);
+                        }
+                    },
+                    yes: function (index, layero) {
+                        //var res = window["layui-layer-iframe" + index].callbackdata();
+                        ////打印返回的值，看是否有我们想返回的值。
+                        //console.log(res);
+                        //layer.close(index);
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-front-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+
+                            console.log(data.field);
+
+                            layer.close(index); //关闭弹层
+
+                            $.ajax({
+                                type: 'POST',
+                                url: 'Save',
+                                data: data.field,
+                                dataType: "json",
+                                success: function (res) {//res为相应体,function为回调函数
+                                    body.find("#T_id").val(res.Message);
+
+                                    var uplist = window["layui-layer-iframe" + index].f_list()
+
+                                    if (uplist > 0) {
+
+                                        window["layui-layer-iframe" + index].f_upload();
+                                    }
+                                    else {
+                                        layer.close(index); //关闭弹层
+                                        f_reload("table_contract");
+                                    }
+
+                                    //alert( window["layui-layer-iframe" + index].f_list());
+                                    //f_reload();
+                                },
+                                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                                }
+                            });
+                        });
+
+                        submit.trigger('click');
+                    },
+                    btn2: function (index, layero) {
+                        layer.close(index);
+                    }
+
+                });
+            }
+
+         
+        }
+
+
+
+        f_reload = function (id) {
+            table.reload(id, {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                }
+                , where: {
+                    key: {
+
+                    }
+                }
+            }, 'data');
+        }
+
+    });
+</script>

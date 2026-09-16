@@ -1,0 +1,328 @@
+﻿<style>
+    body { background-color: #f2f2f2; }
+    .demo-container { /* max-width: 1400px;  */ margin: 0 auto; }
+    .demo-section { background: white; border-radius: 8px; /* box-shadow: 0 2px 12px rgba(0,0,0,0.1);  */ padding: 20px; margin-bottom: 20px; }
+    .demo-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; color: #333; border-left: 4px solid #1E9FFF; padding-left: 12px; }
+    .demo-actions { margin-bottom: 15px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .calendar-demo { min-height: 600px; }
+    .code-block { background: #f8f8f8; border-left: 4px solid #1E9FFF; padding: 15px; font-family: monospace; font-size: 13px; overflow-x: auto; margin: 15px 0; }
+    #eventLogs { height: 200px; overflow-y: auto; background: #fafafa; padding: 10px; border-radius: 4px; font-size: 12px; }
+        
+    /* 颜色方块样式 */
+    .color-palette { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 5px; }
+    .color-option { width: 36px; height: 36px; border-radius: 6px; cursor: pointer; border: 2px solid transparent; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+        .color-option:hover { transform: scale(1.08); box-shadow: 0 2px 6px rgba(0,0,0,0.3); }
+        .color-option.selected { border-color: #333; /* box-shadow: 0 0 0 2px white, 0 0 0 4px #333; */ position: relative; }
+            .color-option.selected::after { content: "✓"; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: white; font-weight: bold; font-size: 18px; text-shadow: 0 0 2px black; }
+        
+    .loading-toast { position: fixed; bottom: 20px; right: 20px; background: rgba(0,0,0,0.6); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; z-index: 10000; }
+</style>
+
+<div class="demo-container">
+        
+        <div id="calendarDemo" class="calendar-demo"></div>
+
+    
+</div>
+
+<!-- 任务表单弹窗内容 -->
+<div id="taskFormContent" style="display: none; padding: 20px;">
+    <form class="layui-form" lay-filter="taskForm">
+        <div class="layui-form-item">
+            <label class="layui-form-label">任务标题</label>
+            <div class="layui-input-block"><input type="text" name="title" required placeholder="请输入标题" class="layui-input"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">开始时间</label>
+            <div class="layui-input-inline"><input type="text" name="startDate" id="startDate" class="layui-input" placeholder="日期"></div>
+            <div class="layui-input-inline"><input type="text" name="startTime" id="startTime" class="layui-input" placeholder="时间"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">结束时间</label>
+            <div class="layui-input-inline"><input type="text" name="endDate" id="endDate" class="layui-input" placeholder="日期"></div>
+            <div class="layui-input-inline"><input type="text" name="endTime" id="endTime" class="layui-input" placeholder="时间"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">任务颜色</label>
+            <div class="layui-input-block">
+                <div id="colorPaletteContainer" class="color-palette"></div>
+                <input type="hidden" name="color" id="selectedColor">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">全天任务</label>
+            <div class="layui-input-block"><input type="checkbox" name="allDay" lay-skin="switch" lay-text="是|否" id="allDaySwitch"></div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">描述</label>
+            <div class="layui-input-block"><textarea name="description" class="layui-textarea"></textarea></div>
+        </div>
+        <input type="hidden" name="id">
+    </form>
+</div>
+<script>
+
+    // ==================== 页面逻辑 ====================
+    let calendarInstance = null;
+    let layer, laydate, $, form;
+    
+    layui.use(['calendar', 'layer', 'laydate', 'form'], function() {
+        const calendar = layui.calendar;
+        layer = layui.layer;
+        laydate = layui.laydate;
+        form = layui.form;
+        $ = layui.$;
+        
+        // 渲染颜色方块
+        const colorList = [
+            { value: 1, bg: '#5FB878' }, { value: 2, bg: '#1E9FFF' }, { value: 3, bg: '#FFB800' },
+            { value: 4, bg: '#FF5722' }
+        ];
+        function renderColorPalette(selectedValue) {
+            const container = $('#colorPaletteContainer');
+            container.empty();
+            colorList.forEach(color => {
+                const $div = $(`<div class="color-option" data-color="${color.value}" style="background-color: ${color.bg};"></div>`);
+                if (selectedValue == color.value) $div.addClass('selected');
+                $div.on('click', function() {
+                    $('.color-option').removeClass('selected');
+                    $(this).addClass('selected');
+                    $('#selectedColor').val(color.value);
+                });
+                container.append($div);
+            });
+        }
+
+        function formatDate(date) {
+            let y = date.getFullYear(), m = (date.getMonth()+1).toString().padStart(2,'0'), d = date.getDate().toString().padStart(2,'0');
+            return `${y}-${m}-${d}`;
+        }
+        
+        // 初始化日历组件（按需加载）
+        calendarInstance = calendar.render({
+            elem: '#calendarDemo',
+            view: 'month',
+            currentDate: new Date(),
+            showTimeLine: true,
+            autoUpdateTimeLine: true,
+            onRangeChange: async function(range, cal) {
+                // 直接使用 range 参数，不需要再调用 getCurrentRange
+                log(`📡 请求数据范围: ${range.view} | ${range.startDate} ～ ${range.endDate}`);
+                $.ajax({
+                    url: 'Grid',   // 替换为您的真实接口地址
+                    data: {
+                        start: range.startDate,
+                        end: range.endDate
+                    },
+                    dataType: 'json',
+                    success: function(res) {
+                        // 假设后端返回 { data: [...] }
+                        cal.setTasks(res.data || []);
+                        log(`✅ 加载完成，共 ${(res.data || []).length} 条任务`);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('加载失败', error);
+                        layer.msg('加载数据失败', {icon: 2});
+                        cal.setTasks([]); // 清空
+                    }
+                });
+            },
+            onTaskClick: function(task) {
+                log(`📌 点击任务: ${task.title}`);
+                showTaskForm(task);
+            },
+            onDayClick: function(date) {
+                log(`📅 点击日期: ${date.toLocaleDateString()}`);
+                showTaskForm(null, date);
+            },
+            onViewChange: function(view) {
+                log(`👁️ 视图切换: ${view}`);
+            }
+        });
+
+        
+        // 日志函数
+        function log(msg) {
+            const time = new Date().toLocaleTimeString();
+            console.log(`${time} - ${msg}`);
+            // $('#eventLogs').scrollTop($('#eventLogs')[0].scrollHeight);
+        }
+
+        
+        // 显示任务表单（支持新增/编辑）
+        function showTaskForm(task, defaultDate) {
+            const isEdit = !!task;
+            let startDate = defaultDate || new Date();
+            if (isEdit && task.startDate) startDate = new Date(task.startDate);
+            let endDate = new Date(startDate);
+            if (!isEdit) endDate.setHours(startDate.getHours() + 1);
+            else if (isEdit && task.endDate) endDate = new Date(task.endDate);
+            
+            // 设置表单基本值
+            $('#taskFormContent input[name="id"]').val(task ? task.id : '');
+            $('#taskFormContent input[name="title"]').val(task ? task.title : '');
+            $('#taskFormContent input[name="startDate"]').val(task ? task.startDate : formatDate(startDate));
+            $('#taskFormContent input[name="startTime"]').val(task && !task.allDay ? (task.startTime || '09:00') : '');
+            $('#taskFormContent input[name="endDate"]').val(task ? task.endDate : formatDate(endDate));
+            $('#taskFormContent input[name="endTime"]').val(task && !task.allDay ? (task.endTime || '10:00') : '');
+            $('#taskFormContent textarea[name="description"]').val(task ? (task.description || '') : '');
+            
+            const allDayChecked = task ? (task.allDay === 1 || task.allDay === true) : false;
+            $('#allDaySwitch').prop('checked', allDayChecked);
+            $('#startTime, #endTime').prop('disabled', allDayChecked);
+            if (allDayChecked) $('#startTime, #endTime').val('');
+            
+            // 渲染颜色方块
+            const defaultColor = task ? task.color : 1;
+            renderColorPalette(defaultColor);
+            $('#selectedColor').val(defaultColor);
+            
+            // 监听全天切换
+            $('#allDaySwitch').off('change').on('change', function() {
+                const isAll = $(this).prop('checked');
+                $('#startTime, #endTime').prop('disabled', isAll);
+                if (isAll) $('#startTime, #endTime').val('');
+            });
+            
+            form.render(); // 渲染开关
+            
+            layer.open({
+                type: 1,
+                title: isEdit ? '编辑任务' : '新建任务',
+                area: ['600px', '550px'],
+                content: $('#taskFormContent'),
+                btn: ['确定', '删除' , '取消'],
+                yes: async function(index) {
+                    // 收集数据
+                    const id = $('#taskFormContent input[name="id"]').val();
+                    const title = $('#taskFormContent input[name="title"]').val();
+                    let startDateVal = $('#taskFormContent input[name="startDate"]').val();
+                    let startTimeVal = $('#taskFormContent input[name="startTime"]').val();
+                    let endDateVal = $('#taskFormContent input[name="endDate"]').val();
+                    let endTimeVal = $('#taskFormContent input[name="endTime"]').val();
+                    const color = parseInt($('#selectedColor').val());
+                    const allDay = $('#allDaySwitch').prop('checked') ? 1 : 0;   // 转为整数
+                    const description = $('#taskFormContent textarea[name="description"]').val();
+                    
+                    if (!title || !startDateVal || !endDateVal) {
+                        layer.msg('请填写完整信息', {icon:2}); return;
+                    }
+                    if (allDay) {
+                        startTimeVal = '';
+                        endTimeVal = '';
+                    } else {
+                        if (!startTimeVal) startTimeVal = '09:00';
+                        if (!endTimeVal) endTimeVal = '10:00';
+                    }
+                    
+                    const taskData = { id:id, title, startDate: startDateVal, startTime: startTimeVal, endDate: endDateVal, endTime: endTimeVal, color, allDay, description };
+                    
+                    if (isEdit && id) {
+                        // 本地立即更新
+                        const oldTask = calendarInstance.getTasks().find(t => t.id === id);
+                        const newTask = { ...oldTask, ...taskData };
+                        calendarInstance.updateTask(newTask);
+                        log(`✏️ 本地更新任务: ${title}`);
+
+                        // 2. 异步发送 AJAX 到后端
+                        $.ajax({
+                            url: 'Save',
+                            method: 'POST',
+                            data: JSON.stringify(taskData),
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            success: function(res) {
+                                
+                                if (task) {
+                                    calendarInstance.updateTask(taskData); // 更新id并重绘
+
+                                    log(`✅ 后端同步成功: ${title}`);
+                                }
+                            },
+                            error: function() {
+                                // 回滚
+                                calendarInstance.updateTask(oldTask);
+                                layer.msg('后端更新失败，已回滚', {icon:2});
+                                log(`❌ 后端更新失败，已回滚: ${title}`);
+                            }
+                        });
+                    }
+                    else {
+                        // 新增：本地立即添加（临时ID）
+                        const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2,6)}`;
+                        const newTask = { ...taskData, id: tempId };
+                        calendarInstance.addTask(newTask);
+                        log(`➕ 本地添加任务: ${title} (临时ID)`);
+                        
+                        // 2. 异步发送 AJAX 到后端
+                        $.ajax({
+                            url: 'Save',
+                            method: 'POST',
+                            data: JSON.stringify(taskData),
+                            contentType: 'application/json',
+                            dataType: 'json',
+                            success: function(res) {
+                                // 后端返回真实id，替换临时id
+                                if (res.msg && res.msg !== tempId) {
+                                    const task = calendarInstance.getTasks().find(t => t.id === tempId);
+                                    if (task) {
+                                        task.id = res.msg;
+                                        calendarInstance.updateTask(task); // 更新id并重绘
+                                    }
+                                }
+                            },
+                            error: function() {
+                                // 后端失败：删除本地临时任务，提示用户
+                                calendarInstance.deleteTask(tempId);
+                                layer.msg('添加失败，已回滚', {icon: 2});
+                            }
+                        });
+                    }
+                    layer.close(index);
+                },
+                btn2: function(index) {
+                    if (isEdit && task.id) {
+                        layer.confirm('确定删除该任务？', async function(confirmIdx) {
+                            const taskId = task.id;
+                            const taskTitle = task.title;
+                            // 本地立即删除
+                            calendarInstance.deleteTask(taskId);
+                            log(`🗑️ 本地删除任务: ${taskTitle}`);
+                            // 异步同步后端
+
+                            $.ajax({
+                            url: 'Delete',
+                            method: 'POST',
+                            data: { id:taskId },
+                            dataType: 'json',
+                            success: function(res) {
+                                layer.close(confirmIdx);
+                                layer.close(index);
+                            },
+                            error: function() {
+                                // 回滚：重新添加
+                                calendarInstance.addTask(task);
+                                layer.msg('后端删除失败，已恢复', {icon:2});
+                                log(`❌ 后端删除失败，已恢复: ${taskTitle}`);
+                            }
+                            });
+                        });
+                    }
+                    else {
+                        layer.msg('无法删除未保存的任务', {icon:2});
+                    }
+                    return false;
+                },
+                btn3: function(index) { layer.close(index); }
+            });
+        }
+
+        
+        
+        // 初始化日期选择器
+        laydate.render({ elem: '#startDate', type: 'date', format: 'yyyy-MM-dd' });
+        laydate.render({ elem: '#startTime', type: 'time', format: 'HH:mm' });
+        laydate.render({ elem: '#endDate', type: 'date', format: 'yyyy-MM-dd' });
+        laydate.render({ elem: '#endTime', type: 'time', format: 'HH:mm' });
+    });
+</script>

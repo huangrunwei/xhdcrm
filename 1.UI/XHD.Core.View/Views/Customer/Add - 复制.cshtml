@@ -1,0 +1,497 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span { line-height: 38px; }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover { background-color: inherit; }
+
+    #treeclass { width: 190px; }
+
+    body .layui-layer-content { overflow: visible; }
+
+    #toolbar { padding: 5px 0; }
+</style>
+
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("cus_industry_val")
+    @Html.Hidden("cus_type_val")
+    @Html.Hidden("cus_level_val")
+    @Html.Hidden("cus_source_val")
+    @Html.Hidden("Provinces_val")
+    @Html.Hidden("City_val")
+    @Html.Hidden("emp_id")
+    @Html.Hidden("x")
+    @Html.Hidden("y")
+
+    <div class="layui-card">
+        <div class="layui-card-header">客户信息</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">客户名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_name" id="cus_name" placeholder="客户名" lay-verify="required|customer" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">电话</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_tel" id="cus_tel" placeholder="电话" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">传真</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_fax" id="cus_fax" placeholder="传真" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">网站</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="cus_website" id="cus_website" placeholder="网站" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">行业</label>
+                    <div class="layui-input-inline">
+                        <select id="cus_industry_id" name="cus_industry_id">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">类型</label>
+                    <div class="layui-input-inline">
+                        <select id="cus_type_id" name="cus_type_id">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">级别</label>
+                    <div class="layui-input-inline">
+                        <select id="cus_level_id" name="cus_level_id">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">来源</label>
+                    <div class="layui-input-inline">
+                        <select id="cus_source_id" name="cus_source_id">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">省份</label>
+                    <div class="layui-input-inline">
+                        <select id="Provinces_id" name="Provinces_id" lay-filter="Provinces">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">城市</label>
+                    <div class="layui-input-inline">
+                        <select id="City_id" name="City_id">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">状态</label>
+                    <div class="layui-input-inline">
+                        <select id="isPrivate" name="isPrivate" autocomplete="off" class="layui-input" lay-verify="required">
+                            <option value="">请选择</option>
+                            <option value=0>私客</option>
+                            <option value=1>公客</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">归属</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="employee" id="employee" placeholder="归属" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">描述</label>
+                <div class="layui-input-block">
+                    <input type="text" name="DesCripe" id="DesCripe" placeholder="描述" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <!--<div class="layui-form-item">
+                <div class="layui-input-group">-->
+            @*<div class="layui-input-split layui-input-prefix">
+                    地址
+                </div>*@
+            <!--<label class="layui-form-label ">地址</label>
+                    <input type="text" name="cus_add" id="cus_add" placeholder="地址" autocomplete="off" class="layui-input" lay-affix="location" lay-filter="location">
+
+                </div>
+            </div>-->
+            <div class="layui-form-item">
+                <label class="layui-form-label ">地址</label>
+                <div class="layui-input-block">
+                    <input type="text" name="cus_add" id="cus_add" placeholder="地址" autocomplete="off" class="layui-input" lay-affix="location" lay-filter="location">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label ">备注</label>
+                <div class="layui-input-block">
+                    <input type="text" name="Remarks" id="Remarks" placeholder="备注" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+
+
+        </div>
+    </div>
+
+    
+</div>
+
+
+<script>
+    var id = null;
+    var f_upload;
+    var f_list;
+    layui.use(['tree', 'form', 'layer', 'tableSelect',  'table', 'laydate', 'element'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+        var table = layui.table;
+        var laydate = layui.laydate;
+        var numberInput = layui.numberInput;
+        var tableSelect = layui.tableSelect;
+        var webuploader = layui.webuploader;
+        var element = layui.element;
+
+        //日期
+        laydate.render({
+            elem: '#birthday'
+            , trigger: 'click' //采用click弹出
+        });
+
+        laydate.render({
+            elem: '#EntryDate'
+            , trigger: 'click' //采用click弹出
+        });
+
+
+
+
+        //下拉
+        $.ajax({
+            url: "/SysParam/Combo",
+            data: { type: 'cus_industry' },
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var data = data.data;
+                var category = $('#cus_industry_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+                }
+                if ($("#cus_industry_val").val()) {
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#cus_industry_val").val() + ']';
+                        $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+                }
+
+                form.render("select");
+            },
+        });
+
+        //下拉
+        $.ajax({
+            url: "/SysParam/Combo",
+            data: { type: 'cus_type' },
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var data = data.data;
+                var category = $('#cus_type_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+                }
+                if ($("#cus_type_val").val()) {
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#cus_type_val").val() + ']';
+                        $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+                }
+
+                form.render("select");
+            },
+        });
+
+        //下拉
+        $.ajax({
+            url: "/SysParam/Combo",
+            data: { type: 'cus_level' },
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var data = data.data;
+                var category = $('#cus_level_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+                }
+                if ($("#cus_level_val").val()) {
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#cus_level_val").val() + ']';
+                        $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+                }
+
+                form.render("select");
+            },
+        });
+
+        //下拉
+        $.ajax({
+            url: "/SysParam/Combo",
+            data: { type: 'cus_source' },
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var data = data.data;
+                var category = $('#cus_source_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+                }
+                if ($("#cus_source_val").val()) {
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#cus_source_val").val() + ']';
+                        $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+                }
+
+                form.render("select");
+            },
+        });
+
+        //下拉
+        $.ajax({
+            url: "/ParamsProvince/Combo",
+            //data:{type:'cus_source'},
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var category = $('#Provinces_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["title"] + "</option>");
+                }
+                if ($("#Provinces_val").val()) {
+                    setTimeout(function () {
+                        var select = 'dd[lay-value=' + $("#Provinces_val").val() + ']';
+                        $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                        $("#data-search-btn").click();
+                    }, 50)
+                }
+
+                form.render("select");
+            },
+        });
+
+        // 输入框点缀事件 - 位置示例
+        form.on('input-affix(location)', function (data) {
+            //var elem = data.elem; // 输入框
+            //// do something
+            //layer.msg('模拟获取位置中…', { icon: 16, time: 1.5 * 1000 }, function () {
+            //    elem.value = '浙江杭州'; // 向输入框赋值
+            //})
+            f_map();
+        });
+
+        function f_map() {
+            var index = layui.layer.open({
+                title: "地图标记",
+                type: 2,
+                anim: 1,
+                area: ['80%', '80%'],
+                maxmin: true,
+                content: "mapmark?xy=" + $("#x").val() + "," + $("#y").val(),
+                btn: ['确定', '关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+
+                },
+                yes: function (index, layero) {
+                    var res = window["layui-layer-iframe" + index].f_save();
+                    ////打印返回的值，看是否有我们想返回的值。
+                    console.log(res);
+                    //layer.close(index);
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'LAY-user-front-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                    if (res) {
+                        arr = res.split(",")
+
+                        $("#x").val(arr[0])
+                        $("#y").val(arr[1])
+                        //$("#xy").val(res);
+
+                        layer.close(index);
+                    }
+
+
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+        form.on('select(Provinces)', function (data) {
+            //console.log(data.elem); //得到select原始DOM对象
+            //console.log(data.value); //得到被选中的值
+            //console.log(data.othis); //得到美化后的DOM对象
+            fillCity(data.value);
+        });
+
+        if ($("#Provinces_val").val()) {
+            fillCity($("#Provinces_val").val());
+        }
+
+        function fillCity(province_id) {
+            $.ajax({
+                url: "/ParamsCity/Combo",
+                data: { 'province_id': province_id },
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    var category = $('#City_id');
+                    category.html("");
+                    category.append('<option value="">请选择</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        console.log(data[i]);
+                        category.append("<option value='" + data[i]["id"] + "'>" + data[i]["title"] + "</option>");
+                    }
+                    if ($("#City_val").val()) {
+                        setTimeout(function () {
+                            var select = 'dd[lay-value=' + $("#City_val").val() + ']';
+                            $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                            $("#data-search-btn").click();
+                        }, 50)
+                    }
+
+                    form.render("select");
+                },
+            });
+        }
+
+        form.verify({
+            customer: function (value, item) { //value：表单的值、item：表单的DOM对象
+                var msg;
+                $.ajax({
+                    url: "Excute",
+                    type: "post",
+                    async: false,
+                    data: {
+                        cus_name: value,
+                        id: $("#id").val()
+                    },
+
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.code === 0) {
+                            msg = "系统已存在相同的客户，请修改后再进行操作！";
+                        }
+                    },
+                    error: function (xml, errstr, err) {
+                        msg = "系统异常，请稍候再试";
+                    }
+                });
+                if (msg) {
+                    return msg;
+                }
+            }
+        });
+        tableSelect.render({
+            elem: '#employee',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#emp_id").val(ids.join(','));
+
+
+            }
+        })
+
+       
+    });
+</script>

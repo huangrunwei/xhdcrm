@@ -1,0 +1,10 @@
+﻿/* 树形下拉容器：相对定位，用于箭头定位 */
+.tree-select { position: relative; width: 300px; /* 容器宽度 */ }
+/* Input样式：带内边距，给箭头留空间 */
+.tree-select-input { width: 100%; border: 1px solid #e6e6e6 !important; border-radius: 2px !important; padding: 0 30px 0 10px !important; /* 右侧留30px给箭头 */ height: 38px; line-height: 38px; cursor: pointer; /* 点击光标提示 */ box-sizing: border-box; }
+/* 下拉箭头：纯样式，无功能 */
+.tree-select::after { content: "▼"; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; color: #999; pointer-events: none; /* 禁止箭头触发事件，不影响Input点击 */ }
+/* 禁用Input默认焦点样式 */
+.tree-select-input:focus { outline: none; border-color: #5FB878 !important; /* Layui主题色 */ }
+/* 树形弹窗样式 */
+.tree-popup { padding: 10px; width: 300px; max-height: 400px; overflow-y: auto; }

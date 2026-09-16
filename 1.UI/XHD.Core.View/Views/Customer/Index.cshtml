@@ -1,0 +1,768 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="table-search-fieldset">
+    <div>
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">客户</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="cus_name" id="cus_name" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">电话</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="cus_tel" id="cus_tel" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <!-- 按钮组 + 展开/折叠，单独一个行内块容器 -->
+            <div class="btn-group-inline">
+                <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon layui-icon-error"></i> 重置</button>
+                <!-- 展开/折叠按钮 -->
+                <a id="toggleBtn" style="cursor:pointer;">
+                    <i class="layui-icon layui-icon-down"></i>
+                    <span>展开</span>
+                </a>
+            </div>
+
+
+            <div id="extraConditions" style="display: none;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">行业</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_industry_id" name="cus_industry_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_industry = ViewData["cus_industry"] as Dictionary<string, string>;
+
+                                    if (cus_industry != null && cus_industry.Any())
+                                    {
+                                        foreach (var item in cus_industry)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">类型</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_type_id" name="cus_type_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_type = ViewData["cus_type"] as Dictionary<string, string>;
+
+                                    if (cus_type != null && cus_type.Any())
+                                    {
+                                        foreach (var item in cus_type)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">级别</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_level_id" name="cus_level_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_level = ViewData["cus_level"] as Dictionary<string, string>;
+
+                                    if (cus_level != null && cus_level.Any())
+                                    {
+                                        foreach (var item in cus_level)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">来源</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_source_id" name="cus_source_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_source = ViewData["cus_source"] as Dictionary<string, string>;
+
+                                    if (cus_source != null && cus_source.Any())
+                                    {
+                                        foreach (var item in cus_source)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">省份</label>
+                        <div class="layui-input-inline">
+                            <select id="Provinces_id" name="Provinces_id" lay-filter="Provinces">
+                                <option value="">请选择</option>
+                                @{
+                                    var Province = ViewData["Province"] as Dictionary<string, string>;
+
+                                    if (Province != null && Province.Any())
+                                    {
+                                        foreach (var item in Province)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">城市</label>
+                        <div class="layui-input-inline">
+                            <select id="City_id" name="City_id">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">状态</label>
+                        <div class="layui-input-inline">
+                            <select id="isPrivate" name="isPrivate" autocomplete="off" class="layui-input">
+                                <option value="">请选择</option>
+                                <option value=0>私客</option>
+                                <option value=1>公客</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">归属</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="employee" id="employee" placeholder="归属" autocomplete="off" class="layui-input">
+                            <input type="text" name="emp_id" id="emp_id" style="display:none;">
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label">创建时间</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="date1" id="date1" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="date2" id="date2" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layuimini-card">
+    <div class="layui-card-body">
+        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+    </div>
+</div>
+
+<script type="text/html" id="toolbarDemo">
+    <div class="layui-btn-container">
+        <button class="layui-btn layui-btn-sm" lay-event="add">添加</button>
+        @*<button class="layui-btn layui-btn-sm layui-bg-blue" lay-event="import">导入</button>*@
+        <button class="layui-btn layui-btn-sm layui-bg-orange" lay-event="export">导出</button>
+    </div>
+</script>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-xs" lay-event="info">详情</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<form id="form_excel"></form>
+<script>
+    layui.use(['table', 'treetable', 'form', 'laydate', 'tableSelect'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var tableSelect = layui.tableSelect;
+
+        // 渲染表格
+        layer.load(2);
+        table.render({
+            elem: '#munu-table',
+            url: 'Grid',
+            page: false,
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter', 'print', 'exports'],
+            id: "mainGrid4",
+            cols: [[
+                { type: 'numbers', fixed: 'left',title:"序号"  },
+                {
+                    field: 'cus_name', width: 250, title: '客户名', fixed: 'left', templet: function (item) {
+                        var html = "<a href='javascript:void(0)' onclick= CusInfo('" + item.id + "','【客户】" + item.cus_name + "')> ";
+                        html += "<i class='fa fa-user'></i> ";
+                        if (item.cus_name) {
+                            html += item.cus_name;
+                        }
+                        html += "</a>";
+
+                        return html;
+                    }
+                },
+                { field: 'sn', width: 200, title: '编号' },
+                {
+                    field: 'isPrivate', width: 80, title: '类型', align: "center", templet: function (t) {
+                        switch (t.isPrivate) {
+                            case 1: return '<div style="background:#F00;Color:#FFF;">公客</div>';
+                            case 0: return '<div style="background:#0F0;Color:#000;">私客</div>';
+                            default: return "";
+                        }
+                    }
+                },
+                {
+                    field: 'cus_tel', width: 150, title: '电话', templet: function (item) {
+                        var html = "<i class='fa fa-phone'></i> ";
+                        if (item.cus_tel)
+                            html += item.cus_tel;
+
+                        return html;
+                    }
+                },
+                {
+                    field: 'employee', width: 150, title: '员工', templet: function (t) {
+                        if (t.Employee) {
+                            if (t.Employee.department) {
+                                return "【" + t.Employee.department.dep_name + "】" + t.Employee.name;
+                            }
+                            return t.Employee.name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_industry', width: 100, title: '行业', templet: function (t) {
+                        if (t.cus_industry) {
+                            return t.cus_industry.params_name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_source', width: 100, title: '来源', templet: function (t) {
+                        if (t.cus_source) {
+                            return t.cus_source.params_name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_type', width: 100, title: '类别', templet: function (t) {
+                        if (t.cus_type) {
+                            return t.cus_type.params_name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_level', width: 100, title: '级别', templet: function (t) {
+                        if (t.cus_level) {
+                            return t.cus_level.params_name;
+                        }
+                        return "";
+                    }
+                },
+                { field: 'lastfollow', width: 180, title: '最后跟进' },
+                { field: 'create_time', width: 180, title: '创建时间' },
+                {
+                    field: 'Creater', width: 150, title: '创建人', templet: function (t) {
+                        if (t.Creater) {
+                            return t.Creater.name;
+                        }
+                        return "";
+                    }
+                },
+                { templet: '#auth-state', width: 200, align: 'center', fixed: "right", title: '操作', fixed: 'right' }
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        /**
+        * toolbar监听事件
+        */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                add();
+                return;
+            }
+            if (obj.event === 'export') {  // 监听添加操作
+                Export();
+                return;
+            }
+        });
+
+        function Export() {
+            var file = "Export";
+            $("#form_excel").attr("method", "get");
+            $("#form_excel").attr("action", file);
+            $("#form_excel").submit();
+        }
+
+
+        //监听工具条
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                    del(data.id);
+                    layer.close(index);
+                });
+
+                //layer.msg('删除' + data.id);
+            }
+            else if (layEvent === 'edit') {
+                if (data.isMenu == 1) {
+                    return;
+                }
+                add(data);
+            }
+            else if (layEvent === "info") {
+                //info(data);
+                CusInfo(data.id, data.cus_name)
+            }
+        });
+
+        //function info(id,title) {
+        //    //var index = layui.layer.open({
+        //    //    title: "详情",
+        //    //    type: 2,
+        //    //    anim: 1,
+        //    //    area: ['100%', '100%'],
+        //    //    maxmin: true,
+        //    //    content: "Add?id="+data.id,
+        //    //    btn: ['关闭'],
+        //    //    success: function (layero, index) {
+        //    //        var iframe = window["layui-layer-iframe" + index];
+        //    //        var body = layui.layer.getChildFrame('body', index);
+        //    //        if (data) {
+        //    //            for (var val in data) {
+        //    //                var value = data[val];
+        //    //                if (isNaN(value) && !isNaN(Date.parse(value))) {
+        //    //                    value = value.replace(' 00:00:00', '');
+        //    //                }
+        //    //                body.find("#" + val).val(value);
+        //    //            }
+        //    //            body.find("#cus_industry_val").val(data.cus_industry_id);
+        //    //            body.find("#cus_type_val").val(data.cus_type_id);
+        //    //            body.find("#cus_level_val").val(data.cus_level_id);
+        //    //            body.find("#cus_source_val").val(data.cus_source_id);
+        //    //            body.find("#Provinces_val").val(data.Provinces_id);
+        //    //            body.find("#City_val").val(data.City_id);
+        //    //            body.find("#employee").val(data.Employee.name);
+        //    //        }
+        //    //    },
+        //    //    btn2: function (index, layero) {
+        //    //        layer.close(index);
+        //    //    }
+
+        //    //});
+        //    top.cusInfo(id,title);
+        //}
+
+
+        function del(id) {
+            $.ajax({
+                type: 'POST',
+                url: "Delete",
+                data: { id: id },
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                    if (res.code == 0) {
+                        f_reload();
+                    }
+                    else {
+                        layer.alert(res.msg, { icon: 5 });
+                    }
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        }
+
+
+        //添加目录
+        function add(edit) {
+            var tit = "添加";
+            if (edit) {
+                tit = "编辑";
+            }
+
+            var id = "";
+            if (edit) {
+                id = edit.id;
+            }
+
+
+            var index = layui.layer.open({
+                title: tit,
+                type: 2,
+                anim: 1,
+                area: ['100%', '100%'],
+                maxmin: true,
+                content: "Add?id=" + id,
+                btn: ['确定', '关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+                    if (edit) {
+                        for (var val in edit) {
+                            var value = edit[val];
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            body.find("#" + val).val(value);
+                        }
+                        body.find("#cus_industry_val").val(edit.cus_industry_id);
+                        body.find("#cus_type_val").val(edit.cus_type_id);
+                        body.find("#cus_level_val").val(edit.cus_level_id);
+                        body.find("#cus_source_val").val(edit.cus_source_id);
+                        body.find("#Provinces_val").val(edit.Provinces_id);
+                        body.find("#City_val").val(edit.City_id);
+                        body.find("#employee").val(edit.Employee.name);
+                    }
+                },
+                yes: function (index, layero) {
+                    //var res = window["layui-layer-iframe" + index].f_save();
+                    //var res = window["layui-layer-iframe" + index].callbackdata();
+                    ////打印返回的值，看是否有我们想返回的值。
+                    //console.log(res);
+                    //layer.close(index);
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'LAY-user-front-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                    //监听提交
+                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                        var field = data.field; //获取提交的字段
+
+                        console.log(data.field);
+
+                        //layer.close(index); //关闭弹层
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Save',
+                            data: data.field,
+                            dataType: "json",
+                            success: function (res) {//res为相应体,function为回调函
+                                layer.close(index); //关闭弹层
+                                f_reload();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    });
+
+                    submit.trigger('click');
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+        function f_reload(id) {
+            $("#btn_serch").click();
+        }
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var curr = $(".layui-laypage-skip").find("input").val();
+            if (!curr) {
+                curr = 1;
+            }
+
+            //var result = JSON.stringify(data.field);
+            //layer.alert(result, {
+            //    title: '最终的搜索信息'
+            //});
+
+            //执行搜索重载
+            table.reload('mainGrid4', {
+                page: {
+                    curr: curr
+                }
+                , where: data.field
+            }, 'data');
+
+            return false;
+        });
+
+        //日期
+        laydate.render({
+            elem: '#date1'
+            , trigger: 'click' //采用click弹出
+        });
+
+        laydate.render({
+            elem: '#date2'
+            , trigger: 'click' //采用click弹出
+        });
+
+
+
+
+        ////下拉
+        //$.ajax({
+        //    url: "/SysParam/Combo",
+        //    data:{type:'cus_industry'},
+        //    type: "post",
+        //    dataType: "json",
+        //    success: function (data) {
+        //        var data=data.data;
+        //        var category = $('#cus_industry_id');
+        //        category.html("");
+        //        category.append('<option value="">请选择</option>');
+        //        for (var i = 0; i < data.length; i++) {
+
+        //            console.log(data[i]);
+        //            category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+        //        }
+
+        //        form.render("select");
+        //    },
+        //});
+
+        ////下拉
+        //$.ajax({
+        //    url: "/SysParam/Combo",
+        //    data:{type:'cus_type'},
+        //    type: "post",
+        //    dataType: "json",
+        //    success: function (data) {
+        //        var data=data.data;
+        //        var category = $('#cus_type_id');
+        //        category.html("");
+        //        category.append('<option value="">请选择</option>');
+        //        for (var i = 0; i < data.length; i++) {
+
+        //            console.log(data[i]);
+        //            category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+        //        }
+
+        //        form.render("select");
+        //    },
+        //});
+
+        // //下拉
+        //$.ajax({
+        //    url: "/SysParam/Combo",
+        //    data:{type:'cus_level'},
+        //    type: "post",
+        //    dataType: "json",
+        //    success: function (data) {
+        //        var data=data.data;
+        //        var category = $('#cus_level_id');
+        //        category.html("");
+        //        category.append('<option value="">请选择</option>');
+        //        for (var i = 0; i < data.length; i++) {
+
+        //            console.log(data[i]);
+        //            category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+        //        }
+
+        //        form.render("select");
+        //    },
+        //});
+
+        ////下拉
+        //$.ajax({
+        //    url: "/SysParam/Combo",
+        //    data:{type:'cus_source'},
+        //    type: "post",
+        //    dataType: "json",
+        //    success: function (data) {
+        //        var data=data.data;
+        //        var category = $('#cus_source_id');
+        //        category.html("");
+        //        category.append('<option value="">请选择</option>');
+        //        for (var i = 0; i < data.length; i++) {
+
+        //            console.log(data[i]);
+        //            category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+        //        }
+
+        //        form.render("select");
+        //    },
+        //});
+
+        ////下拉
+        //$.ajax({
+        //    url: "/ParamsProvince/Combo",
+        //    //data:{type:'cus_source'},
+        //    type: "post",
+        //    dataType: "json",
+        //    success: function (data) {
+        //        var category = $('#Provinces_id');
+        //        category.html("");
+        //        category.append('<option value="">请选择</option>');
+        //        for (var i = 0; i < data.length; i++) {
+
+        //            console.log(data[i]);
+        //            category.append("<option value='" + data[i]["id"] + "'>" + data[i]["title"] + "</option>");
+        //        }
+
+        //        form.render("select");
+        //    },
+        //});
+
+        form.on('select(Provinces)', function (data) {
+            //console.log(data.elem); //得到select原始DOM对象
+            //console.log(data.value); //得到被选中的值
+            //console.log(data.othis); //得到美化后的DOM对象
+            fillCity(data.value);
+        });
+
+        if ($("#Provinces_val").val()) {
+            fillCity($("#Provinces_val").val());
+        }
+
+        function fillCity(province_id) {
+            $.ajax({
+                url: "/ParamsCity/Combo",
+                data: { 'province_id': province_id },
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    var category = $('#City_id');
+                    category.html("");
+                    category.append('<option value="">请选择</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        console.log(data[i]);
+                        category.append("<option value='" + data[i]["id"] + "'>" + data[i]["title"] + "</option>");
+                    }
+                    if ($("#City_val").val()) {
+                        setTimeout(function () {
+                            var select = 'dd[lay-value=' + $("#City_val").val() + ']';
+                            $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                            $("#data-search-btn").click();
+                        }, 50)
+                    }
+
+                    form.render("select");
+                },
+            });
+        }
+
+        form.verify({
+            customer: function (value, item) { //value：表单的值、item：表单的DOM对象
+                var msg;
+                $.ajax({
+                    url: "Excute",
+                    type: "post",
+                    async: false,
+                    data: {
+                        cus_name: value,
+                        id: $("#id").val()
+                    },
+
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.code === 0) {
+                            msg = "系统已存在相同的客户，请修改后再进行操作！";
+                        }
+                    },
+                    error: function (xml, errstr, err) {
+                        msg = "系统异常，请稍候再试";
+                    }
+                });
+                if (msg) {
+                    return msg;
+                }
+            }
+        });
+
+        tableSelect.render({
+            elem: '#employee',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#emp_id").val(ids.join(','));
+
+
+            }
+        })
+
+        // 展开/折叠额外条件
+        $('#toggleBtn').on('click', function () {
+            var $extra = $('#extraConditions');
+            var $icon = $(this).find('i');
+            var $span = $(this).find('span');
+
+            if ($extra.is(':visible')) {
+                $extra.slideUp(200);
+                $icon.removeClass('layui-icon-up').addClass('layui-icon-down');
+                $span.text('展开');
+            } else {
+                $extra.slideDown(200, function () {
+                    form.render('select'); // 重新渲染下拉框
+                });
+                $icon.removeClass('layui-icon-down').addClass('layui-icon-up');
+                $span.text('收起');
+            }
+        });
+    });
+</script>

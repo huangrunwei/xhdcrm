@@ -1,0 +1,52 @@
+[
+  {
+    "id": "cus_industry",
+    "params_name": "【客户】行业",
+    "params_order": 10
+  },
+  {
+    "id": "cus_type",
+    "params_name": "【客户】类型",
+    "params_order": 20
+  },
+  {
+    "id": "cus_level",
+    "params_name": "【客户】级别",
+    "params_order": 30
+  },
+  {
+    "id": "cus_source",
+    "params_name": "【客户】来源",
+    "params_order": 40
+  },
+  {
+    "id": "follow_aim",
+    "params_name": "【跟进】目的",
+    "params_order": 50
+  },
+  {
+    "id": "follow_type",
+    "params_name": "【跟进】方式",
+    "params_order": 60
+  },
+  {
+    "id": "pay_type",
+    "params_name": "【支付】方式",
+    "params_order": 70
+  },
+  {
+    "id": "order_status",
+    "params_name": "【订单】状态",
+    "params_order": 80
+  },
+  {
+    "id": "invoice_type",
+    "params_name": "【发票】类型",
+    "params_order": 90
+  },
+  {
+    "id": "message_type",
+    "params_name": "【消息】类别",
+    "params_order": 110
+  }
+]

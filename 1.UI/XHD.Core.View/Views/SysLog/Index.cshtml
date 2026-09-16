@@ -1,0 +1,211 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="table-search-fieldset">
+    <div style="margin: 10px 10px 10px 10px">
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">日志类型</label>
+                    <div class="layui-input-inline">
+                        <select id="logtype">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label">时间</label>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="date1" id="date1" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                    <div class="layui-form-mid">-</div>
+                    <div class="layui-input-inline" style="width: 100px;">
+                        <input type="text" name="date2" id="date2" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                @*<div class="layui-inline">
+                        <label class="layui-form-label">关键字</label>
+                        <div class="layui-input-inline">
+                            <input type="text" name="keyword" id="keyword" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>*@
+                <div class="layui-inline">
+                    <button type="button" class="layui-btn layui-btn-primary" id="data-search-btn"><i class="layui-icon"></i> 搜 索</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+</div>
+
+<div class="layuimini-card">
+    <div class="layui-card-body">
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+<script>
+    layui.use(['form', 'table', 'laydate', 'openTable'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table,
+            laydate = layui.laydate,
+            openTable = layui.openTable
+            ;
+
+        //日期
+        laydate.render({
+            elem: '#date1'
+        });
+        laydate.render({
+            elem: '#date2'
+        });
+
+        openTable.render({
+            elem: '#currentTableId',
+            url: 'Grid',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter'],
+            id: "mainGrid1",
+            cols: [[
+                //{ type: "checkbox", width: 50, fixed: "left" },
+                //{ field: 'id', width: 80, title: 'ID', sort: true },
+                { type: 'numbers' },
+                { field: 'EventType', width: 180, title: '日志类型' },
+                { field: 'EventTitle', minWidth: 180, title: '标题' },
+                { field: 'UserName', width: 180, title: '操作人' },
+                { field: 'EventDate', width: 180, title: '操作时间' },
+                { field: 'IPStreet', width: 180, title: 'IP' },
+                //{ field: 'Log_Content', title: '内容', minWidth: 150 }
+                { templet: '#auth-state', width: 80, align: 'center', title: '操作'}
+
+            ]],
+            openCols: [
+                { field: 'Log_Content', title: '内容' }
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true
+        });
+
+        //监听工具条
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                    del(data.id);
+                    layer.close(index);
+                });
+
+                //layer.msg('删除' + data.id);
+            }
+
+        });
+
+        function del(id) {
+            $.ajax({
+                type: 'POST',
+                url: "Delete",
+                data: { id: id },
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                    if (res.code == 0) {
+                        f_reload();
+                    }
+                    else {
+                        layer.alert(res.msg, { icon: 5 });
+                    }
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        }
+
+        //下拉
+        $.ajax({
+            url: "LogType",
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var data = data.data;
+
+                var category = $('#logtype');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i] + "'>" + data[i] + "</option>");
+                }
+                form.render("select");
+            },
+        });
+
+        $("#data-search-btn").on("click", function () {
+            table.reload("mainGrid1", {
+                page: {
+                    curr: 1 //重新从第 1 页开始
+                },
+                where: {
+                    keyword: $("#keyword").val()  //搜索的关键字
+                    , date1: $("#date1").val()
+                    , date2: $("#date2").val()
+                    , logtype: $('#logtype').val()
+                }
+            });
+        });
+        //// 监听搜索操作
+        //form.on('submit(data-search-btn)', function (data) {
+        //    var result = JSON.stringify(data.field);
+        //    layer.alert(result, {
+        //        title: '最终的搜索信息'
+        //    });
+
+        //    //执行搜索重载
+        //    table.reload('currentTableId', {
+        //        page: {
+        //            curr: 1
+        //        }
+        //        , where: {
+        //            searchParams: result
+        //        }
+        //    }, 'data');
+
+        //    return false;
+        //});
+
+
+        //监听表格复选框选择
+        table.on('checkbox(currentTableFilter)', function (obj) {
+            console.log(obj)
+        });
+
+        function f_reload(id) {
+            var curr = $(".layui-laypage-skip").find("input").val();
+            if (!curr) {
+                curr = 1;
+            }
+            table.reload('mainGrid1', {
+                page: {
+                    curr: curr //重新从第 1 页开始
+                }
+                , where: {
+                    T_name: $("#T_name").val()
+                }
+            }, 'data');
+        }
+    });
+</script>

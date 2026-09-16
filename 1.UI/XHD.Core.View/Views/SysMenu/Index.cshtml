@@ -1,0 +1,227 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div>
+            <button class="layui-btn layui-btn layui-btn-normal" id="btn-menu">添加目录</button>
+            @*<button class="layui-btn layui-btn layui-btn-normal" id="btn-button">添加按钮</button>*@
+            <div class="layui-btn-group">
+
+                <button class="layui-btn" id="btn-expand">全部展开</button>
+                <button class="layui-btn" id="btn-fold">全部折叠</button>
+            </div>
+            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+        </div>
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    layui.use(['table', 'treetable'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+
+        // 渲染表格
+        layer.load(2);
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: 'root',
+            treeIdName: 'Menu_id',
+            treePidName: 'parentid',
+            elem: '#munu-table',
+            url: 'Grid',
+            page: false,
+            cols: [[
+                { type: 'numbers' },
+                { field: 'title', minWidth: 200, title: '目录名称' },
+                {
+                    field: 'btn', width: 300, title: '按钮', templet: function (t) {
+                        var list = t.btn;
+                        var html = [];
+
+                        for (var i = 0; i < list.length; i++) {
+                            var btn = list[i];
+                            html.push('<a class="layui-btn layui-btn-xs">' + btn.title + '</a>');
+                        }
+
+                        return html.join('');
+                    }
+                },
+                //{field: 'authority', title: '权限标识'},
+                { field: 'href', title: '菜单url' },
+                { field: 'order', width: 80, align: 'center', title: '序号' },
+                {
+                    field: 'icon', width: 80, align: 'center', title: '图标', templet: function (d) {
+                        return "<i class='fa " + d.icon + "'>";
+                    }
+                },
+                //{
+                //    field: 'isMenu', width: 80, align: 'center', templet: function (d) {
+                //        if (d.isMenu == 1) {
+                //            return '<span class="layui-badge layui-bg-gray">按钮</span>';
+                //        }
+                //        if (d.parentId == "root") {
+                //            return '<span class="layui-badge layui-bg-blue">目录</span>';
+                //        } else {
+                //            return '<span class="layui-badge-rim">菜单</span>';
+                //        }
+                //    }, title: '类型'
+                //},
+                //{ field: 'Btn_List', width: 180, align: 'center', title: '按钮'},
+                { templet: '#auth-state', width: 120, align: 'center', title: '操作' }
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        $('#btn-expand').click(function () {
+            treetable.expandAll('#munu-table');
+        });
+
+        $('#btn-fold').click(function () {
+            treetable.foldAll('#munu-table');
+        });
+
+        $('#btn-menu').click(function () {
+            addMenu();
+        });
+
+        $('#btn-button').click(function () {
+            addButton();
+        });
+
+
+        //监听工具条
+        table.on('tool(munu-table)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.confirm('确定删除此菜单？', { icon: 3, title: '提示信息' }, function (index) {
+                    
+                        del( data.id);
+                   
+                });
+
+                //layer.msg('删除' + data.id);
+            }
+            else if (layEvent === 'edit') {
+                
+                addMenu(data);
+            }
+        });
+
+        function del(id) {           
+
+            $.ajax({
+                type: 'POST',
+                url: 'Delete',
+                data: { id: id },
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                    if (res.code == 0) {
+                        window.location.reload();
+                    }
+                    else {
+                        layer.alert(res.msg, { icon: 5 });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        }
+
+
+        //添加目录
+        function addMenu(edit) {
+            var tit = "添加菜单";
+            if (edit) {
+                tit = "编辑菜单";
+            }
+            var index = layui.layer.open({
+                title: tit,
+                type: 2,
+                anim: 1,
+                area: ['80%', '80%'],
+                maxmin: true,
+                content: "Add",
+                btn: ['确定', '关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+                    if (edit) {
+                        body.find("#id").val(edit.id).addClass("layui-disabled");
+                        body.find("#Menu_name").val(edit.title);
+                        body.find("#Menu_order").val(edit.order);
+                        body.find("#Menu_icon").val(edit.icon);
+                        body.find("#Menu_url").val(edit.href);
+
+                        body.find("#parentid").val(edit.parentid);
+
+                        var btn = edit.btn;
+
+                        if (btn) {
+                            for (var i = 0; i < btn.length; i++) {
+
+                                var arr = btn[i].id.split("|");
+
+                                var id = "btn_" + arr[1];
+
+
+                                body.find("#" + id).attr("checked", true);
+                            }
+                        }
+                    }
+                },
+                yes: function (index, layero) {
+                    //var res = window["layui-layer-iframe" + index].callbackdata();
+                    ////打印返回的值，看是否有我们想返回的值。
+                    //console.log(res);
+                    //layer.close(index);
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'LAY-user-front-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                    //监听提交
+                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                        var field = data.field; //获取提交的字段
+
+                        console.log(data.field);
+
+                        layer.close(index); //关闭弹层
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Save',
+                            data: data.field,
+                            dataType: "json",
+                            success: function (res) {//res为相应体,function为回调函数
+                                window.location.reload();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    });
+
+                    submit.trigger('click');
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+        
+    });
+</script>

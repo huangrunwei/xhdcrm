@@ -1,0 +1,773 @@
+﻿@{
+    ViewData["Title"] = "home";
+    Layout = null;
+}
+
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <title>某公司大数据监控平台</title>
+    <script type="text/javascript" src="/js/home/jquery.js"></script>
+    <script type="text/javascript" src="/js/home/echarts.min.js"></script>
+    <script type="text/javascript" src="/js/home/china.js"></script>
+    <script type="text/javascript" src="/js/home/map.js"></script>
+    <script type="text/javascript" src="/js/home/Bubble.js"></script>
+    <script type="text/javascript" src="/js/XHD.js"></script>
+    <link rel="stylesheet" href="/CSS/home.css">
+</head>
+<body>
+    <div class="head clearfix">
+    </div>
+    <div class="mainbox">
+
+        <ul class="clearfix nav1">
+            <li style="width: 22%">
+                <div class="box">
+                    <div class="tit">客户行业</div>
+                    <div class="boxnav" style="height: 200px;" id="echarts-industry">
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="tit">客户类型</div>
+                    <div class="boxnav" style="height: 250px;" id="echarts-type">
+                    </div>
+                </div>
+            </li>
+            <li style="width: 56%">
+
+                <div class="box">
+                    <div class="boxnav mapc" style="height: 550px; position: relative">
+                        <div class="mapnav">
+                            <ul>
+                                <li><div><span>客户</span><p>@ViewData["cuscount"]</p></div></li>                                
+                                <li><div><span>跟进</span><p>@ViewData["followcount"]</p></div></li>
+                                <li><div><span>订单</span><p>@ViewData["ordercount"]</p></div></li>
+                                <li><div><span>合同</span><p>@ViewData["contractcount"]</p></div></li>
+                                <li><div><span>收款</span><p>@ViewData["receivecount"]</p></div></li>
+                            </ul>
+                        </div>
+                        <div class="mapnav2">
+
+                            <div class="box">
+                                <div class="tit">客户统计</div>
+                                <div class="boxnav" style="height: 180px;" id="echarts-customer">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="map" id="map"></div>
+
+                        <script>
+                            $(".mapbtn a").hover(function(){
+                                var ind=$(this).index()
+                                $(".mapnav ul").eq(ind).show().siblings().hide()
+                            })
+                        </script>
+                    </div>
+                </div>
+
+            </li>
+            <li style="width: 22%">
+
+                <div class="box">
+                    <div class="tit">客户级别</div>
+                    <div class="boxnav" id="echarts-level" style="height: 200px;">
+                    </div>
+                </div>
+                <div class="box">
+                    <div class="tit">客户来源</div>
+                    <div class="boxnav" style="height: 250px;" id="echarts-source" >
+                    </div>
+                </div>
+
+            </li>
+        </ul>
+
+        <div class="box" style="padding: 20px 0;">
+            <ul class="clearfix nav2 ">
+                <li style="width:25%">
+                    <div class="tit01">跟进统计</div>
+                    <div class="ftechart" id="echarts-follow"></div>
+                </li>
+                <li style="width:25%">
+                    <div class="tit01">订单统计</div>
+                    <div class="ftechart" id="echarts-order"></div>
+                </li>
+                <li style="width:25%">
+                    <div class="tit01">收款统计</div>
+                    <div class="ftechart" id="echarts-receive"></div>
+
+                </li>
+                <li style="width:25%">
+                    <div class="tit01">发票统计</div>
+
+                    <div class="ftechart" id="echarts-invoice"></div>
+
+                </li>
+            </ul>
+        </div>
+
+    </div>
+</body>
+<script>
+    $.ajax({
+        url: "/Report_Customer/ReportYear",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_customer(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Customer/ReportFollowYear",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_follow(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Order/ReportYear",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_order(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Finance/ReportYear",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_receive(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Finance/ReportInvoice",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_invoice(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Customer/ReportIndustry",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_Industry(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Customer/ReportLevel",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_level(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Customer/ReportType",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_type(data);
+        },
+    });
+
+    $.ajax({
+        url: "/Report_Customer/ReportSource",
+        type: "get",
+        dataType: "json",
+        success: function (data) {
+            echarts_source(data);
+        },
+    });
+
+    //$.ajax({
+    //    url: "/Report_Customer/ReportProvinces",
+    //    type: "get",
+    //    dataType: "json",
+    //    success: function (data) {
+    //        map(data);
+    //    },
+    //});
+
+    function echarts_customer(data) {
+
+        var seriesdata=[];
+        for(var i=0;i<data.length;i++)
+        {
+            seriesdata.push(data[i].count);
+        }
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-customer'));
+        option = {            
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            grid:{
+                left:'10%',
+                right:'1%',
+                top:'10%',
+                bottom:'15%'
+            },
+            series: [
+                {
+                    data: seriesdata,
+                    type: 'bar',
+                    showBackground: false,
+                    backgroundStyle: {
+                        color: 'rgba(180, 180, 180, 0.2)'
+                    }
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_follow(data) {
+
+        var seriesdata=[];
+        for(var i=0;i<data.length;i++)
+        {
+            seriesdata.push(data[i].count);
+        }
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-follow'));
+        option = {            
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            grid:{
+                left:'10%',
+                right:'1%',
+                top:'10%',
+                bottom:'15%'
+            },
+            series: [
+                {
+                    data: seriesdata,
+                    type: 'bar',
+                    showBackground: false,
+                    backgroundStyle: {
+                        color: 'rgba(180, 180, 180, 0.2)'
+                    }
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_order(data) {
+
+        var seriesdata=[];
+        for(var i=0;i<data.length;i++)
+        {
+            seriesdata.push(data[i].count);
+        }
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-order'));
+        option = {            
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            grid:{
+                left:'10%',
+                right:'1%',
+                top:'10%',
+                bottom:'15%'
+            },
+            series: [
+                {
+                    data: seriesdata,
+                    type: 'bar',
+                    showBackground: false,
+                    backgroundStyle: {
+                        color: 'rgba(180, 180, 180, 0.2)'
+                    }
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_receive(data) {
+
+        var seriesdata=[];
+        for(var i=0;i<data.length;i++)
+        {
+            seriesdata.push(data[i].count);
+        }
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-receive'));
+        option = {            
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            grid:{
+                left:'10%',
+                right:'1%',
+                top:'10%',
+                bottom:'15%'
+            },
+            series: [
+                {
+                    data: seriesdata,
+                    type: 'bar',
+                    showBackground: false,
+                    backgroundStyle: {
+                        color: 'rgba(180, 180, 180, 0.2)'
+                    }
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_invoice(data) {
+
+        var seriesdata=[];
+        for(var i=0;i<data.length;i++)
+        {
+            seriesdata.push(data[i].count);
+        }
+
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-invoice'));
+        option = {            
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            xAxis: {
+                type: 'category',
+                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            yAxis: {
+                type: 'value',
+                splitLine:{
+                    show:false
+                },
+                axisLabel:{
+                        color: '#ffffff'
+                    }
+            },
+            grid:{
+                left:'10%',
+                right:'1%',
+                top:'10%',
+                bottom:'15%'
+            },
+            series: [
+                {
+                    data: seriesdata,
+                    type: 'bar',
+                    showBackground: false,
+                    backgroundStyle: {
+                        color: 'rgba(180, 180, 180, 0.2)'
+                    }
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_Industry(data) {       
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-industry'));
+        option = {
+            tooltip: {
+                trigger: 'item'                    
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'right',
+                textStyle:{
+                    color: '#ffffff'
+                }
+            },
+            series: [
+                {
+                    name: '客户行业',
+                    type: 'pie',
+                    radius: ['30%', '70%'],
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    data: data,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_level(data) {       
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-level'));
+        option = {
+            tooltip: {
+                trigger: 'item'                    
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'right',
+                textStyle:{
+                    color: '#ffffff'
+                }
+            },
+            series: [
+                {
+                    name: '客户级别',
+                    type: 'pie',
+                    radius: ['30%', '70%'],
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    data: data,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_type(data) {       
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-type'));
+        option = {
+            tooltip: {
+                trigger: 'item'                    
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'right',
+                textStyle:{
+                    color: '#ffffff'
+                }
+            },
+            series: [
+                {
+                    name: '客户类型',
+                    type: 'pie',
+                    radius: ['30%', '70%'],
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    data: data,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function echarts_source(data) {       
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('echarts-source'));
+        option = {
+            tooltip: {
+                trigger: 'item'                    
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'right',
+                textStyle:{
+                    color: '#ffffff'
+                }
+            },
+            series: [
+                {
+                    name: '客户来源',
+                    type: 'pie',
+                    radius: ['30%', '70%'],
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    data: data,
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+
+    function map(data)
+    {
+        var myChart = echarts.init(document.getElementById('map'));
+        let scatterData = [
+            {
+                value: [112.549248, 37.857014]
+            },
+            {
+                value:[117.283042, 31.86119]
+            }
+        ]
+
+        var option = {
+            // backgroundColor: '#404a59',
+            title: {
+                //text: '客户',
+                //subtext: '来源：big-data-view',
+                sublink: 'https://gitee.com/iGaoWei/big-data-view',
+                left: 'center',
+                textStyle: {
+                    color: '#fff'
+                }
+            },
+            tooltip: {
+                //trigger: 'item'
+                formatter(params)
+                {
+                    return '地区：${params.name}</br>客户：${params.value}';
+                }
+            },
+
+            geo: {
+                map: 'china',
+                label: {
+                    emphasis: {
+                        show: false
+                    }
+                },
+                roam: false,
+                zoom: 1.2,
+                itemStyle: {
+                    normal: {
+                        areaColor: 'rgba(2,37,101,.5)',
+                        borderColor: 'rgba(112,187,252,.5)'
+                    },
+                    emphasis: {
+                        areaColor: 'rgba(2,37,101,.8)'
+                    }
+                }
+            },
+            series: [
+                {
+                    name: '标题名称',
+                    type: 'scatter',
+                    coordinateSystem: 'geo',
+                    data: data,
+                    symbolSize: function (val) {
+                        return val[2] / 15;
+                    },
+                    label: {
+                        normal: {
+                            formatter: '{b}',
+                            position: 'right',
+                            show: false
+                        },
+                        emphasis: {
+                            show: true
+                        }
+                    },
+                    itemStyle: {
+                        normal: {
+                            color: '#ffeb7b'
+                        }
+                    },
+                    
+                },
+                {
+                        type: 'effectScatter',
+                        data: scatterData, //配置散点的坐标数据
+                        coordinateSystem:'geo', //指明散点使用的坐标系统  geo的坐标系统
+                        rippleEffect:{
+                            scale: 10
+                        }
+                    }
+
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+        window.addEventListener("resize", function () {
+            myChart.resize();
+        });
+    }
+    
+</script>
+</html>
+
+

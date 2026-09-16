@@ -1,0 +1,3656 @@
+[
+    {
+      "id": "095D3473-F4AE-4FCC-8F9B-B2A5F1B35FFA",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "嵊州",
+      "City_order": 210,
+      "City_type": "sys"
+    },
+    {
+      "id": "E52A5DB3-0327-4B53-8EE3-2AD0E11F9192",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "温岭",
+      "City_order": 220,
+      "City_type": "sys"
+    },
+    {
+      "id": "6FD60350-EB0C-4D08-9297-9ED7979E8677",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "义乌",
+      "City_order": 230,
+      "City_type": "sys"
+    },
+    {
+      "id": "31FDCD04-5554-4611-8611-20AFED81BB77",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "永康",
+      "City_order": 240,
+      "City_type": "sys"
+    },
+    {
+      "id": "13659825-EFE1-43E0-89B2-6C4E3B966EB4",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "余姚",
+      "City_order": 250,
+      "City_type": "sys"
+    },
+    {
+      "id": "9ADE5EEA-45AB-49E6-8EE7-CCDD81D1E9BE",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "诸暨",
+      "City_order": 260,
+      "City_type": "sys"
+    },
+    {
+      "id": "2107E77A-6C4A-4BA0-8319-8917271A0911",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "新昌",
+      "City_order": 270,
+      "City_type": "sys"
+    },
+    {
+      "id": "0FB62561-D34D-4C33-8667-2979671131EF",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "南昌",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "41F73C59-4E85-4357-9323-7CF7823D3698",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "贵港",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "20EEAE71-8894-4BBD-BC39-24C5590BD039",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "玉林",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "950EB45B-A438-4C80-A7A6-18E898D7D2DB",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "百色",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "83B27031-5FD5-4C13-84EC-C477308C8A09",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "贺州",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "2824BC6D-00F9-4297-B647-E204755D11CA",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "河池",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "AB6A89CF-F5A5-476D-B539-936D0B3A02F8",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "来宾",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "07990D9A-9383-46C1-9965-4391A3A96285",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "崇左",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "883F3C30-31AC-4B9B-9087-ABC5C023C485",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "福州",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "69B13708-9A2B-4FE4-A29E-1900C64DE132",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "厦门",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "E7CA6157-BF47-4000-837A-4CFD770B1580",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "三明",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "05BF0673-D977-421E-9002-37A14413E0AE",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "莆田",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "EA26C4F2-7795-4CB7-8EF0-4619EC1CF5AB",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "泉州",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "487E6610-09A5-42E4-A570-183750E76975",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "漳州",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "131D69D6-0DDD-482F-B020-F00E76D89DCD",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "南平",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "817CDEBB-A6BB-4FA3-9D00-FE8328BBBC5B",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "龙岩",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "5D71A4CD-9674-4075-872F-190137DD636C",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "宁德",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "6991CD38-971E-4203-BA99-3B93A42A03A2",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "福清",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "E68190B2-AA53-4D23-95CE-1754E69749FA",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "建瓯",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "9B9467FF-9414-4A36-AFDA-64D64ED376E2",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "晋江",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "B0289181-C4AF-4F6F-BDA8-878C7508BCE4",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "南安",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "531F25F8-90A7-4002-9714-F168CFF4DAE7",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "邵武",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "7F6AA4C1-45FB-4D58-A407-E0A982CE9C2D",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "石狮",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "151DB41D-A826-4E03-A5D9-EE6AF2E1C692",
+      "Provinces_id": "3CCEC37F-01A3-46EB-8F93-1ED1A1303AE8",
+      "City": "仙游",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "093C2C54-9749-489F-9367-F39D3EFB1305",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "成都",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "55741F33-4490-482D-8D6C-40C04C86C606",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "自贡",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "4E1691DF-FF5B-4DA7-A75A-B8BE978576F3",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "攀枝花",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "0778956F-4E6D-4B86-B410-61005A2680D7",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "泸州",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "62F28FDC-B7A2-4170-9412-FC21846B5C50",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "德阳",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "C030D803-A14F-4960-9AB3-DDCB6454A4F1",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "绵阳",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "0FC5BFF4-C9B8-4D1C-9014-428A163614A1",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "广元",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "2AC76E58-3031-4BF2-A373-031213370F5D",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "遂宁",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "78A156A3-A1A3-4794-B3C9-E4D9044302F0",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "内江",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "DDD8FEB8-3C53-45E6-942B-D89064073652",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "乐山",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "5A910978-ECD6-4EE4-A6FE-2BB888A5239F",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "南充",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "6E6B907B-749D-4AB8-8FB5-667A6BAE8CFA",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "宜宾",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "B83C64A9-ADF4-4C12-9BC5-9A86AA110522",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "广安",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "5C9C78C6-C65A-4779-A85D-B8486EEE0A06",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "达州",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "E269E5BF-ABCE-4E26-A996-84EBF385A064",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "巴中",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "E9BA1587-D2E1-44C5-AD29-8E9293F709CA",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "雅安",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "DDA1D664-2A2A-430B-BEA7-A1C4EC67A656",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "眉山",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "6A4044FA-026D-48FF-9A05-47406B395A8E",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "资阳",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "FD1AE823-3E34-443D-BFD1-CFBA79A4E770",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "阿坝藏族羌族自治州",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "37BDACE6-99A2-4E7F-B401-40D5535B2F70",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "甘孜藏族自治州",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "70FCA12E-59C6-4CBB-8D9C-DB50EB19109D",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "凉山彝族自治州",
+      "City_order": 210,
+      "City_type": "sys"
+    },
+    {
+      "id": "49FAE4DF-3A08-4F1E-A2C1-AE897F267EBE",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "广汉",
+      "City_order": 220,
+      "City_type": "sys"
+    },
+    {
+      "id": "078FB4A7-920B-4010-A0A4-3E9C82B13467",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "锦阳",
+      "City_order": 230,
+      "City_type": "sys"
+    },
+    {
+      "id": "DCED670B-331D-4F89-B6BE-05E392B721BA",
+      "Provinces_id": "FB7D51BC-C94E-4C7D-9530-251B0EA45332",
+      "City": "西昌",
+      "City_order": 240,
+      "City_type": "sys"
+    },
+    {
+      "id": "7A76A4F3-EBAB-402C-9A40-275F86B697D9",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "昆明",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "777C8B9B-DA52-474D-B349-AEFCE84D4F14",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "曲靖",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "111DE6FF-3C83-41CB-86B1-D313F6296719",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "玉溪",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "C720BA41-A646-4797-ACA2-7DAE10021EDD",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "保山",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "94640EB3-6614-4223-BADC-2F840902796F",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "昭通",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "21267808-746E-4391-8D5C-DE205731DE8D",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "思茅地区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "07EFA316-FEE8-4219-9F4B-E5DADF2FCCA1",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "临沧地区",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "12CD2F58-A4D8-4794-8271-D5CBDED00841",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "丽江",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "EA50A1BE-5C01-4576-9F66-7189C05F481E",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "文山壮族苗族自治州",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "25EBBE03-3E86-4DB3-9CCB-32B3B32B34B1",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "红河哈尼族彝族自治州",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "5ABEA889-AC9C-4A9D-B62C-BAB8088DB201",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "西双版纳傣族自治州",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "9642ABFA-BB39-4FEC-BEE0-C80EE468971E",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "楚雄彝族自治州",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "5172544F-F168-40C6-8F1E-4E9A8220174E",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "大理白族自治州",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "76B4EA0E-FF07-48B0-902F-ECF6DFDC2BDA",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "德宏傣族景颇族自治州",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "BE3AB87E-6764-4201-B523-2E465BDF0535",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "怒江傈傈族自治州",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "F1EB462C-817D-4B2C-A007-CC3332383C77",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "迪庆藏族自治州",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "5E69326D-25F6-4282-8EDC-E32498E6C308",
+      "Provinces_id": "F0622121-B623-48ED-9ED8-7E77109EC2F6",
+      "City": "大理",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "2EF0DA18-B75A-4456-B605-26A57289C583",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "贵阳",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "267BEC15-372A-4100-9443-DDD0C629048A",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "六盘水",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "7934F0F7-BFB6-4283-A30F-A4BAC99463D5",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "遵义",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "F2D72A28-6784-4A7C-8294-FEBB76768830",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "安顺",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "1A578F12-3259-4979-BEC1-24FC133A6B3F",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "铜仁地区",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "00D06035-BF7F-40B8-8341-42066A7D0A4D",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "毕节地区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "17C53D0F-6F09-4567-A504-9DE082E18704",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "黔西南布依族苗族自治州",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "39BBD162-83F5-4824-BC50-6D8E266326F2",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "黔东南苗族侗族自治州",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "AD361AE0-8A03-4258-9618-C137C016022D",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "黔南布依族苗族自治州",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "0A616D38-929C-4FE2-9BF9-CD8A90D138E4",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "都匀",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "B45A1639-A38A-46FE-8BAD-20D0D0950707",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "贵恙",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "5D888EEA-DE81-4FD9-8FA8-E3B50642671F",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "凯里",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "D4F075E8-D541-410D-A7C0-3F1EEBCEB27A",
+      "Provinces_id": "FB4D4BB6-A7E2-4748-8833-5C3D0A3F124C",
+      "City": "铜仁",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "8156F04C-5758-4A6E-B8D2-662A5486A59A",
+      "Provinces_id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+      "City": "拉萨",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "5DA048D2-8412-4F1A-A521-A80C9AE6330E",
+      "Provinces_id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+      "City": "那曲地区",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "12A34F7F-2F7B-4378-AB4A-1565CAEF348E",
+      "Provinces_id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+      "City": "昌都地区",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "8430D54E-1C66-4351-8DB1-B41DDEAB18A3",
+      "Provinces_id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+      "City": "山南地区",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "D30695C2-A62A-478E-98EF-450DA650D26B",
+      "Provinces_id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+      "City": "日喀则地区",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "EF64DB3A-B914-4DAB-9777-8EFA537F3E01",
+      "Provinces_id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+      "City": "阿里地区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "7C62FA79-5584-489D-B3F2-23B075D50BE4",
+      "Provinces_id": "2E11B7F4-8108-4B25-A741-13CD307D2E71",
+      "City": "林芝地区",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "D613CBA3-C072-4B45-9D9D-01D5B9AA09D8",
+      "Provinces_id": "2E2C5725-CC26-491A-B3E3-92D81B585F12",
+      "City": "海口",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "593CBD85-EA10-4A24-9EF1-54B33ACB3BC2",
+      "Provinces_id": "2E2C5725-CC26-491A-B3E3-92D81B585F12",
+      "City": "三亚",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "39E47207-9373-4922-9C0C-488A34557D81",
+      "Provinces_id": "2E853679-F1CE-409E-BC4D-0AD028F3B03E",
+      "City": "台北",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "94D0439C-1EB1-4D42-A4C0-128290536851",
+      "Provinces_id": "2E853679-F1CE-409E-BC4D-0AD028F3B03E",
+      "City": "高雄",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "196B267C-4A47-400D-9FDE-45F957774343",
+      "Provinces_id": "2E853679-F1CE-409E-BC4D-0AD028F3B03E",
+      "City": "台中",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "B0B6AD56-8345-45BA-80F7-C8458562B3C9",
+      "Provinces_id": "2E853679-F1CE-409E-BC4D-0AD028F3B03E",
+      "City": "台南",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "E9DD9758-56CA-45E0-99D6-E196F0B6029C",
+      "Provinces_id": "2E853679-F1CE-409E-BC4D-0AD028F3B03E",
+      "City": "基隆",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "E1174EB7-7DD8-4276-A213-41AA38966F19",
+      "Provinces_id": "2E853679-F1CE-409E-BC4D-0AD028F3B03E",
+      "City": "新竹",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "51187482-F92A-42E2-B00D-DC20DEE87F2C",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "六安",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "0E1E707D-D574-49BB-BC91-21F33A24D579",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "亳州",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "530AD73F-F741-4561-8854-782CF090DF2F",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "池州",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "F5065CDA-CE93-44AC-98A9-FA0FBD84871B",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "宣城",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "4BB70682-9AFF-4243-AFB4-330289437A0A",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "蒙城",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "6647AECE-407F-4D69-BE39-32B4200329BE",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "宁国",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "06F9C360-1E3D-46BE-9A90-31251B4C52F8",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "桐城",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "72C195D7-9C31-4268-91FE-638A310C79BC",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "南京",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "B52B5E2E-B5E1-4900-865D-03693612075E",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "徐州",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "3AADFA29-F5D0-4C36-9874-BED3BE03E61C",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "连云港",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "42FB05B9-C3E1-4846-A0A7-92C2D3C49C76",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "淮安",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "BFE83735-05E6-4F33-9F2A-F2FBB4977FE7",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "宿迁",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "E9A56DAC-8B97-418F-BBA6-9283CAD67ECF",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "盐城",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "584C183E-5F58-4CE1-B41B-89B429A12904",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "扬州",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "7F98AC57-79F7-4448-8041-786619A4A728",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "泰州",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "3CB0CF03-AA9F-45DD-AAD1-B9B586CD3D84",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "南通",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "24FEE3AC-82F3-4D95-B010-DB4B9CD43756",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "镇江",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "7C74D659-EEA8-49C5-97BF-EB97647EC291",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "常州",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "4F02F9F0-A74B-4F21-9D08-0A202DF33B1D",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "无锡",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "640BFFAA-63E2-43C3-889C-A334348208BA",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "苏州",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "8D544A29-A193-411F-A0F3-A9A0EE2F7A01",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "常熟",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "1C313911-1F51-4753-891E-FB7935D6477C",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "丹阳",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "61A1D890-B0DC-4569-82F9-C83C668C5360",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "海门",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "4BD1496B-7AAC-4BF2-85F8-D367DC41A154",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "江都",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "7FF4E2D4-FA9B-4A04-8F31-D168FB58BCAB",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "江阴",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "F1F44D24-1C80-4140-8BFD-A0D0FA9656E2",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "靖江",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "E41A842A-71BE-4A0E-A945-01FFD0E7191C",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "昆山",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "670CEBDE-A3E8-4D3F-A84B-A4180B229D8B",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "溧阳",
+      "City_order": 210,
+      "City_type": "sys"
+    },
+    {
+      "id": "7C29F843-9A06-4A0B-9381-F6DAFBDB2E93",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "太仓",
+      "City_order": 220,
+      "City_type": "sys"
+    },
+    {
+      "id": "6E0884DD-E9F6-4CE6-A86D-304AF4A98B90",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "泰州华",
+      "City_order": 230,
+      "City_type": "sys"
+    },
+    {
+      "id": "29AD3F5C-5D41-469F-90C8-F1788C035F86",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "吴江",
+      "City_order": 240,
+      "City_type": "sys"
+    },
+    {
+      "id": "493BB2D6-E76A-4C1C-BAD5-43DEAF695C14",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "吴县",
+      "City_order": 250,
+      "City_type": "sys"
+    },
+    {
+      "id": "0915BAB7-51DD-48FB-AE60-973FFE38A8C2",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "宜兴",
+      "City_order": 260,
+      "City_type": "sys"
+    },
+    {
+      "id": "A8D13F3A-CAED-408C-9CDC-EB030A69E740",
+      "Provinces_id": "7607DBFE-7A96-4E8D-9642-E2176794D7E2",
+      "City": "张家港",
+      "City_order": 270,
+      "City_type": "sys"
+    },
+    {
+      "id": "918CDF3F-EE4F-415F-B0A1-129B42277347",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "杭州",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "457A3514-95E5-489D-B0BC-C175E71109E7",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "宁波",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "39BBF5FB-C063-4A10-8CB9-A1E58EA84F37",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "温州",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "E335D27C-4A89-4352-861A-D535004E2B8C",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "嘉兴",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "C6C7C320-A859-4C46-8A65-83F0D4216CD7",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "湖州",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "42E07090-724E-4FE2-9F60-E7B75C382C32",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "绍兴",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "99758014-AF7D-4A59-8945-80CBEB3B20F4",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "金华",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "E3AADDCE-C1E9-4AA4-BC70-DE3D14D165A2",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "衢州",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "01753174-FC51-4BFF-83D0-A4C6A996360E",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "舟山",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "B89EE246-F779-44D0-BCEA-BFA6A4DE24E3",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "台州",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "39D4E967-310C-4C03-8E79-F0697E69444E",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "丽水",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "3AB159EC-6A7E-4C2F-AF0F-B97F0DD62FE2",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "慈溪",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "ED568BF5-80E9-4690-BAF8-66F1D6BD39F5",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "东阳",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "46568E76-94A7-46F7-A648-DDA82DB943B4",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "奉化",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "5E6BD9C1-E3A1-4AC5-B5A7-7B372A0BCE2F",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "乐清",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "F414A4EB-0698-4B03-B015-65386BC0A84F",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "临安",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "8A141BA1-90C0-4D8A-A556-F06D8BED49A8",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "临海",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "6F376489-9E6B-4DC3-BB52-F0C012591D5F",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "平湖",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "AF7548DF-4E10-43C9-BB13-A7B78B7EDD80",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "瑞安",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "1A1485BB-E547-460F-8047-4B1773A13933",
+      "Provinces_id": "73A643D6-A528-46D1-933C-985A832646C7",
+      "City": "上虞",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "9EACF2E8-A7FA-467A-BB1E-6D16AA752F90",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "景德镇",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "DD9105C1-C1C2-40C4-A4A9-2EA65104E820",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "萍乡",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "87F9EB6F-8C68-4B4B-9BC1-E0D3B8F9DE88",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "新余",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "91A73151-C9E2-4855-A272-295EF723C55B",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "九江",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "954C47EF-4912-427B-B5FC-66F92DEDA03B",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "鹰潭",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "FD2AF98E-99B9-4374-81C4-279474982993",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "赣州",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "26C748AE-9422-41E9-8BF8-278C01C4CA7C",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "吉安",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "3AB56842-5678-4E74-908B-58CAE4310EFA",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "宜春",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "FBFD80CF-B025-49BC-86E6-FF6FAEAF00DD",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "抚州",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "89FDB7E4-4468-4D09-9CE6-60320900041A",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "上饶",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "723745DF-F48F-4DF4-9F51-12FC1CA3AF17",
+      "Provinces_id": "ABCE93A3-7ABF-43B6-AD2F-FC6F04E21BC1",
+      "City": "高安",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "11A56838-984B-4E7D-9F56-B00F80C7A484",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "广州",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "E2E09ADE-E128-4C7B-8244-79E7537C3CB2",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "深圳",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "70B204F2-FB7E-4AA2-9FD7-D4B3E5EA2BD8",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "珠海",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "0B3A470F-A633-4AC5-9CEF-0805A4A981C9",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "汕头",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "D80971CE-2C16-4882-B965-D9DDE8E349BE",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "韶关",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "85AB1666-6C1F-432E-BBAE-2675ACC9C3F6",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "河源",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "9BB6B347-2163-4278-AC76-A4D33A40D92A",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "梅州",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "1F2247C2-C479-4523-9E5B-F1035ADEE4CE",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "惠州",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "6FC48896-13A0-45E1-86FC-E860CCC72F44",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "汕尾",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "44B6EEED-9FAF-4FAF-9940-C1E7DEF717BF",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "东莞",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "CD6C7F1A-CC08-4E67-830B-51CA5F296EA6",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "中山",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "2F43F219-24F9-4BB9-9866-DBDF21E70789",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "江门",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "51B616D4-EA6B-494D-AA72-7676DCB6283C",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "佛山",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "C46A12B9-5C22-46B0-8B3F-0ECF8FC8F743",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "阳江",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "0F939490-E8E6-491E-9F07-5CC44868A57D",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "湛江",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "5918ED46-5BF0-4DF9-BBAC-9AE0AFC4A886",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "茂名",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "B0B8B157-6653-46E6-989D-DF8686DC1AAC",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "肇庆",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "89A5AE76-BCF3-43A8-9273-45BC01EB17C8",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "清远",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "C339EC95-63BA-49C3-87AE-9E2934164E15",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "潮州",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "AE36E64C-662B-42C4-AC15-736060F54A12",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "揭阳",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "48C636B2-BBAD-4360-A6D0-AEF32FCA3026",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "云浮",
+      "City_order": 210,
+      "City_type": "sys"
+    },
+    {
+      "id": "D4ED0351-1D91-429C-B250-3F4FB1F50454",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "花都",
+      "City_order": 220,
+      "City_type": "sys"
+    },
+    {
+      "id": "ADDAE1D3-C5C6-43AE-96A1-9BF5A4D916C3",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "开平",
+      "City_order": 230,
+      "City_type": "sys"
+    },
+    {
+      "id": "BB142BCE-7AF0-46D5-9895-E5344D6A7424",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "南海",
+      "City_order": 240,
+      "City_type": "sys"
+    },
+    {
+      "id": "6F412002-CB8F-4DBE-ABF6-3516060769F4",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "顺德",
+      "City_order": 250,
+      "City_type": "sys"
+    },
+    {
+      "id": "C333FDC1-050B-4C53-8555-9FA3A2565C82",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "台山",
+      "City_order": 260,
+      "City_type": "sys"
+    },
+    {
+      "id": "1163BF0C-8E78-40C3-A41C-178C3F1BBBFA",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "增城",
+      "City_order": 270,
+      "City_type": "sys"
+    },
+    {
+      "id": "60885793-1F45-4AE2-B0C3-14F8E68422DE",
+      "Provinces_id": "E6E267E9-12EA-4026-B830-806A502214A7",
+      "City": "市梅",
+      "City_order": 280,
+      "City_type": "sys"
+    },
+    {
+      "id": "080D879D-698A-4E26-9128-CF5F453D379F",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "南宁",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "E93DE97D-8A70-41C6-9AEB-2095214A8626",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "柳州",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "08485607-2BF1-4FB5-99B4-DBC77F9FCD12",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "桂林",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "D0BC29F4-CB4C-4D52-B95A-84A3705FBFFB",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "梧州",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "0D70258E-36A8-4D76-8D3B-D9610F3308EE",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "北海",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "A349ED64-6EBE-445E-8673-925397236B97",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "防城港",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "953DA42F-C943-4A4D-85D1-C0FFCDBC9061",
+      "Provinces_id": "D7EE20AC-A810-4D28-949D-0401BC30E62D",
+      "City": "钦州",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "807C4588-60BD-4D7C-ACF4-100979B115F7",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "新乡",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "ABF45FE1-26FB-4550-8283-B48A54036E9B",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "安阳",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "7A216D17-9BC1-43E5-A63E-D5A0FFC51DB2",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "濮阳",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "57F453F1-A4AD-439E-A1B4-7FE84B33108F",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "许昌",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "440C6136-06A9-409A-9733-EBF9A0C9F86E",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "漯河",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "5E32D7EF-FBA3-46DA-8EB9-0A213E6CE8C4",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "三门峡",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "CE4E77A8-B212-48F8-B143-2D4E0C6B6040",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "南阳",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "A2C69B78-4391-43C7-9FCA-5BE7F7779794",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "商丘",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "B1FACB61-9AF7-4D25-A813-626201DF9847",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "信阳",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "88543E26-E002-42F1-A1A3-2778B034947C",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "周口",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "05CA045F-014C-43CA-912A-8CDBBD0EBD84",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "驻马店",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "1FF282D5-2C62-4D46-A8FD-2621B80BEF06",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "济南",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "FAAEA999-9A74-48C7-94C0-F5A15E471D8D",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "青岛",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "97B33889-FE5D-40A6-BFAF-302180ECE831",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "烟台",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "42DD1B19-D9AC-41FB-B7B2-35190F6C647F",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "淄博",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "24FA1FD9-4D32-444E-9B15-B0181F6DD20A",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "枣庄",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "512B423A-9229-4B9D-9F8C-5B3165F750FC",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "东营",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "657F4707-D7BD-44C3-B69B-958CDC898248",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "潍坊",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "0930A0E4-272B-4DE8-AB0A-4A4381E7D6B4",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "威海",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "1847B15C-62FF-471A-B753-F7807F5255F5",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "济宁",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "30266761-2C3B-41DF-8461-0FA96B3590F6",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "泰安",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "9605C8A1-60E9-4339-825C-62396F545C8A",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "日照",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "EA2B874B-2E15-4112-9890-3D1D0744B14F",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "莱芜",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "47F46868-C70A-44D6-A090-B1DFF4C6BD16",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "德州",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "C8A023D1-5DFC-425A-B557-6254C3221F68",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "临沂",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "99A10855-D390-4964-ADCE-8CA1935BA86D",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "聊城",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "E5D46464-B6EF-4FCF-80BB-F1706E782FBA",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "滨州",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "014D92D3-5C3E-4BDE-9DE2-CF28B81E4CBC",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "菏泽",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "893C5C0F-2119-4E3D-AEC6-9AA3A64F0509",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "高密",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "A330AB1B-2886-482A-A307-D31D33092309",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "荷泽",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "D0654095-BD5B-4807-8454-A9E8FF96DA00",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "淮坊",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "33DBBD5D-7EA3-4FD7-8C16-AAB903250AC1",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "即墨",
+      "City_order": 210,
+      "City_type": "sys"
+    },
+    {
+      "id": "05CCF63C-DBEF-4DA0-8B8A-5D87661DC352",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "胶南",
+      "City_order": 220,
+      "City_type": "sys"
+    },
+    {
+      "id": "EBCFD1FA-5B78-4B4E-BEEE-79927B6C56E3",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "莱州",
+      "City_order": 230,
+      "City_type": "sys"
+    },
+    {
+      "id": "D137511B-68A0-4DE9-A5E3-E4D34AA18551",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "林沂",
+      "City_order": 240,
+      "City_type": "sys"
+    },
+    {
+      "id": "926D09C3-C2FF-4EA6-8903-BC82094A5A06",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "临忻",
+      "City_order": 250,
+      "City_type": "sys"
+    },
+    {
+      "id": "B2C9AEFD-762C-4C7E-A454-61362AC139C9",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "龙口",
+      "City_order": 260,
+      "City_type": "sys"
+    },
+    {
+      "id": "8EF8CC73-21CD-4956-970A-0D616599BE62",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "蓬莱",
+      "City_order": 270,
+      "City_type": "sys"
+    },
+    {
+      "id": "E7413620-E2DC-4039-B010-51B60CC3D4A4",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "青州",
+      "City_order": 280,
+      "City_type": "sys"
+    },
+    {
+      "id": "EE89C9A3-EDE5-4E0D-9463-9C28D7DCDDA8",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "乳山",
+      "City_order": 290,
+      "City_type": "sys"
+    },
+    {
+      "id": "1A9C721D-BC4B-424F-89E3-F52958BA359D",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "寿光",
+      "City_order": 300,
+      "City_type": "sys"
+    },
+    {
+      "id": "FE2F3D58-F11B-42EE-975A-F06FC384CF8D",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "滕州",
+      "City_order": 310,
+      "City_type": "sys"
+    },
+    {
+      "id": "49519E02-E4CB-4507-98AC-13EEEFE50E4D",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "文登",
+      "City_order": 320,
+      "City_type": "sys"
+    },
+    {
+      "id": "F6A1120E-C7FD-4340-8969-046D18B0DA51",
+      "Provinces_id": "1F9D0136-045A-40DD-99C4-C3D80C411C6E",
+      "City": "招远",
+      "City_order": 330,
+      "City_type": "sys"
+    },
+    {
+      "id": "94F7BBDB-2517-41C1-8EEB-94704C94EB42",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "太原",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "6C486CE7-5344-4FAF-8ED7-4F29F8176889",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "大同",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "C63B3000-09FD-47EE-947E-4D38B28676F3",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "吕梁地区",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "5F891C19-BE65-4268-824B-1670B2325FD7",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "河津",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "D85FFD95-207C-4847-946F-0871D9369941",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "侯马",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "97E08707-4E6C-44F5-84C8-F8D5112E305A",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "孝义",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "1D2C52E9-BCF6-41B9-AC2D-B2FC48BFAD24",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "榆次",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "69F16B7F-2722-470A-835A-5BC00153F9FA",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "武汉",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "6660AD3D-A4B0-4EB7-84D3-78A8104D3D68",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "黄石",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "A15BA46A-7F4E-4AB2-BF5E-8EE5BB6343C6",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "襄樊",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "92DACAB1-1E1C-408C-8F17-4D5A847D272B",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "十堰",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "B2F16C85-799C-427B-95C3-73EDA3191786",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "荆州",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "9729D6E6-3A4C-49DF-8C6C-01F15CA03D1C",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "宜昌",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "392FD321-41AA-4F05-8E5A-D160858BC5E2",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "荆门",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "95C1FE96-CE91-444A-8C5B-B4BDB6111229",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "鄂州",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "7442ABED-3402-464D-82D9-450B52524970",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "孝感",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "DB02703D-B4D8-4A7E-968C-4C98BE9CEC15",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "黄冈",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "B52726B0-3AD2-4153-84A1-001DCFBCD993",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "咸宁",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "593F47B7-4CE7-4221-9241-98B921C03936",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "随州",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "0D245C19-8D36-48BD-BC87-14EAF543A04B",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "恩施土家族苗族自治州",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "26C3EEF7-506D-49A9-B405-B6A2C55849C8",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "安陆",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "62256029-2287-4CDF-B629-4DDB2AB7BC07",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "恩施",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "51A37EC0-8817-4650-93A3-B27BB82D529D",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "汉口",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "8D119ABF-8CBA-40CA-A5D3-9BA471957AE6",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "汉阳",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "4108CE3A-A345-4C88-B726-E3A50E00B509",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "潜江",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "BC799E2D-2E52-4A6E-9C61-17C5C80D29B4",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "仙桃",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "50ABCC55-2D35-485E-9727-313FFD66ACF6",
+      "Provinces_id": "DCEEB762-840A-4C44-8E0E-4B08672173FC",
+      "City": "株州",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "153142B7-7D64-4EC4-A6D6-292B606CBAC6",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "长沙",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "D0E04640-2BF9-4024-B2ED-3EA0EC472A06",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "株洲",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "4861C7A6-1CA8-4F5A-B3C5-0D98A354C195",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "湘潭",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "4A88E1D3-518C-425D-A05C-8971F9D5EC82",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "衡阳",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "AF2DD3B6-C389-41F8-89F1-DB1D645E4D1C",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "邵阳",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "422403CF-B3E9-4CFE-A460-D0B4675E12D4",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "岳阳",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "76E40506-E11F-46BD-ABFA-A849D555AB19",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "常德",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "8C7A338F-A837-4C13-8D98-0A781D171EBF",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "张家界",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "05D1FD68-60B3-400B-AF75-983FE1C9E237",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "益阳",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "EF36B6EC-1F7D-416D-9342-C4CC54D72A2A",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "郴州",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "269E75B8-6523-4F4B-8820-306A8E748522",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "永州",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "0F651E8C-7B29-474D-8E17-7FC6343CE80D",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "怀化",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "A68A193C-9252-48B0-AB61-2C612C966225",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "娄底",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "1CC4B5DB-66B8-477C-B8D0-F53B75999AEC",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "湘西土家族苗族自治州",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "1EEB8F10-1834-4E3B-96B3-7010AFD17B91",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "株州",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "32346960-B66D-4F19-B6E2-554D514C3D38",
+      "Provinces_id": "7F9ECCF5-884E-44F8-8CE1-50DB8D1E5219",
+      "City": "邵东",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "6238D25E-6F85-40BA-81CA-1F83BE3C9276",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "合肥",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "B7A8B201-5B6C-4429-B143-3196533F9D71",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "芜湖",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "6D3675AA-A2BA-4E7C-8252-E249EF3F20EA",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "蚌埠",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "F54F0A5D-E286-41C4-87B3-21CB8FEB0376",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "淮南",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "E5478B0F-62F6-41D8-9355-6A010DF96A94",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "马鞍山",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "EB3C2736-DC4F-42C6-8D15-AAFEEFBFADAA",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "淮北",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "428A1DDD-34D3-46B4-BFBF-7EC94FBFF2B2",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "铜陵",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "E3F1B0C7-64EA-40E3-94B8-3F85B7F41396",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "安庆",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "EE79D77E-3C66-43CB-BCD9-F4D7E9FEE269",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "黄山",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "E551699D-E279-4DEC-BE25-1893774566C2",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "滁州",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "97D045CC-3BA8-4800-8E8A-BB715A35DD5A",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "阜阳",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "BF531CF3-BC31-46F6-AB66-A4984E6C949F",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "宿州",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "A24EFAE5-255B-4EF7-8692-E31079C512D8",
+      "Provinces_id": "0E4F8254-AB6C-4AA3-B2CF-DEC4D1DBB5B2",
+      "City": "巢湖",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "FE1A345A-42B6-4A0D-92E8-CE291288A704",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "阜新",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "338FBBAC-2D59-4BB8-837C-9B77296EB25B",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "辽阳",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "A3714F10-1B9B-4392-9932-D2ADCFB3E84E",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "铁岭",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "0FEE4C31-85E9-49A4-B104-C8A7B09619B3",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "朝阳",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "0885760B-CF61-49D0-A5B9-2BA5EB7E005D",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "瓦房店",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "82E81A9B-A42B-4EDE-B8AF-E1FD13566CAF",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "呼和浩特",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "68DE4A6A-EC28-487B-AAB9-52C257911A94",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "包头",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "47016734-2153-492D-8852-CBC51D933398",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "乌海",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "E3CA8BE4-7D98-44A5-A1CF-5865B7E6EE75",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "赤峰",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "12B1D948-F0EF-4C1C-81DB-00FC480BEA3C",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "通辽",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "A8D4E81F-33B9-4945-BC4C-F5AF39C52BEF",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "鄂尔多斯",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "2A11AC6C-20F4-4DD0-91AA-7D1900F7B62E",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "乌兰察布盟",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "99DFE7CA-B340-4365-A401-8E96598182F4",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "锡林郭勒盟",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "9906E66C-3BD7-4D39-9988-D4AA8A4AD5B7",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "巴彦淖尔盟",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "3FB0D988-D344-459B-8E6B-DA04B1510A98",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "阿拉善盟",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "95914113-2E95-4E3F-805C-EDF3FCC063F9",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "兴安盟",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "689C7EF9-1C17-4845-885B-2E6D06839CD4",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "巴彦淖尔",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "F85E2D82-B7FE-4BAF-8E68-BFFFF2835C9D",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "呼伦贝尔",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "47E085CE-B399-424E-B8A7-A80C8B3D6890",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "集宁",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "5FE9DC2F-F369-4AD6-B494-73FF91CF9B94",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "乌兰浩特",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "428B3624-5E0F-4E52-A9C8-3B2C11301CF7",
+      "Provinces_id": "BCC6AA79-8379-4542-94B2-92C7C7F1CD5C",
+      "City": "锡林浩特",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "537C83F0-0117-456D-83BC-7CEC7225B1E0",
+      "Provinces_id": "09E6B810-BB48-4C9D-A51D-392393C82CF8",
+      "City": "银川",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "0F372126-E743-46B9-A5B5-9083DE471000",
+      "Provinces_id": "09E6B810-BB48-4C9D-A51D-392393C82CF8",
+      "City": "石嘴山",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "25B62499-6261-4A73-9BB5-DD9EC664DCE4",
+      "Provinces_id": "09E6B810-BB48-4C9D-A51D-392393C82CF8",
+      "City": "吴忠",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "A33C7BEA-9454-4D27-A4B2-88C58374646C",
+      "Provinces_id": "09E6B810-BB48-4C9D-A51D-392393C82CF8",
+      "City": "固原",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "64B04D19-1351-4BE7-A9D9-6AE2C4B0BC54",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "乌鲁木齐",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "14387481-F8BC-4E5B-878B-48054AD3CA67",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "克拉玛依",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "7882902A-0716-4318-8253-9003B2F7DF19",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "吐鲁番地区",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "9F4C2FB7-4F38-4BEE-B0EA-481E8A52385B",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "哈密地区",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "62909441-A8B5-4AFA-AFE3-DE868F82A46E",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "和田地区",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "6A36484A-8502-473B-BBE4-B1F01066B488",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "阿克苏地区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "D7D9D555-4293-4F16-9A2B-DF77B60EA626",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "喀什地区",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "693699FA-8B38-4A62-B15E-08129735AE03",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "克孜勒苏柯尔克孜自治州",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "CB0E12D7-F74D-4E6F-B06B-F04E78024672",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "巴音郭楞蒙古自治州",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "A05668C0-DA5A-4FC0-8FA1-D319D467DB5B",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "昌吉回族自治州",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "5E196C65-47CE-4CFA-B92F-26E60C54882A",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "博尔塔拉蒙古自治州",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "0F7B80D6-C4EF-4EDF-901F-1D2314BDC4DD",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "伊犁哈萨克自治州",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "50B730D2-3481-4B89-872E-E067B2E5DDB6",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "阿克苏",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "311A2131-5A84-462F-AE25-389E32286D2A",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "黄南藏族自治州",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "881E1B7A-E97C-4663-9566-F9B55205DA8A",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "海南藏族自治州",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "BD923569-3D5A-4A63-96E3-5AC487A0D541",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "果洛藏族自治州",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "9183642C-B852-4F69-A852-5A49B901C1A4",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "玉树藏族自治州",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "5147A693-518A-4A1D-B83C-19027E0FA1F8",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "海西蒙古族藏族自治州",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "5BDF4B8F-47C5-4218-B778-425BAC26DC9E",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "格尔木",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "C564BD60-3D89-4D91-8D18-C35B71865464",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "兰州",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "168AF7D5-0F48-4BB1-82FF-D6A4F0109FC1",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "天水",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "FBB0EBD4-6927-4729-9C78-848EC8293716",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "金昌",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "B58B4B65-24BE-45B1-ADA2-7808D13AA456",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "白银",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "88287D14-A8AC-4128-AB4A-50B67D1F9B45",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "嘉峪关",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "897E5AF6-23B0-4C74-B3C1-911772F48146",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "武威",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "B7D89198-E667-44A6-92F7-4D15846F976E",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "张掖",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "051D20C7-DD4F-4020-B5BD-B9F052A2DFCD",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "平凉",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "DBA2607F-95BE-40E1-92A0-E8A8DE847B86",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "酒泉",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "65DCA5F2-566F-450A-B7BB-8ED3D83C784D",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "庆阳",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "F1797F39-ED8E-4BC8-B4C5-4C8B50C1C7D2",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "定西地区",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "288ADAB3-5674-4ED4-A168-8FFF84485CBC",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "陇南地区",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "F47583B7-8D1B-42B1-B728-95DBD55A776F",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "甘南藏族自治州",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "8ADD0792-A84C-4A8A-B815-658C4622C1FE",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "临夏回族自治州",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "2A233116-DBEE-4630-A361-3C91B86958B1",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "嘉峪",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "97BA540A-685F-415C-9635-37A51B6277C8",
+      "Provinces_id": "BC4093D9-6A6E-477F-BAB4-52B330DE81D4",
+      "City": "武威",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "DA358CD9-A2C0-445F-9093-D989D3F8A305",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "西安",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "A64856C7-22F8-4813-AA36-B74E6B646323",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "宝鸡",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "13156EC2-8403-46B4-BAB4-D637ACB51FF6",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "延安",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "C309DE27-B9E2-47AD-82A7-18403AD68110",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "铜川",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "15A6A62D-7E55-4899-B3F0-12900315E50E",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "咸阳",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "ED9CA0F7-1748-44B6-8C91-BBE203780DDB",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "渭南",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "E6772307-79C9-4166-A73B-67D75A380704",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "汉中",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "9A1E54B6-49FA-4080-97BC-76856FB3F9DE",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "榆林",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "99637A5F-CB6D-4821-9695-55D49EB2A55A",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "安康",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "BE492688-3098-48DF-8546-8B3CABA8432B",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "商洛",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "9D2E82BE-858D-487F-A82C-BB5317671957",
+      "Provinces_id": "C4728E77-DE69-41BB-A628-0F4C02DF5D1F",
+      "City": "韩城",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "CC076449-C388-45EA-BD54-A69BE9A36D73",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "石家庄",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "A2B25CD9-1481-4943-917A-24BB5DB3CA26",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "保定",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "4C53A30F-5E04-4DFC-9547-C249FF598C77",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "唐山",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "4B97DD83-9B46-4AA1-807C-66FEBB425796",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "秦皇岛",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "3B0629D4-848F-4B92-9E68-3EE792F8941A",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "邯郸",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "2269A173-B45B-4275-9C9D-7D7BD1CAB914",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "邢台",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "96E6E8CC-52F1-4F65-BF71-1577A456D558",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "张家口",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "4CA7DE9C-F247-469C-BEB7-89641353D331",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "承德",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "8D4D8868-4B8E-4F4A-88A7-E9DD7D1A1A54",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "沧州",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "461DB763-D39B-4540-9826-86530D7A850C",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "廊坊",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "6E868312-1F83-41B8-90A1-C95312EE9E0B",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "衡水",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "036EDC09-2EF2-4501-8C7A-883A1D3C34D2",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "霸州",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "B2639F14-E3CB-4E5C-BA08-C2921FE63C8E",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "青县",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "E84700FB-8A5E-4BC0-A48D-36682E109EB4",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "任丘",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "495CFBA1-AA4E-4169-ACEA-F8ED6FA6F01E",
+      "Provinces_id": "7C7401C9-AE5D-484F-B19E-2B69A8F2034F",
+      "City": "涿州",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "589FAB94-7B21-4A21-83DB-4D9910F9BB3A",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "郑州",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "066A143F-777A-4028-ADED-0B4B53728046",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "洛阳",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "CD3935B4-1D24-415A-A96F-6D2E8ECBA9EF",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "开封",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "10CBAB04-0F91-4FD9-A15C-599D72E07B6F",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "平顶山",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "43430D74-A806-4E79-A2ED-86A636003D12",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "焦作",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "6738681F-A251-453D-BE7A-DCF2CD365F82",
+      "Provinces_id": "B15279E1-EEFE-446C-9034-5C7376E23745",
+      "City": "鹤壁",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "23520F49-4363-4267-A746-D4287F43B65E",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "朔州",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "A0CC8EB6-6354-4BB0-85FA-139DC11B87A3",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "阳泉",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "4BB88286-9D6A-45E2-A968-650735C3B1BC",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "长治",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "37FD4ADB-D400-4FD0-9580-9E2F131D7594",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "晋城",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "151178F3-DD2B-457B-982B-0FE628B8C091",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "忻州",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "D12655AE-0972-4C53-AC98-DDA9086C112A",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "晋中",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "ECC051F1-60DA-4283-B86E-1D1304F3FE8D",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "临汾",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "B3C09BF1-AF9D-4453-9304-595BE5D71132",
+      "Provinces_id": "D50E4BEA-73CF-4089-A95A-E7C88459CCC6",
+      "City": "运城",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "177E60D7-6326-440E-A8E4-74B3180D1F4F",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "东城区",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "DAE939CF-F47F-4089-98C9-0AEED02A6F05",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "西城区",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "6BC1AFA9-AE7C-4CC4-9C2E-6809C7A84D58",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "宣武区",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "6D2FE75C-1122-4B9E-8340-94700ABFEA05",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "崇文区",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "E920CCFB-48A1-4F44-AF96-0985F8450895",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "朝阳区",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "D653BFAC-60E2-4442-9543-CED3FD4B65A5",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "海淀区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "1503E8AD-5830-43C3-8D2B-0147D2FCBB5C",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "丰台区",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "C7176CFA-6802-448F-AB97-939EE3B65880",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "石景山区",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "1B9D7B4E-9969-49AF-8F7C-21843461ECCD",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "门头沟区",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "CC675B49-CDBF-4755-A7B3-CFBE3BDEB830",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "昌平区",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "026F4702-4B42-44A8-8E56-4DC369CFCC19",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "大兴区",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "92D21B94-ADF4-4632-8EFE-1628B47A7B88",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "怀柔区",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "4BCCA7A7-0128-4F75-9616-6262FBABADFE",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "密云县",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "FF8EF6A6-B5CE-497E-B03B-127886D73BB7",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "平谷区",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "8AF11CA5-E03B-4F8A-B665-2AE1502AE635",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "顺义区",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "80C28E8D-3554-4753-B124-F16DA7A4DAE8",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "通州区",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "25F24A79-3496-4EE2-AC73-5C2C83A0D4B8",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "延庆县",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "58F25CBC-CD16-4C9A-9093-583014700219",
+      "Provinces_id": "E046DC72-7828-4C2E-86EC-FDD5642C0FDA",
+      "City": "房山区",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "46DB9E83-52C4-44CB-8138-FAC04E1C0D23",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "黄浦区",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "CF7D4D5E-3267-48E9-B432-3413CCC6F9D0",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "南市区",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "C04A93B1-C29D-4C4B-BE15-8ED77EDB6090",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "卢湾区",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "EA29EC66-2E8C-4434-825D-F993193E6504",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "徐汇区",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "2310720F-1EA3-4308-86CC-F6A0505D9C23",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "长宁区",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "5EB79320-6CA7-4E40-B7A4-B01178F1888E",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "静安区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "C5985FF3-DA75-4766-B915-0BD2F88F591D",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "普陀区",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "116E8B97-746B-47C4-A8DD-B296C3BE05EB",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "金山区",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "B4A24602-9909-4FD7-BEBE-8BD738196D5A",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "闸北区",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "26719753-9C53-4908-A5B2-4ADAFDD653EB",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "虹口区",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "61F2CD61-F19B-4E0C-97EC-7D5A8259B5BD",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "杨浦区",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "A54400A5-A153-4E0F-9500-8E354AEC97BB",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "宝山区",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "5FB4966E-CAB8-4EED-A9F1-5DC1607BF7DA",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "闵行区",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "2B73BDC9-4C49-4543-A352-D07EE3FDC0AA",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "蓟县",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "0E582E68-B709-4F51-BC9B-0E7700F08D78",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "宁河县",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "3F564A61-D21E-47D3-8CA3-C10FA963FC2F",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "静海县",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "B9814B13-37F9-4FCC-8193-A6667CEF1610",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "永川市",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "4694A371-D4A4-4584-B289-2754A6070543",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "黔江区",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "2A9AF3D9-58A1-4B22-A7C8-68AB67642A71",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "涪陵区",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "EF7BF8E3-38D3-45CE-9CEB-B82EC93E7E82",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "万洲区",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "371788AE-EE0C-4B39-A666-A1AD036263F3",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "渝中区",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "72DF1BAD-39A2-4825-BA06-1B2331E8C813",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "大渡口区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "229759FD-7E55-4394-ACA5-A4571FE579B6",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "江北区",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "CEBE34ED-6319-4A7B-B938-BC707AECFEFD",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "沙坪坝区",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "8F0D98FB-21FA-4766-8D97-3C8E063B2FB7",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "九龙坡区",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "B47AD8BE-FB34-443F-84F1-9DF573646A03",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "南岸区",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "CA838A27-A697-4024-97D1-ADF09055984D",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "北碚区",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "ECB2F0DB-25A1-40F3-81EF-DAB984265BD2",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "万盛区",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "37CEA570-8789-4FF4-BCA2-38A9729A8A79",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "双桥区",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "16A81045-1415-4343-8CAC-D99295EF9938",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "渝北区",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "D0F33393-7BF0-43E7-B751-DB5BE687BC16",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "巴南区",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "27702151-3AC4-4934-AC00-E5F002CA93B8",
+      "Provinces_id": "C7ABD4D6-4896-4928-89FB-FB8D8CB84D3C",
+      "City": "长寿区",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "08BC671E-A223-4E03-BD70-3ED3E15422BA",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "哈尔滨",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "67E28AD3-4A6F-4639-B990-9FBB1B2D75B1",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "齐齐哈尔",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "4BCE2A85-2FB5-4645-9708-9AD9DAA9783B",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "牡丹江",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "6639A4DC-416A-4EA4-B0EA-E899E2979293",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "鹤岗",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "8DC61E2A-C8C3-41EB-BF5D-3035A9368A62",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "双鸭山",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "EEB6CAB9-9B63-4633-86BE-8A2CA0E3E54B",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "鸡西",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "E8187930-732A-438F-8482-3665F79FBC41",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "大庆",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "A3002C17-4B45-48A2-868B-0B6980C6D2A9",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "伊春",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "42D75FDF-02A3-4C7E-BAB5-997BD119E91F",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "佳木斯",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "3A7A5F1D-F0ED-42A4-86A9-70AAE0298C1D",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "七台河",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "15EBDD2C-CDD4-48E4-8ABB-905E226D655C",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "黑河",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "3B830325-3894-4C9A-A2C1-13511A804888",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "绥化",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "96B70721-9651-43B1-A119-9C6EDE6EAB61",
+      "Provinces_id": "DC92D9EC-B6B5-4BC2-AE44-EB0C16522FF1",
+      "City": "大兴安岭地区",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "84D42C77-3848-4C58-85F7-18E883366F99",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "长春",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "60909811-1617-48A9-9C35-CD5B23E8BBD8",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "吉林",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "84529288-C5EC-4513-8B9A-7F94B4A9B199",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "四平",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "62508CF8-38C8-4462-BABD-F17AD72926C5",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "辽源",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "33878395-580C-4500-80FA-F79A59693883",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "通化",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "FF27C627-6625-4697-8FD6-1FAF6509DF78",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "白山",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "8077097E-9F97-4D9C-AE61-D7BD21B6556E",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "松原",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "5453CB77-A409-48E9-9BFF-97A00B8F18ED",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "白城",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "6380A3C1-5383-42AC-A855-7D8438914A34",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "延边朝鲜族自治州",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "597BD542-B57C-4F37-B3B4-40A70F501D45",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "高新",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "D29C7012-094D-430C-B0A1-5542A00A5CC5",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "延吉",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "D2EB50A0-219C-4190-B541-4704AEEDAB1C",
+      "Provinces_id": "3B496280-21BC-4EFA-9192-FF276CD173CA",
+      "City": "梅河口",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "6DBC39B6-BB86-437B-A19A-FF53C2A8CE87",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "沈阳",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "1BA2730E-7B4F-46AD-B5AF-8121E89998FB",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "大连",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "DEBE8B6E-4B7D-4052-BE06-A16A768BB23B",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "锦州",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "FD933814-DE97-4107-8DBF-30BE0EE4B931",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "鞍山",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "A5FD24CF-6657-46F2-B1A9-8BD9E4F40659",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "抚顺",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "974B2022-3DA1-4B27-948B-707C16EC499C",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "本溪",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "ED5E005F-57AC-41D9-A964-83F2957406D8",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "丹东",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "C433FC27-76E7-436A-B60D-190DA7B06381",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "葫芦岛",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "3F3EF63C-C052-4245-ABF4-CFFD4AA31C91",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "营口",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "852766B9-87C6-4CB5-A7DF-6499CFA3E179",
+      "Provinces_id": "79F4174B-D73C-4DD8-A354-D005183DAFC9",
+      "City": "盘锦",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "7054D477-045C-4684-A70D-FF53E822468F",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "昌吉",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "3091456A-1355-41E3-B9E4-852B0B6E0A71",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "哈密",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "1FD9C056-3A3B-4C14-A7B2-6970E463C1C4",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "和田",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "EE3AFDBD-F7FC-4C55-8FA5-FD6EDE2FCDB5",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "喀什",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "10DB185F-73FA-4FF0-9367-C3350AF61BB9",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "克拉马依",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "1127DC91-C664-4EDF-86C5-AE0F7767118D",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "库尔勒",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "35B239FC-19D3-4BF6-A229-EAA6023AA852",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "石河子",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "252607C4-5F3E-49E4-8B81-584E2BB3F72F",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "吐鲁番",
+      "City_order": 210,
+      "City_type": "sys"
+    },
+    {
+      "id": "2B08C6F5-C1DD-4369-9773-D32B9411952E",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "乌市",
+      "City_order": 220,
+      "City_type": "sys"
+    },
+    {
+      "id": "3CC7835D-6892-43BF-8F73-3E803032D8CB",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "奎屯",
+      "City_order": 230,
+      "City_type": "sys"
+    },
+    {
+      "id": "FB808B77-C8B7-4480-AB4A-829281AED0C7",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "伊犁",
+      "City_order": 240,
+      "City_type": "sys"
+    },
+    {
+      "id": "5B99044E-FB90-447B-B9FD-2AD4D646D662",
+      "Provinces_id": "2E94BF5D-4729-4239-BC5D-968E538F4D05",
+      "City": "伊宁",
+      "City_order": 250,
+      "City_type": "sys"
+    },
+    {
+      "id": "0C32D758-02B9-4FAF-B0CC-BD9792508024",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "西宁",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "54AD3CFE-D04C-4668-B21E-AFCDB1B883B1",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "海东地区",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "FCD88187-ECC6-4CBE-9708-6759C70C2110",
+      "Provinces_id": "7610FC32-105C-4847-B802-D1ACD7BAA230",
+      "City": "海北藏族自治州",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "3B5A5D56-89C2-4861-B7C8-94E233A6B55C",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "宝坻区",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "560FB77A-774A-4D76-AB5B-E2C88A132729",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "武清区",
+      "City_order": 140,
+      "City_type": "sys"
+    },
+    {
+      "id": "F90DF0D1-AC65-4DAF-9697-ED5D3705CA94",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "北辰区",
+      "City_order": 130,
+      "City_type": "sys"
+    },
+    {
+      "id": "A3C33A64-5700-4F64-80D0-3163410ACB4B",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "津南区",
+      "City_order": 120,
+      "City_type": "sys"
+    },
+    {
+      "id": "E8732A3F-8870-4A66-8E2B-EE26EE3A22FE",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "西青区",
+      "City_order": 110,
+      "City_type": "sys"
+    },
+    {
+      "id": "354A5890-5589-445F-806F-BC5BB46D31C9",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "东丽区",
+      "City_order": 100,
+      "City_type": "sys"
+    },
+    {
+      "id": "C673A084-D271-4D54-8019-D4C72DB80E1A",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "大港区",
+      "City_order": 90,
+      "City_type": "sys"
+    },
+    {
+      "id": "1F14E7C2-8724-430D-9C56-23E0E885D647",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "汉沽区",
+      "City_order": 80,
+      "City_type": "sys"
+    },
+    {
+      "id": "97F6CA67-D5F3-4A64-BC9D-8E7FE58927BC",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "塘沽区",
+      "City_order": 70,
+      "City_type": "sys"
+    },
+    {
+      "id": "69E9D33D-5FA5-4740-AA40-BEC2D13BA775",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "红桥区",
+      "City_order": 60,
+      "City_type": "sys"
+    },
+    {
+      "id": "46F5CE97-0C58-44D5-A457-8BB649A90A68",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "南开区",
+      "City_order": 50,
+      "City_type": "sys"
+    },
+    {
+      "id": "98064DFF-AAAC-4CAA-837E-52EE6CE95AC5",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "河北区",
+      "City_order": 40,
+      "City_type": "sys"
+    },
+    {
+      "id": "46053200-8D27-4418-9C8A-23F0D7E344AA",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "河西区",
+      "City_order": 30,
+      "City_type": "sys"
+    },
+    {
+      "id": "644FBA4D-AD12-49C0-9CD8-DF8F93B4C755",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "河东区",
+      "City_order": 20,
+      "City_type": "sys"
+    },
+    {
+      "id": "7CCDD588-4E5F-42F0-AFB4-2A63D0A7BFBA",
+      "Provinces_id": "7C38C5CC-3008-4D9F-AC83-68AF5C8AE421",
+      "City": "和平区",
+      "City_order": 10,
+      "City_type": "sys"
+    },
+    {
+      "id": "8DC83762-27DD-4C1C-8EC3-E6F7AFE2A660",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "崇明县",
+      "City_order": 200,
+      "City_type": "sys"
+    },
+    {
+      "id": "75024D1A-3CAF-4BA7-BD70-C9903148FD1F",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "南汇县",
+      "City_order": 190,
+      "City_type": "sys"
+    },
+    {
+      "id": "9D3F399B-A88E-4401-B84A-354759C610D2",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "奉贤县",
+      "City_order": 180,
+      "City_type": "sys"
+    },
+    {
+      "id": "B61973BA-74DC-4271-B391-BA46492F8D27",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "青浦县",
+      "City_order": 170,
+      "City_type": "sys"
+    },
+    {
+      "id": "6F06F964-92E1-4912-A043-DD2126C130DD",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "浦东新区",
+      "City_order": 160,
+      "City_type": "sys"
+    },
+    {
+      "id": "C2F33CD9-E371-43AA-8072-5E7F0965A853",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "松江区",
+      "City_order": 150,
+      "City_type": "sys"
+    },
+    {
+      "id": "0FD10C23-B55C-4CE8-AEBD-7370A79E1494",
+      "Provinces_id": "2D1FD454-4F3B-407D-988B-F589AF8A6DD8",
+      "City": "嘉定区",
+      "City_order": 140,
+      "City_type": "sys"
+    }
+  ]

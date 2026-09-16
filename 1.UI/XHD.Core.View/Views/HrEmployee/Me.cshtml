@@ -1,0 +1,205 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+<style type="text/css">
+    .downpanel .layui-select-title span {
+        line-height: 38px;
+    }
+
+    /*继承父类颜色*/
+    .downpanel dl dd:hover {
+        background-color: inherit;
+    }
+
+    #treeclass {
+        width: 190px;
+    }
+
+    body .layui-layer-content {
+        overflow: visible;
+    }
+
+    #toolbar{
+        padding:5px 0;
+    }
+</style>
+
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    @Html.Hidden("dep_id")
+    @Html.Hidden("position_id")
+    @Html.Hidden("canlogin")
+    @Html.Hidden("remarks")
+
+    <div class="layui-card">
+        <div class="layui-card-header">员工信息</div>
+        <div class="layui-card-body">
+            <div class="layui-form-item">  
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">账号</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="uid" id="uid" placeholder="账号" lay-verify="required" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">姓名</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="name" id="name" placeholder="姓名" lay-verify="required" autocomplete="off" class="layui-input" >
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">身份证</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="idcard" id="idcard" placeholder="身份证" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">生日</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="birthday" id="birthday" placeholder="生日" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">部门</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="dep_name" id="dep_name" placeholder="部门" lay-verify="required" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">职务</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="position_name" id="position_name" placeholder="职务" lay-verify="required" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">性别</label>
+                    <div class="layui-input-inline">
+                        <select id="sex" name="sex" autocomplete="off" class="layui-input" disabled>
+                            <option value="">请选择</option>
+                            <option value=1>男</option>
+                            <option value=2>女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">状态</label>
+                    <div class="layui-input-inline">
+                        <select id="status" name="status" lay-verify="required" autocomplete="off" class="layui-input" disabled>
+                            <option value="">请选择</option>
+                            <option value=1>在职</option>
+                            <option value=0>离职</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">邮件</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="email" id="email" placeholder="邮件" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">电话</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="tel" id="tel" placeholder="电话" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">入职日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="EntryDate" id="EntryDate" placeholder="入职日期" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">住址</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="address" id="address" placeholder="住址" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">学历</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="education" id="education" placeholder="学历" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">专业</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="professional" id="professional" placeholder="专业" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">毕业院校</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="schools" id="schools" placeholder="毕业院校" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required" style="padding-left:0px;">排序</label>
+                    <div class="layui-input-inline">
+                        <input type="number" name="sort" id="sort" placeholder="排序" lay-verify="required" autocomplete="off" class="layui-input" disabled>
+                    </div>
+                </div>                
+            </div>
+            
+           @* <div class="layui-form-item">
+                <button type="button" class="layui-btn">确定</button>
+            </div>*@
+
+
+        </div>
+    </div>
+</div>
+
+<script>
+    var id = null;
+    layui.use(['tree', 'form', 'layer', 'tableSelect', 'table',  'laydate'], function () {
+        var form = layui.form,
+            tree = layui.tree,
+            layer = layui.layer,
+            $ = layui.$;
+            var table=layui.table;
+        var laydate = layui.laydate;
+        var numberInput = layui.numberInput;
+        var tableSelect = layui.tableSelect;
+
+        //日期
+        laydate.render({
+            elem: '#birthday'
+            , trigger: 'click' //采用click弹出
+        });
+
+        laydate.render({
+            elem: '#EntryDate'
+            , trigger: 'click' //采用click弹出
+        });
+
+        $.ajax({
+            type: 'get',
+            url: 'Grid',
+            data: {id:"me"},
+            dataType: "json",
+            success: function (res) {//res为相应体,function为回调函数
+                if(res.count==0)
+                {
+                    return;
+                }
+                var data=res.data[0];
+                for (var val in data) {
+                    var value = data[val];
+                    if (isNaN(value) && !isNaN(Date.parse(value))) {
+                        value = value.replace(' 00:00:00', '');
+                    }
+                    $("#" + val).val(value);
+
+                    form.render();
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+            }
+        });
+    });
+</script>

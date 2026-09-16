@@ -1,0 +1,47 @@
+body { margin: 15px 15px 15px 15px; background: #f2f2f2; }
+
+.layuimini-container { border: 1px solid #f2f2f2; border-radius: 5px; background-color: #ffffff }
+
+.layuimini-main { margin: 10px 10px 10px 10px; }
+
+/**必填红点 */
+.layuimini-form > .layui-form-item > .required:after { content: '*'; color: red; position: absolute; margin-left: 4px; font-weight: bold; line-height: 1.8em; top: 6px; right: 5px; }
+
+.layuimini-form > .layui-form-item > .layui-form-label { width: 120px !important; }
+
+.layuimini-form > .layui-form-item > .layui-input-block { margin-left: 150px !important; }
+
+    .layuimini-form > .layui-form-item > .layui-input-block > tip { display: inline-block; margin-top: 10px; line-height: 10px; font-size: 10px; color: #a29c9c; }
+
+/**搜索框*/
+.table-search-fieldset { border: 1px solid #ccc; /* 设置边框宽度、样式和颜色 */ border-radius: 5px; /* 设置边框圆角 */ margin-bottom: 15px; background: #fff; padding: 15px; padding-bottom:0;}
+
+/**自定义滚动条样式 */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+
+::-webkit-scrollbar-track { background-color: transparent; -webkit-border-radius: 2em; -moz-border-radius: 2em; border-radius: 2em; }
+
+::-webkit-scrollbar-thumb { background-color: #999; -webkit-border-radius: 2em; -moz-border-radius: 2em; border-radius: 2em }
+
+/* 按钮组也作为行内块，与输入框对齐 */
+.btn-group-inline { display: inline-block; vertical-align: top; /* 与表单项顶部对齐 */ margin-left: 5px; white-space: nowrap; /* 按钮组内部不换行 */ }
+
+/* 展开/折叠按钮样式微调 */
+#toggleBtn { display: inline-flex; align-items: center; color: #1E9FFF; transition: all 0.2s; user-select: none; white-space: nowrap; margin-left: 5px; vertical-align: middle; }
+    #toggleBtn:hover { color: #0b7ec9; }
+    #toggleBtn i { font-size: 16px; margin-right: 3px; }
+
+/* 重置按钮与搜索按钮间距 */
+.layui-btn-primary { border-color: #d2d2d2; }
+
+/* 折叠区域整体样式，继承inline布局 */
+#extraConditions { border-top: 1px dashed #e6e6e6; padding: 15px 0; }
+    /* 保证折叠区域内的表单项也是行内块 */
+    #extraConditions .layui-form-item.layui-inline { margin-bottom: 5px; /* 稍小底部间距 */ }
+
+.required { color: red; }
+    .required:after { content: '*'; color: red; }
+
+.layuimini-card { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; background: #fff; box-shadow: 0 0 1px rgba(0,0,0,.1); }
+.layuimini-card-header { position: relative; height: 42px; line-height: 42px; padding: 0 15px; border-bottom: 1px solid #ccc; color: #333; border-radius: 2px 2px 0 0; font-size: 14px; }
+.layuimini-card-body { position: relative; padding: 10px 15px; line-height: 24px; }

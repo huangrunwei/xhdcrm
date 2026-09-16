@@ -1,0 +1,235 @@
+﻿@{
+    ViewData["Title"] = "MenuAdd";
+}
+
+<style>
+    /* 左右卡片间隔 */
+    .config-card { margin-right: 15px; }
+    .upload-card { margin-left: 15px; }
+    /* 右侧上传区域内部左右布局 */
+    .upload-inner { display: flex; align-items: flex-start; gap: 20px; }
+    .preview-area { flex-shrink: 0; width: 150px; }
+    .preview-img { width: 100%; height: auto; box-shadow: 0px 0px 5px rgba(0,0,0,0.3); border-radius: 4px; }
+    .upload-controls { flex: 1; }
+    /* 响应式：小屏幕时垂直排列 */
+    @@media (max-width: 768px) {
+        .upload-inner { flex-direction: column; }
+    }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id")
+    <div class="layui-row">
+        <!-- 左侧卡片：基本信息配置 -->
+        <div class="layui-col-md6">
+            <div class="layui-card config-card">
+                <div class="layui-card-header">基本信息</div>
+                <div class="layui-card-body">
+                    <div class="layui-form">
+                        <div class="layui-form-item">
+                            <div class="layui-input-group">
+                                <div class="layui-input-split layui-input-prefix">
+                                    公司名
+                                </div>
+                                <input type="text" class="layui-input layui-disabled" readonly="readonly" id="T_Company">
+                                <div class="layui-input-split layui-input-suffix" style="cursor: pointer;">
+                                    <i class="layui-icon layui-icon-edit" lay-on="config-company"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="layui-form-item">
+                            <div class="layui-input-group">
+                                <div class="layui-input-split layui-input-prefix">
+                                    天地图TK
+                                </div>
+                                <input type="text" class="layui-input layui-disabled" readonly="readonly" id="T_MapKey">
+                                <div class="layui-input-split layui-input-suffix" style="cursor: pointer;">
+                                    <i class="layui-icon layui-icon-edit" lay-on="config-mapkey"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右侧卡片：Logo上传 -->
+        <div class="layui-col-md6">
+            <div class="layui-card upload-card">
+                <div class="layui-card-header">Logo上传</div>
+                <div class="layui-card-body">
+                    <div class="upload-inner">
+                        <!-- 左侧：图片预览 -->
+                        <div class="preview-area">
+                            <img class="preview-img" id="ID-upload-demo-img" src="" alt="Logo预览">
+                            <div id="ID-upload-demo-text" style="text-align: center; margin-top: 5px;"></div>
+                        </div>
+                        <!-- 右侧：上传按钮 + 进度条 -->
+                        <div class="upload-controls">
+                            <button type="button" class="layui-btn" id="ID-upload-demo-btn">
+                                <i class="layui-icon layui-icon-upload"></i> 选择图片
+                            </button>
+                            <div style="margin-top: 15px;">
+                                <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="filter-demo">
+                                    <div class="layui-progress-bar" lay-percent=""></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var id = null;
+    layui.use(['element', 'tree', 'form', 'layer', 'util','upload'], function () {
+        var element = layui.element,
+            tree = layui.tree,
+            form = layui.form,
+            layer = layui.layer,
+            $ = layui.$;
+        var util = layui.util;
+        var upload = layui.upload;
+
+         //事件
+        util.on('lay-on',
+            {
+                "config-company": function () {
+                    layer.prompt({ title: '公司名配置', formType: 0, value: $("#T_Company").val() }, function (text, index) {
+                        layer.close(index);
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "Save",
+                            data: { key: 'sys_name', value: text },
+                            dataType: "json",
+                            success: function (res) {
+                                if (res.code == 0) {
+                                    $("#T_Company").val(text);
+                                    layer.msg('保存成功', { icon: 1 });
+                                } else {
+                                    layer.alert(res.msg, { icon: 5 });
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    });
+                },
+                "config-mapkey": function () {
+                    layer.prompt({ title: '天地图TK配置', formType: 0, value: $("#T_MapKey").val() }, function (text, index) {
+                        layer.close(index);
+
+                        $.ajax({
+                            type: 'POST',
+                            url: "Save",
+                            data: { key: 'map_key', value: text },
+                            dataType: "json",
+                            success: function (res) {
+                                if (res.code == 0) {
+                                    $("#T_MapKey").val(text);
+                                    layer.msg('保存成功', { icon: 1 });
+                                } else {
+                                    layer.alert(res.msg, { icon: 5 });
+                                }
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    });
+                }
+            }
+        );
+
+        // 加载配置数据
+        $.ajax({
+            type: 'POST',
+            url: "Grid",
+            dataType: "json",
+            success: function (res) {
+                if (res.code == 0) {
+                    var data = res.data;
+
+                    let text = "{";
+                    for (var i = 0; i < data.length; i++) {
+                        text += '"' + data[i].sys_key + '":"' + (data[i].sys_value || '') + '"';
+                        if (i < data.length - 1) {
+                            text += ",";
+                        }
+                    }
+                    text += "}";
+
+                    var infos = eval('(' + text + ')');
+
+                    console.log(infos);
+
+                    $("#T_Company").val(infos.sys_name || '');
+                    $("#T_MapKey").val(infos.map_key || '');
+                    $("#ID-upload-demo-img").attr("src", infos.sys_logo || '');
+                } else {
+                    layer.alert(res.msg, { icon: 5 });
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+            }
+        });
+
+        var uploadInst = upload.render({
+            elem: '#ID-upload-demo-btn',
+            url: '/upload/Image',
+            before: function (obj) {
+                obj.preview(function (index, file, result) {
+                    $('#ID-upload-demo-img').attr('src', result);
+                });
+
+                element.progress('filter-demo', '0%');
+                layer.msg('上传中', { icon: 16, time: 0 });
+            },
+            done: function (res) {
+                if (res.code > 0) {
+                    return layer.msg('上传失败');
+                }
+                
+                $('#ID-upload-demo-text').html('');
+                var url = res.location;
+
+                $.ajax({
+                    type: 'POST',
+                    url: "Save",
+                    data: { key: 'sys_logo', value: url },
+                    dataType: "json",
+                    success: function (saveRes) {
+                        if (saveRes.code == 0) {
+                            $('#ID-upload-demo-img').attr('src', url);
+                            layer.msg('Logo保存成功', { icon: 1 });
+                        } else {
+                            layer.alert(saveRes.msg, { icon: 5 });
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        layer.alert('保存Logo失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                    }
+                });
+            },
+            error: function () {
+                var demoText = $('#ID-upload-demo-text');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function () {
+                    uploadInst.upload();
+                });
+            },
+            progress: function (n, elem, e) {
+                element.progress('filter-demo', n + '%');
+                if (n == 100) {
+                    layer.msg('上传完毕', { icon: 1 });
+                }
+            }
+        });
+    });
+</script>

@@ -1,0 +1,231 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="layuimini-card">
+    <div class="layui-card-body">
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加</button>
+                <button class="layui-btn layui-btn-sm " lay-event="btn-expand">全部展开</button>
+                <button class="layui-btn layui-btn-sm " lay-event="btn-fold">全部折叠</button>
+            </div>
+        </script>
+
+        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-xs" lay-event="info">详情</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    layui.use(['table', 'treetable'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+
+        // 渲染表格
+        layer.load(2);
+
+
+        var grid = function () {
+            treetable.render({
+                treeColIndex: 1,
+                treeSpid: 'root',
+                treeIdName: 'id',
+                treePidName: 'parentid',
+                elem: '#munu-table',
+                url: 'Grid',
+                page: false,
+                toolbar: '#toolbarDemo',
+                defaultToolbar: ['filter'],
+                cols: [[
+                    { type: 'numbers',title:"序号"  },
+                    { field: 'dep_name', minWidth: 200, title: '部门名称' },
+                    { field: 'dep_chief', width: 100, title: '负责人' },
+                    { field: 'dep_tel', width: 200, title: '电话' },
+                    { field: 'dep_order', width: 80, title: '排序' },
+
+                    { templet: '#auth-state', width: 200, align: 'center', title: '操作' }
+                ]],
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
+
+        grid();
+
+        /**
+        * toolbar监听事件
+        */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                addMenu();
+                return;
+            }
+            if (obj.event === 'btn-expand') {
+                treetable.expandAll('#munu-table');
+                return;
+            }
+
+            if (obj.event === 'btn-fold') {
+                treetable.foldAll('#munu-table');
+                return;
+            }
+        });
+
+
+
+        //监听工具条
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                    del(data.id);
+                    layer.close(index);
+                });
+
+                //layer.msg('删除' + data.id);
+            }
+            else if (layEvent === 'edit') {
+                if (data.isMenu == 1) {
+                    return;
+                }
+                addMenu(data);
+            }
+            else if (layEvent === "info") {
+                info(data);
+            }
+        });
+
+        function info(data) {
+            console.log(data);
+
+            var index = layui.layer.open({
+                title: "详情",
+                type: 2,
+                anim: 1,
+                area: ['80%', '80%'],
+                maxmin: true,
+                content: "Add",
+                btn: ['关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+                    if (data) {
+                        for (var val in data) {
+                            var value = data[val];
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            body.find("#" + val).val(value);
+                        }
+                    }
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+        function del(id) {
+            var url = "del";
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: { id: id },
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                    grid();
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        }
+
+
+        //添加目录
+        function addMenu(edit) {
+            var tit = "添加";
+            var id;
+            if (edit) {
+                tit = "编辑";
+                id=edit.id;
+                console.log(edit);
+            }
+            var index = layui.layer.open({
+                title: tit,
+                type: 2,
+                anim: 1,
+                area: ['600px', '550px'],
+                maxmin: true,
+                content: "Add?id="+id,
+                btn: ['确定', '关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+                    if (edit) {
+                       for (var val in edit) {
+                            var value = edit[val];
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            body.find("#" + val).val(value);
+                        }
+
+                    }
+                },
+                yes: function (index, layero) {
+                    //var res = window["layui-layer-iframe" + index].callbackdata();
+                    ////打印返回的值，看是否有我们想返回的值。
+                    //console.log(res);
+                    //layer.close(index);
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'LAY-user-front-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                    //监听提交
+                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                        var field = data.field; //获取提交的字段
+
+                        console.log(data.field);
+
+                        layer.close(index); //关闭弹层
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Save',
+                            data: data.field,
+                            dataType: "json",
+                            success: function (res) {//res为相应体,function为回调函数
+                                grid();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    });
+
+                    submit.trigger('click');
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+
+    });
+</script>

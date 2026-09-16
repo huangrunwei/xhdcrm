@@ -1,0 +1,154 @@
+﻿
+@{
+    ViewData["Title"] = "Auth";
+}
+
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div>
+            <table id="munu-table" class="layui-table" lay-filter="munu-table"></table>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var role_id = getparastr("id");
+
+    layui.use(['table', 'treetable', 'form'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var form = layui.form;
+        var treetable = layui.treetable;
+
+        // 渲染表格
+        layer.load(2);
+        treetable.render({
+            treeColIndex: 1,
+            treeSpid: 'root',
+            treeIdName: 'id',
+            treePidName: 'parentid',
+            elem: '#munu-table',
+            url: '/SysAuth/grid?role_id=' + role_id,
+            page: false,
+            cols: [[
+                { type: 'numbers' },
+                { field: 'title', width: 200, title: '目录名称' },
+                {
+                    field: 'btn', width: 400, title: '按钮权限', templet: function (t) {
+                        var list = t.btn;
+                        var html = [];
+
+                        for (var i = 0; i < list.length; i++) {
+                            var btn = list[i];
+                            html.push('<input type="checkbox" name="' + btn.id + '" id="' + btn.id + '" title="' + btn.title + '"  lay-filter="btnauth"');
+
+                            if (btn.auth_on == 1) {
+                                html.push(' checked  ');
+                            }
+
+                            html.push(' >');
+
+                            
+                        }
+                        return html.join('');
+                    }
+                },
+
+                //{
+                //    field: 'isMenu', width: 80, align: 'center', templet: function (d) {
+                //        if (d.isMenu == 1) {
+                //            return '<span class="layui-badge layui-bg-gray">按钮</span>';
+                //        }
+                //        if (d.parentId == "root") {
+                //            return '<span class="layui-badge layui-bg-blue">目录</span>';
+                //        } else {
+                //            return '<span class="layui-badge-rim">菜单</span>';
+                //        }
+                //    }, title: '类型'
+                //},
+                {
+                    field: 'isMenu', width: 80, align: 'center', templet: function (d) {
+                        if (d.auth_on == 1) {
+                            return '<input type="checkbox" name="IsLock" value="' + d.id + ' " lay-filter="IsLock" lay-skin="switch" lay-text="是|否" checked>';
+                        }
+                        else {
+                            return '<input type="checkbox" name="IsLock" value="' + d.id + ' " lay-filter="IsLock" lay-skin="switch" lay-text="是|否">';
+                        }
+                    }, title: '授权'
+                }
+            ]],
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+
+        console.log(table);
+
+        form.on('switch(IsLock)', function (data) {
+            console.log(data);
+
+            var loading = layer.msg('正在提交', { icon: 16, shade: 0.3, time: 0 });
+            $.ajax({
+                type: 'POST',
+                url: "/SysAuth/save",
+                data: { role_id: getparastr("id"), auth_id: data.value, auth_on: data.elem.checked ? 1 : 0 },
+                dataType: "json",
+                success: function (obj) {//res为相应体,function为回调函数
+                    layer.close(loading);
+                    if (obj.code == 0) {
+
+                    }
+                    else {
+                        layer.alert(obj.msg);
+                        var swt = $(data.elem);
+                        swt.prop('checked', !data.elem.checked); //修改switch开关
+                        layui.form.render();//刷新表格
+                        return;
+
+                    }
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        });
+
+        form.on('checkbox(btnauth)', function (data) {
+            console.log(data);
+            //var auth_on= data.elem.checked ? 1 : 0; // 获取值并判断是否选中
+            //console.log(auth_on); // 打印值，或者在需要时使用
+
+            //var id = $(data.elem).attr("id");
+
+            //console.log("id=>" + id);
+            var loading = layer.msg('正在提交', { icon: 16, shade: 0.3, time: 0 });
+            $.ajax({
+                type: 'POST',
+                url: "/SysAuth/save",
+                data: { role_id: getparastr("id"), auth_id: $(data.elem).attr("id"), auth_on: data.elem.checked ? 1 : 0 },
+                dataType: "json",
+                success: function (obj) {//res为相应体,function为回调函数
+                    layer.close(loading);
+                    if (obj.code == 0) {
+
+                    }
+                    else {
+                        layer.alert(obj.msg);
+                        var swt = $(data.elem);
+                        swt.prop('checked', !data.elem.checked); //修改switch开关
+                        layui.form.render();//刷新表格
+                        return;
+
+                    }
+
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        });
+
+    });
+</script>

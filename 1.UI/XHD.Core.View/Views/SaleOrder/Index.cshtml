@@ -1,0 +1,484 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+
+<div class="table-search-fieldset">
+    <div>
+        <form class="layui-form layui-form-pane" action="">
+
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">客户</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="cus_name" id="cus_name" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">订单时间</label>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <input type="text" name="date1" id="date1" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline" style="width: 100px;">
+                    <input type="text" name="date2" id="date2" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+
+            <!-- 按钮组 + 展开/折叠，单独一个行内块容器 -->
+            <div class="btn-group-inline">
+                <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon layui-icon-error"></i> 重置</button>
+                <!-- 展开/折叠按钮 -->
+                <a id="toggleBtn" style="cursor:pointer;">
+                    <i class="layui-icon layui-icon-down"></i>
+                    <span>展开</span>
+                </a>
+            </div>
+
+
+            <div id="extraConditions" style="display: none;">
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">成交人</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="employee" id="employee" placeholder="成交人" autocomplete="off" class="layui-input">
+                        <input type="text" name="emp_id" id="emp_id" style="display:none;">
+                    </div>
+                </div>
+                <div class="layui-form-item layui-inline">
+                    <label class="layui-form-label " style="padding-left:0px;">订单状态</label>
+                    <div class="layui-input-inline">
+                        <select id="Order_status_id" name="Order_status_id" autocomplete="off" class="layui-input">
+                            <option value=""></option>
+                        </select>
+                    </div>
+                </div>
+
+            </div>
+        </form>
+    </div>
+    
+</div>
+<div class="layuimini-card">
+    <div class="layui-card-body">
+
+        <script type="text/html" id="toolbarDemo">
+                    <div class="layui-btn-container">
+                            <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加</button>
+
+                    </div>
+        </script>
+
+        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+    </div>
+</div>
+<!-- 操作列 -->
+<script type="text/html" id="auth-state">
+    <a class="layui-btn layui-btn-xs" lay-event="info">详情</a>
+    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
+    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+</script>
+
+<script>
+    layui.use(['table', 'treetable', 'form', 'laydate', 'tableSelect'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var tableSelect = layui.tableSelect;
+
+        // 渲染表格
+        layer.load(2);
+        table.render({
+            elem: '#munu-table',
+            url: 'Grid',
+            page: false,
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter'],
+            id: "mainGrid4",
+            cols: [[
+                { type: 'numbers', fixed: 'left' ,title:"序号" },
+                {
+                    field: 'cus_name', width: 250, title: '客户', fixed: 'left', templet: function (t) {
+                        if (t.customer) {
+                            return t.customer.cus_name;
+                        }
+                        return "";
+                    }
+                },
+                { field: 'sn', width: 220, title: '订单号' },
+                {
+                    field: 'Order_date', width: 120, title: '订单时间', templet: function (item) {
+                        var value = item.Order_date;
+                        if (isNaN(value) && !isNaN(Date.parse(value))) {
+                            value = value.split(" ")[0];
+                        }
+                        return value;
+                    }
+                },
+                {
+                    field: 'Order_status_id', width: 120, title: '订单状态', templet: function (item) {
+                        if (item.OrderStatus) {
+                            return item.OrderStatus.params_name;
+                        }
+                    }
+                },
+                {
+                    field: 'pay_type_id', width: 120, title: '支付类别', templet: function (item) {
+                        if (item.PayType) {
+                            return item.PayType.params_name;
+                        }
+                    }
+                },
+                { 
+                    field: 'Order_amount', width: 150, title: '订单金额', align: 'right' ,templet:function(item){
+                        return toMoney(item.Order_amount);
+                    }
+                },
+                {
+                    field: 'discount_amount', width: 150, title: '优惠金额', align: 'right' ,templet:function(item){
+                        return toMoney(item.discount_amount);
+                    }
+                },
+                {
+                    field: 'total_amount', width: 150, title: '总计金额', align: 'right' ,templet:function(item){
+                        return toMoney(item.total_amount);
+                    }
+                },
+                {
+                    field: 'receive_money', width: 150, title: '已收金额', align: 'right' ,templet:function(item){
+                        return toMoney(item.receive_money);
+                    }
+                },
+                {
+                    field: 'arrears_money', width: 150, title: '未收金额', align: 'right' ,templet:function(item){
+                        return toMoney(item.arrears_money);
+                    }
+                },
+                {
+                    field: 'invoice_money', width: 150, title: '已开发票', align: 'right' ,templet:function(item){
+                        return toMoney(item.invoice_money);
+                    }
+                },
+                {
+                    field: 'arrears_invoice', width: 150, title: '未开发票', align: 'right' ,templet:function(item){
+                        return toMoney(item.arrears_invoice);
+                    }
+                },
+                { field: 'create_time', width: 180, title: '创建时间' },
+                {
+                    field: 'creater', width: 150, title: '创建人', templet: function (t) {
+                        if (t.creater) {
+                            return t.creater.name;
+                        }
+                        return "";
+                    }
+                },
+                { templet: '#auth-state', width: 200, align: 'center', fixed: "right", title: '操作', fixed: 'right' }
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        /**
+        * toolbar监听事件
+        */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                add();
+                return;
+            }
+        });
+
+
+
+        //监听工具条
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            var layEvent = obj.event;
+
+            if (layEvent === 'del') {
+                layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
+                    del(data.id);
+                    layer.close(index);
+                });
+
+                //layer.msg('删除' + data.id);
+            }
+            else if (layEvent === 'edit') {
+                if (data.isMenu == 1) {
+                    return;
+                }
+                add(data);
+            }
+            else if (layEvent === "info") {
+                info(data);
+            }
+        });
+
+        function info(data) {
+            var index = layui.layer.open({
+                title: "详情",
+                type: 2,
+                anim: 1,
+                area: ['80%', '80%'],
+                maxmin: true,
+                content: "Add?id=" + data.id,
+                btn: ['关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+                    if (data) {
+                        for (var val in data) {
+                            var value = data[val];
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            body.find("#" + val).val(value);
+                        }
+                        body.fine("#order_status_val").val(data.Order_status_id);
+                        body.find("#customer_val").val(data.customer_id);
+                        body.find("#customer_name").val(data.customer.cus_name);
+                    }
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+
+        function del(id) {
+            $.ajax({
+                type: 'POST',
+                url: "Delete",
+                data: { id: id },
+                dataType: "json",
+                success: function (res) {//res为相应体,function为回调函数
+                    if (res.code == 0) {
+                        f_reload();
+                    }
+                    else {
+                        layer.alert(res.msg, { icon: 5 });
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                }
+            });
+        }
+
+
+        //添加目录
+        function add(edit) {
+            var tit = "添加";
+            if (edit) {
+                tit = "编辑";
+            }
+
+            var id = "";
+            if (edit) {
+                id = edit.id;
+            }
+
+
+            var index = layui.layer.open({
+                title: tit,
+                type: 2,
+                anim: 1,
+                area: ['80%', '80%'],
+                maxmin: true,
+                content: "Add?id=" + id,
+                btn: ['确定', '关闭'],
+                success: function (layero, index) {
+                    var iframe = window["layui-layer-iframe" + index];
+                    var body = layui.layer.getChildFrame('body', index);
+                    if (edit) {
+                        for (var val in edit) {
+                            var value = edit[val];
+                            if (isNaN(value) && !isNaN(Date.parse(value))) {
+                                value = value.replace(' 00:00:00', '');
+                            }
+                            body.find("#" + val).val(value);
+                        }
+                        body.find("#customer_val").val(edit.customer_id);
+                        body.find("#customer_name").val(edit.customer.cus_name);
+                        body.find("#pay_type_val").val(edit.pay_type_id);
+                        body.find("#Order_status_val").val(edit.Order_status_id);
+                        body.find("#employee").val(edit.employee.name);
+
+                        if(edit.Order_date)
+                        {
+                             body.find("#Order_date").val(edit.Order_date.split(" ")[0]);
+                        }
+                    }
+                },
+                yes: function (index, layero) {
+                    var res = window["layui-layer-iframe" + index].f_save();
+                    //var res = window["layui-layer-iframe" + index].callbackdata();
+                    ////打印返回的值，看是否有我们想返回的值。
+                    //console.log(res);
+                    //layer.close(index);
+                    var iframeWindow = window['layui-layer-iframe' + index]
+                        , submitID = 'LAY-user-front-submit'
+                        , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                    //监听提交
+                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                        var field = data.field; //获取提交的字段
+
+                        console.log(data.field);
+
+                        layer.close(index); //关闭弹层
+
+                        $.ajax({
+                            type: 'POST',
+                            url: 'Save',
+                            data: data.field,
+                            dataType: "json",
+                            success: function (res) {//res为相应体,function为回调函数
+                                f_reload();
+                            },
+                            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                            }
+                        });
+                    });
+
+                    submit.trigger('click');
+                },
+                btn2: function (index, layero) {
+                    layer.close(index);
+                }
+
+            });
+        }
+
+        function f_reload(id) {
+            $("#btn_serch").click();
+        }
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var curr = $(".layui-laypage-skip").find("input").val();
+            if (!curr) {
+                curr = 1;
+            }
+
+            //var result = JSON.stringify(data.field);
+            //layer.alert(result, {
+            //    title: '最终的搜索信息'
+            //});
+
+            //执行搜索重载
+            table.reload('mainGrid4', {
+                page: {
+                    curr: curr
+                }
+                , where: data.field
+            }, 'data');
+
+            return false;
+        });
+
+        //日期
+        laydate.render({
+            elem: '#date1'
+            , trigger: 'click' //采用click弹出
+        });
+
+        laydate.render({
+            elem: '#date2'
+            , trigger: 'click' //采用click弹出
+        });
+
+        tableSelect.render({
+            elem: '#employee',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#emp_id").val(ids.join(','));
+
+
+            }
+        })
+
+        //下拉
+        $.ajax({
+            url: "/SysParam/Combo",
+            data: { type: 'order_status' },
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                var data = data.data;
+                var category = $('#Order_status_id');
+                category.html("");
+                category.append('<option value="">请选择</option>');
+                for (var i = 0; i < data.length; i++) {
+
+                    console.log(data[i]);
+                    category.append("<option value='" + data[i]["id"] + "'>" + data[i]["params_name"] + "</option>");
+                }
+
+                form.render("select");
+            },
+        });
+
+        // 展开/折叠额外条件
+        $('#toggleBtn').on('click', function () {
+            var $extra = $('#extraConditions');
+            var $icon = $(this).find('i');
+            var $span = $(this).find('span');
+
+            if ($extra.is(':visible')) {
+                $extra.slideUp(200);
+                $icon.removeClass('layui-icon-up').addClass('layui-icon-down');
+                $span.text('展开');
+            } else {
+                $extra.slideDown(200, function () {
+                    form.render('select'); // 重新渲染下拉框
+                });
+                $icon.removeClass('layui-icon-down').addClass('layui-icon-up');
+                $span.text('收起');
+            }
+        });
+
+    });
+</script>

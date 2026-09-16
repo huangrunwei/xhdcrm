@@ -1,0 +1,522 @@
+﻿@{
+    ViewData["Title"] = "Index";
+}
+
+<div class="table-search-fieldset">
+   
+    <div>
+        <form class="layui-form layui-form-pane" action="">
+            <input type="text" name="customer_ids" id="customer_ids" style="display:none;">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">转出人</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="old_emp" id="old_emp" autocomplete="off" class="layui-input">
+                    <input type="text" name="old_emp_id" id="old_emp_id" style="display:none;">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">接收人</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="new_emp" id="new_emp" autocomplete="off" class="layui-input">
+                    <input type="text" name="new_emp_id" id="new_emp_id" style="display:none;">
+                </div>
+            </div>
+
+            <!-- 按钮组 + 展开/折叠，单独一个行内块容器 -->
+            <div class="btn-group-inline">
+                <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon layui-icon-error"></i> 重置</button>
+                <!-- 展开/折叠按钮 -->
+                <a id="toggleBtn" style="cursor:pointer;">
+                    <i class="layui-icon layui-icon-down"></i>
+                    <span>展开</span>
+                </a>
+            </div>
+
+
+            <div id="extraConditions" style="display: none;">
+                <div class="layui-form-item">
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">行业</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_industry_id" name="cus_industry_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_industry = ViewData["cus_industry"] as Dictionary<string, string>;
+
+                                    if (cus_industry != null && cus_industry.Any())
+                                    {
+                                        foreach (var item in cus_industry)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">类型</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_type_id" name="cus_type_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_type = ViewData["cus_type"] as Dictionary<string, string>;
+
+                                    if (cus_type != null && cus_type.Any())
+                                    {
+                                        foreach (var item in cus_type)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">级别</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_level_id" name="cus_level_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_level = ViewData["cus_level"] as Dictionary<string, string>;
+
+                                    if (cus_level != null && cus_level.Any())
+                                    {
+                                        foreach (var item in cus_level)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">来源</label>
+                        <div class="layui-input-inline">
+                            <select id="cus_source_id" name="cus_source_id">
+                                <option value="">请选择</option>
+                                @{
+                                    var cus_source = ViewData["cus_source"] as Dictionary<string, string>;
+
+                                    if (cus_source != null && cus_source.Any())
+                                    {
+                                        foreach (var item in cus_source)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">省份</label>
+                        <div class="layui-input-inline">
+                            <select id="Provinces_id" name="Provinces_id" lay-filter="Provinces">
+                                <option value="">请选择</option>
+                                @{
+                                    var Province = ViewData["Province"] as Dictionary<string, string>;
+
+                                    if (Province != null && Province.Any())
+                                    {
+                                        foreach (var item in Province)
+                                        {
+                                            <option value="@item.Key">@item.Value</option>
+                                        }
+                                    }
+                                }
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">城市</label>
+                        <div class="layui-input-inline">
+                            <select id="City_id" name="City_id">
+                                <option value="">请选择</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">状态</label>
+                        <div class="layui-input-inline">
+                            <select id="isPrivate" name="isPrivate" autocomplete="off" class="layui-input">
+                                <option value="">请选择</option>
+                                <option value=0>私客</option>
+                                <option value=1>公客</option>
+                            </select>
+                        </div>
+                    </div>
+                   
+                    <div class="layui-inline">
+                        <label class="layui-form-label">创建时间</label>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="date1" id="date1" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                        <div class="layui-form-mid">-</div>
+                        <div class="layui-input-inline" style="width: 100px;">
+                            <input type="text" name="date2" id="date2" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layuimini-card">
+    <div class="layui-card-body">
+        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+    </div>
+</div>
+
+<script>
+
+    layui.use(['table', 'treetable', 'form', 'laydate', 'tableSelect'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var treetable = layui.treetable;
+        var form = layui.form;
+        var laydate = layui.laydate;
+        var tableSelect = layui.tableSelect;
+
+        // 渲染表格
+        layer.load(2);
+        table.render({
+            elem: '#munu-table',
+            url: '/Customer/Grid?type=bath',
+            //toolbar: '#toolbarDemo',
+            //defaultToolbar: ['filter', 'print', 'exports'],
+            id: "mainGrid4",
+            cols: [[
+                { type: 'checkbox', fixed: 'left'},
+                { type: 'numbers', fixed: 'left',title:"序号"  },
+                {
+                    field: 'cus_name', width: 250, title: '客户名', fixed: 'left', templet: function (item) {
+                        var html = "<a href='javascript:void(0)' onclick= CusInfo('" + item.id + "','【客户】" + item.cus_name + "')> ";
+                        html += "<i class='fa fa-user'></i> ";
+                        if (item.cus_name) {
+                            html += item.cus_name;
+                        }
+                        html += "</a>";
+
+                        return html;
+                    }
+                },
+                { field: 'sn', width: 200, title: '编号' },
+                {
+                    field: 'isPrivate', width: 80, title: '类型', align: "center", templet: function (t) {
+                        switch (t.isPrivate) {
+                            case 1: return '<div style="background:#F00;Color:#FFF;">公客</div>';
+                            case 0: return '<div style="background:#0F0;Color:#000;">私客</div>';
+                            default: return "";
+                        }
+                    }
+                },
+                {
+                    field: 'cus_tel', width: 150, title: '电话', templet: function (item) {
+                        var html = "<i class='fa fa-phone'></i> ";
+                        if (item.cus_tel)
+                            html += item.cus_tel;
+
+                        return html;
+                    }
+                },
+                {
+                    field: 'employee', width: 150, title: '员工', templet: function (t) {
+                        if (t.Employee) {
+                            if (t.Employee.department) {
+                                return "【" + t.Employee.department.dep_name + "】" + t.Employee.name;
+                            }
+                            return t.Employee.name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_industry', width: 100, title: '行业', templet: function (t) {
+                        if (t.cus_industry) {
+                            return t.cus_industry.params_name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_source', width: 100, title: '来源', templet: function (t) {
+                        if (t.cus_source) {
+                            return t.cus_source.params_name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_type', width: 100, title: '类别', templet: function (t) {
+                        if (t.cus_type) {
+                            return t.cus_type.params_name;
+                        }
+                        return "";
+                    }
+                },
+                {
+                    field: 'cus_level', width: 100, title: '级别', templet: function (t) {
+                        if (t.cus_level) {
+                            return t.cus_level.params_name;
+                        }
+                        return "";
+                    }
+                },
+                { field: 'lastfollow', width: 180, title: '最后跟进' },
+                { field: 'create_time', width: 180, title: '创建时间' },
+                {
+                    field: 'Creater', width: 150, title: '创建人', templet: function (t) {
+                        if (t.Creater) {
+                            return t.Creater.name;
+                        }
+                        return "";
+                    }
+                }
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+
+        function f_reload(id) {
+            $("#btn_serch").click();
+        }
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var curr = $(".layui-laypage-skip").find("input").val();
+            if (!curr) {
+                curr = 1;
+            }
+
+            //执行搜索重载
+            table.reload('mainGrid4', {
+                page: {
+                    curr: curr
+                }
+                , where: data.field
+            }, 'data');
+
+            return false;
+        });
+
+        //日期
+        laydate.render({
+            elem: '#date1'
+            , trigger: 'click' //采用click弹出
+        });
+
+        laydate.render({
+            elem: '#date2'
+            , trigger: 'click' //采用click弹出
+        });
+
+
+
+
+        form.on('select(Provinces)', function (data) {
+            //console.log(data.elem); //得到select原始DOM对象
+            //console.log(data.value); //得到被选中的值
+            //console.log(data.othis); //得到美化后的DOM对象
+            fillCity(data.value);
+        });
+
+        if ($("#Provinces_val").val()) {
+            fillCity($("#Provinces_val").val());
+        }
+
+        function fillCity(province_id) {
+            $.ajax({
+                url: "/ParamsCity/Combo",
+                data: { 'province_id': province_id },
+                type: "post",
+                dataType: "json",
+                success: function (data) {
+                    var category = $('#City_id');
+                    category.html("");
+                    category.append('<option value="">请选择</option>');
+                    for (var i = 0; i < data.length; i++) {
+
+                        console.log(data[i]);
+                        category.append("<option value='" + data[i]["id"] + "'>" + data[i]["title"] + "</option>");
+                    }
+                    if ($("#City_val").val()) {
+                        setTimeout(function () {
+                            var select = 'dd[lay-value=' + $("#City_val").val() + ']';
+                            $(category).siblings("div.layui-form-select").find('dl').find(select).click();
+                            $("#data-search-btn").click();
+                        }, 50)
+                    }
+
+                    form.render("select");
+                },
+            });
+        }
+
+        
+
+        tableSelect.render({
+            elem: '#old_emp',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#old_emp_id").val(ids.join(','));
+            }
+        })
+
+        tableSelect.render({
+            elem: '#new_emp',
+            checkedKey: 'id',
+            table: {
+                url: '/HrEmployee/grid',
+                cols: [[
+                    { type: 'radio' },
+                    { field: 'name', width: 150, title: '员工姓名' },
+                    {
+                        field: 'dep_name', width: 150, title: '部门', templet: function (t) {
+                            if (t.department) {
+                                return t.department.dep_name;
+                            }
+                            return "";
+                        }
+                    },
+                    {
+                        field: 'position_name', width: 150, title: '职务', templet: function (t) {
+                            if (t.position) {
+                                return t.position.position_name;
+                            }
+                            return "";
+                        }
+                    },
+                ]]
+            },
+            done: function (elem, data) {
+                var NEWJSON = [];
+                var ids = [];
+
+                layui.each(data.data, function (index, item) {
+                    NEWJSON.push(item.name);
+                    ids.push(item.id);
+                })
+                elem.val(NEWJSON.join(","))
+
+                $("#new_emp_id").val(ids.join(','));
+            }
+        })
+
+        // 展开/折叠额外条件
+        $('#toggleBtn').on('click', function () {
+            var $extra = $('#extraConditions');
+            var $icon = $(this).find('i');
+            var $span = $(this).find('span');
+
+            if ($extra.is(':visible')) {
+                $extra.slideUp(200);
+                $icon.removeClass('layui-icon-up').addClass('layui-icon-down');
+                $span.text('展开');
+            } else {
+                $extra.slideDown(200, function () {
+                    form.render('select'); // 重新渲染下拉框
+                });
+                $icon.removeClass('layui-icon-down').addClass('layui-icon-up');
+                $span.text('收起');
+            }
+        });
+
+        window.f_save = function() {
+            // 1. 校验转出人
+            if ($("#old_emp").val() == "") {
+                layer.msg("请选择转出人");
+                return false;
+            }
+            // 2. 校验接收人
+            if ($("#new_emp").val() == "") {
+                layer.msg("请选择接收人");
+                return false;
+            }
+
+            if($("#old_emp_id").val()==$("#new_emp_id").val())
+            {
+                layer.msg("不能转给自己");
+                return false;
+            }
+            
+
+            // 3. 获取表格选中行数据
+            var checkStatus = table.checkStatus('mainGrid4');
+            var data = checkStatus.data;
+
+            // 4. 校验是否有选中行
+            if (data.length == 0) {
+                layer.msg("请选择要转的客户");
+                return false;
+            }
+
+            // 5. 组装选中行的 ID
+            // 使用 map 方法遍历 data 数组，提取出每一行的 id 字段，生成一个新的 ID 数组
+            var ids = data.map(function(item){
+                return item.id;
+            });
+            // 将 ID 数组用逗号连接成字符串，例如: "1,5,8"
+            var idsStr = ids.join(',');
+    
+            // 6. 将组装好的 ID 字符串存入隐藏的 input 中
+            $("#customer_ids").val(idsStr);
+
+            // 7. 获取页面搜索条件
+            // 通过序列化 form 表单，可以轻松获取所有 input, select 等元素的值
+            // 结果是一个标准的查询字符串，例如: "old_emp=张三&new_emp=李四&cus_industry_id=3"
+            var where = $('form').serialize();
+
+            // 此时，where 变量包含了所有搜索条件，idsStr 变量包含了所有选中客户的ID
+            // 你可以将它们用于后续的 AJAX 请求或其他逻辑
+            console.log("搜索条件:", where);
+            // console.log("选中的客户IDs:", idsStr);
+
+            // 如果所有校验都通过，返回 true
+            return where;
+        }
+    });
+
+</script>

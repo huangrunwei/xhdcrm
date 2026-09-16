@@ -1,0 +1,349 @@
+﻿@{
+    ViewData["Title"] = "Add";
+}
+
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { height: 100vh; overflow: hidden; }
+    .map-top-bar { height: 60px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; padding: 0 20px; gap: 15px; z-index: 999; position: relative; }
+    .search-wrap { position: relative; display: flex; align-items: center; width: 420px; }
+    .search-input { flex: 1; }
+    /* 下拉建议列表样式 */
+    .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #d2d2d2; border-top: none; max-height: 300px; overflow-y: auto; z-index: 1000; display: none; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+        .suggest-list .suggest-item { padding: 8px 15px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #f0f0f0; transition: background 0.15s; }
+            .suggest-list .suggest-item:hover { background: #e6f7ff; }
+            .suggest-list .suggest-item:last-child { border-bottom: none; }
+    #mapDiv { width: 100%; height: calc(100vh - 60px); }
+    .tm-popup { min-width: 220px; padding: 10px; }
+        .tm-popup h4 { font-size: 15px; color: #2385bb; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 6px; }
+        .tm-popup p { font-size: 13px; line-height: 1.8; color: #333; }
+        .tm-popup span { color: #666; margin-right: 6px; }
+</style>
+
+
+<!-- 天地图JS API -->
+<script src="https://api.tianditu.gov.cn/api?v=4.0&tk=0267810f3111fb11793fbb516ca78e92"></script>
+
+<div class="map-top-bar">
+    <h2 style="font-size:18px;color:#333;">客户地图分布</h2>
+    <div class="search-wrap layui-form">
+        <!-- 保留输入框，添加下拉容器 -->
+        <input class="layui-input search-input" id="searchInput" placeholder="输入客户名称模糊搜索" autocomplete="off">
+        <div class="suggest-list" id="suggestList"></div>
+    </div>
+</div>
+<div id="mapDiv"></div>
+
+  
+<script>
+layui.use(['layer', 'jquery'], function(){
+    var layer = layui.layer;
+    var $ = layui.jquery;
+    var map;
+    var markerList = [];
+    var customerData = [];
+
+    // ========== 本地存储相关函数 ==========
+    // 安全的存储操作
+    function safeSetItem(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+        } catch (e) {
+            console.warn('存储地图状态失败:', e);
+        }
+    }
+
+    function safeGetItem(key) {
+        try {
+            const data = localStorage.getItem(key);
+            return data ? JSON.parse(data) : null;
+        } catch (e) {
+            console.warn('读取地图状态失败:', e);
+            return null;
+        }
+    }
+
+    // 保存地图状态
+    function saveMapState() {
+        if (!map) return;
+        try {
+            const center = map.getCenter();
+            const zoom = map.getZoom();
+            const state = {
+                center: {
+                    lng: center.getLng(),
+                    lat: center.getLat()
+                },
+                zoom: zoom,
+                // 可选：保存地图类型
+                // mapType: map.getMapType()
+            };
+            safeSetItem('tianditu_map_state', state);
+            console.log('地图状态已保存:', state);
+        } catch (e) {
+            console.warn('保存地图状态失败:', e);
+        }
+    }
+
+    // 恢复地图状态
+    function restoreMapState(defaultCenter, defaultZoom) {
+        const savedState = safeGetItem('tianditu_map_state');
+        if (savedState && savedState.center && savedState.zoom) {
+            // 验证数据的有效性
+            const lng = Number(savedState.center.lng);
+            const lat = Number(savedState.center.lat);
+            const zoom = Number(savedState.zoom);
+            
+            if (!isNaN(lng) && !isNaN(lat) && !isNaN(zoom) && zoom >= 1 && zoom <= 18) {
+                const center = new T.LngLat(lng, lat);
+                map.centerAndZoom(center, zoom);
+                console.log('已恢复上次地图状态:', savedState);
+                return true;
+            }
+        }
+        // 没有有效的存储数据，使用默认值
+        map.centerAndZoom(new T.LngLat(defaultCenter.lng, defaultCenter.lat), defaultZoom);
+        console.log('使用默认地图状态');
+        return false;
+    }
+
+    // ========== 地图初始化 ==========
+    function initTianditu(){
+        map = new T.Map('mapDiv');
+        
+        // 默认中心点（长沙）
+        const defaultCenter = { lng: 112.93, lat: 28.23 };
+        const defaultZoom = 10;
+        
+        // 尝试恢复上次的地图状态
+        restoreMapState(defaultCenter, defaultZoom);
+        
+        map.enableScrollWheelZoom(true);
+
+        // ========== 监听地图变化，自动保存 ==========
+        // 监听地图移动结束
+        map.addEventListener('moveend', function() {
+            saveMapState();
+        });
+
+        // 监听地图缩放结束
+        map.addEventListener('zoomend', function() {
+            saveMapState();
+        });
+
+        // 可选：监听地图类型切换（如果有）
+        // map.addEventListener('maptypechange', function() {
+        //     saveMapState();
+        // });
+    }
+
+    // ========== 渲染客户标记 ==========
+    function renderCustomerMarker(list){
+        markerList.forEach(marker => map.removeOverLay(marker));
+        markerList = [];
+
+        list.forEach(item => {
+            let lng = Number(item.x);
+            let lat = Number(item.y);
+            if (isNaN(lng) || isNaN(lat)) return;
+            let point = new T.LngLat(lng, lat);
+
+            let icon = new T.Icon({
+                iconUrl: '/images/mark_red.png',
+                iconSize: new T.Point(30,36),
+                iconAnchor: new T.Point(15,36)
+            });
+            let marker = new T.Marker(point, {icon: icon});
+            markerList.push(marker);
+            map.addOverLay(marker);
+
+            let label = new T.Label({
+                text: item.cus_name,
+                position: point,
+                offset: new T.Point(0, -25),
+                style: {
+                    color: '#333',
+                    fontSize: '14px',
+                    fontWeight: 'bold',
+                    backgroundColor: 'rgba(255,255,255,0.85)',
+                    border: '1px solid #2385bb',
+                    borderRadius: '4px',
+                    padding: '2px 10px'
+                }
+            });
+            markerList.push(label);
+            map.addOverLay(label);
+
+            marker.addEventListener('click', function(){
+                showCustomerPopup(point, item);
+            });
+        });
+    }
+
+    // ========== 显示客户弹窗 ==========
+    function showCustomerPopup(point, info){
+        let popupHtml = `
+            <div class="tm-popup">
+                <h4>${info.cus_name}</h4>
+                <p><span>联系电话：</span>${info.cus_tel || '无'}</p>
+                <p><span>详细地址：</span>${info.cus_add || '无'}</p>
+            </div>
+        `;
+        let infoWin = new T.InfoWindow(popupHtml, {offset: new T.Point(0,-40)});
+        map.openInfoWindow(infoWin, point);
+    }
+
+    // ========== 搜索自动补全 ==========
+    function initSearch(){
+        var $input = $('#searchInput');
+        var $suggest = $('#suggestList');
+        var currentFocus = -1;
+
+        // 隐藏下拉
+        function hideSuggest(){
+            $suggest.hide();
+            currentFocus = -1;
+        }
+
+        // 显示下拉并填充匹配项
+        function showSuggest(matched){
+            if(matched.length === 0){
+                hideSuggest();
+                return;
+            }
+            var html = '';
+            matched.forEach(item => {
+                 html += `<div class="suggest-item" data-name="${item.cus_name}">${item.cus_name}</div>`;
+            });
+            $suggest.html(html).show();
+            // 绑定点击事件
+            $suggest.find('.suggest-item').off('click').on('click', function(){
+                var name = $(this).data('name');
+                var target = customerData.find(c => c.cus_name === name);
+                if(target){
+                    $input.val(name);
+                    hideSuggest();
+                    locateCustomer(target);
+                }
+            });
+        }
+
+        // 定位客户
+        function locateCustomer(target){
+            var lng = Number(target.x);
+            var lat = Number(target.y);
+            if(isNaN(lng) || isNaN(lat)){
+                layer.msg('该客户坐标缺失，无法定位', {icon:5});
+                return;
+            }
+            var point = new T.LngLat(lng, lat);
+            map.centerAndZoom(point, 14);
+            showCustomerPopup(point, target);
+            // 定位后也保存一下当前状态
+            saveMapState();
+        }
+
+        // 输入事件
+        $input.on('input', function(){
+            var keyword = $.trim($(this).val());
+            if(!keyword){
+                hideSuggest();
+                return;
+            }
+            // 模糊匹配（忽略大小写）
+            var matched = customerData.filter(item => 
+                item.cus_name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+            );
+            // 最多显示10条
+            if(matched.length > 10) matched = matched.slice(0, 10);
+            showSuggest(matched);
+        });
+
+        // 键盘上下键选择
+        $input.on('keydown', function(e){
+            var items = $suggest.find('.suggest-item');
+            if(items.length === 0) return;
+            if(e.keyCode === 40){ // 下
+                e.preventDefault();
+                currentFocus++;
+                if(currentFocus >= items.length) currentFocus = 0;
+                items.removeClass('layui-this');
+                items.eq(currentFocus).addClass('layui-this');
+            }else if(e.keyCode === 38){ // 上
+                e.preventDefault();
+                currentFocus--;
+                if(currentFocus < 0) currentFocus = items.length - 1;
+                items.removeClass('layui-this');
+                items.eq(currentFocus).addClass('layui-this');
+            }else if(e.keyCode === 13){ // 回车
+                e.preventDefault();
+                if(currentFocus >= 0 && currentFocus < items.length){
+                    items.eq(currentFocus).click();
+                }else if($input.val()){
+                    // 如果没有选中项，尝试直接定位第一个匹配
+                    var keyword = $input.val();
+                    var matched = customerData.filter(item => 
+                        item.cus_name.toLowerCase().indexOf(keyword.toLowerCase()) !== -1
+                    );
+                    if(matched.length > 0){
+                        locateCustomer(matched[0]);
+                        hideSuggest();
+                    }else{
+                        layer.msg('未匹配到客户', {icon:5});
+                    }
+                }
+            }
+        });
+
+        // 失去焦点延迟隐藏
+        $input.on('blur', function(){
+            setTimeout(hideSuggest, 200);
+        });
+
+        // 点击空白处隐藏
+        $(document).on('click', function(e){
+            if(!$(e.target).closest('.search-wrap').length){
+                hideSuggest();
+            }
+        });
+    }
+
+    // ========== 加载客户数据 ==========
+    function loadCustomer(){
+        layer.load(1);
+        $.ajax({
+            url: "GetPoint",            
+            type: "post",
+            dataType: "json",
+            success: function (data) {
+                layer.closeAll('loading');
+                customerData = data.data;
+                renderCustomerMarker(customerData);
+                // 数据加载完成后再初始化搜索（只一次）
+                if(!window._searchInited){
+                    initSearch();
+                    window._searchInited = true;
+                }
+            },
+            error: function() {
+                layer.closeAll('loading');
+                layer.msg('加载客户数据失败', {icon:5});
+            }
+        });
+    };
+
+    // ========== 页面卸载时保存状态 ==========
+    // 在页面关闭或刷新前保存一次
+    window.addEventListener('beforeunload', function() {
+        saveMapState();
+    });
+
+    // ========== 启动应用 ==========
+    // 先初始化地图
+    initTianditu();
+    // 再加载客户数据
+    loadCustomer();
+
+});
+</script>
