@@ -1,6 +1,7 @@
 
 
 using FreeSql;
+using Lazy.Captcha.Core.Generator;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -66,9 +67,24 @@ namespace XHD.Core.View
 
                 });
 
+            services.AddCaptcha(options =>
+            {
+                // 外层配置
+                options.CaptchaType = CaptchaType.DEFAULT; //字母数字
+                options.CodeLength = 4;                   //4位验证码
+                options.ExpirySeconds = 60;               //过期时间60秒
+                options.IgnoreCase = true;                //校验忽略大小写，和你旧逻辑一致
 
-            #if DEBUG
-                 services.AddRazorPages().AddRazorRuntimeCompilation();
+                //图片相关配置，全部放在ImageOption下
+                options.ImageOption.Width = 120;
+                options.ImageOption.Height = 42;
+                options.ImageOption.FontSize = 28;
+                options.ImageOption.InterferenceLineCount = 0; //干扰线数量，和你登录页线条风格匹配
+                options.ImageOption.Animation = true;          //GIF动图
+            });
+
+#if DEBUG
+            services.AddRazorPages().AddRazorRuntimeCompilation();
             #endif
 
             //跨域

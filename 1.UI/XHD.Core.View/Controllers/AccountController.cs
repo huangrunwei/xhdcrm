@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿using Lazy.Captcha.Core;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -8,13 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using SixLabors.Fonts;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Drawing;
-using SixLabors.ImageSharp.Drawing.Processing;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
-using SixLabors.ImageSharp.Processing;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -33,6 +28,7 @@ namespace XHD.Core.View.Controllers
 {
     public class AccountController : Controller
     {
+        private readonly ICaptcha _captcha;
         private readonly string CaptchaCodeSessionName = "CaptchaCode";
         private readonly Ihr_employeeService _service;
         private readonly ISys_MenuService _menuService;
@@ -50,7 +46,7 @@ namespace XHD.Core.View.Controllers
             ISys_Param_CityService _cityService,
             ISys_Param_TypeService typeService,
             ISys_logService LogService,
-            ISys_infoService infoservice)
+            ISys_infoService infoservice, ICaptcha captcha)
         {
             _service = service;
             _LogService = LogService;
@@ -60,6 +56,7 @@ namespace XHD.Core.View.Controllers
             this._provincesService = _provincesService;
             this._cityService = _cityService;
             this._typeService = typeService;
+            _captcha= captcha;
         }
         public async Task<IActionResult> Index()
         {
@@ -155,21 +152,36 @@ namespace XHD.Core.View.Controllers
             return list ?? new List<T>();
         }
 
-        /// <summary>
-        /// 验证码
-        /// </summary>
-        /// <returns>文件流</returns>
-        public async Task<IActionResult> ValiCode()
+        //验证码接口，替换原来的ValiCode
+        public IActionResult ValiCode()
         {
-            byte[] buf = await this.CreateImageAsync();
-            return File(buf, "image/png");
+            // 1.自己生成唯一captchaId（Guid）
+            string captchaId = Guid.NewGuid().ToString("N");
+            // 2.把Id传给Generate
+            CaptchaData res = _captcha.Generate(captchaId);
+
+            // 3.把captchaId存入Session，登录校验时读取
+            HttpContext.Session.SetString("CaptchaId", captchaId);
+
+            return File(res.Bytes, "image/png");
         }
+
         public async Task<string> Login(hr_employee model)
         {
             try
             {
-                var valicode_session = HttpContext.Session.GetString(CaptchaCodeSessionName);
-                if (valicode_session.ToLower() != Request.Form["valicode"].ToString().ToLower())
+                // 只读取captchaId
+                var captchaId = HttpContext.Session.GetString("CaptchaId");
+                if (string.IsNullOrEmpty(captchaId))
+                {
+                    return XHDResult.Error(-9, "验证码已过期！").ToString();
+                }
+
+                var inputCode = Request.Form["valicode"].ToString() ?? "";
+
+                // 交给LazyCaptcha内部去比对，库内部自己拿captchaId去找保存好的验证码
+                bool captchaOk = _captcha.Validate(captchaId, inputCode);
+                if (!captchaOk)
                 {
                     return XHDResult.Error("验证码错误！").ToString();
                 }
@@ -221,6 +233,7 @@ namespace XHD.Core.View.Controllers
             _ = HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return XHDResult.Success().ToString();
         }
+
         #region 生成验证码
         //生成随机验证码数字字符串——4位数
         private string RandomNum(int int_NumberLength)
@@ -232,91 +245,7 @@ namespace XHD.Core.View.Controllers
                 validateCode += chars[random.Next(0, chars.Length)].ToString();
             return validateCode;
         }
-        //生成随机点
-        private int[] RandomPoint()
-        {
-            int[] intArray = new int[6];
-            for (int i = 0; i < 6; i += 2)
-            {
-                Random random = new Random(Guid.NewGuid().GetHashCode());
-                switch (i)
-                {
-                    case 0:
-                        intArray[i] = random.Next(0, 10);
-                        break;
-                    case 2:
-                        intArray[i] = random.Next(45, 55);
-                        break;
-                    case 4:
-                        intArray[i] = random.Next(90, 100);
-                        break;
-                }
-            }
-            for (int i = 1; i < 6; i += 2)
-            {
-                Random random = new Random(Guid.NewGuid().GetHashCode());
-                intArray[i] = random.Next(0, 42);
-            }
-            return intArray;
-        }
-        private async Task<byte[]> CreateImageAsync()
-        {
-            int width = 120;
-            int height = 42;
-            Random random = new Random();
-            string code = RandomNum(4);
-            // 将验证码存入session
-            HttpContext.Session.SetString(CaptchaCodeSessionName, code);
-            using (var image = new Image<Rgba32>(width, height))
-            {
-                // 背景色
-                image.Mutate(ctx => ctx.BackgroundColor(Color.White));
-                // 画曲线 - 修正版本
-                var pen = Pens.Solid(Color.Black, 0.2f);
-                for (int i = 0; i < 4; i++)
-                {
-                    int[] points = RandomPoint();
-                    var path = new PathBuilder()
-                        .AddLine(points[0], points[1], points[2], points[3])
-                        .AddLine(points[2], points[3], points[4], points[5])
-                        .Build();
-                    image.Mutate(ctx => ctx.Draw(pen, path));
-                }
-                // 加载字体（需要准备字体文件）
-                var fontCollection = new FontCollection();
-                // 获取系统默认字体
-                var fontFamily = SystemFonts.Families.FirstOrDefault();
-                // 绘制验证码字符
-                for (int i = 0; i < code.Length; i++)
-                {
-                    var font = fontFamily.CreateFont(28, FontStyle.Bold);
-                    var brush = new SolidBrush(GetRandomColor());
-                    int y = (i + 1) % 2 == 0 ? 2 : 4;
-                    image.Mutate(ctx => ctx.DrawText(
-                        code[i].ToString(),
-                        font,
-                        brush,
-                        new PointF(i * 30, y + 10)));
-                }
-                // 转换为byte数组
-                using (var ms = new MemoryStream())
-                {
-                    await image.SaveAsync(ms, new PngEncoder());
-                    return ms.ToArray();
-                }
-            }
-        }
-        private Color GetRandomColor()
-        {
-            Random RandomNum_First = new Random((int)DateTime.Now.Ticks);
-            System.Threading.Thread.Sleep(RandomNum_First.Next(50));
-            Random RandomNum_Sencond = new Random((int)DateTime.Now.Ticks);
-            int int_Red = RandomNum_First.Next(210);
-            int int_Green = RandomNum_Sencond.Next(180);
-            int int_Blue = (int_Red + int_Green > 300) ? 0 : 400 - int_Red - int_Green;
-            int_Blue = (int_Blue > 255) ? 255 : int_Blue;
-            return Color.FromRgb((byte)int_Red, (byte)int_Green, (byte)int_Blue);
-        }
+       
         #endregion
     }
 }
