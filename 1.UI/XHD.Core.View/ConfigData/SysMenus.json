@@ -114,7 +114,7 @@
   {
     "id": "Sale_Menu_order",
     "Menu_name": "订单管理",
-    "Menu_url": "SaleMenu_order/Index",    
+    "Menu_url": "Sale_order/Index",    
     "Menu_icon": "fa-copy",    
     "parentid": "SaleManager",
     "Menu_order": 10

@@ -1,5 +1,4 @@
-﻿using Lazy.Captcha.Core;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,12 +8,12 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Security.Claims;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using XHD.Core.Common;
@@ -28,7 +27,6 @@ namespace XHD.Core.View.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ICaptcha _captcha;
         private readonly string CaptchaCodeSessionName = "CaptchaCode";
         private readonly Ihr_employeeService _service;
         private readonly ISys_MenuService _menuService;
@@ -46,7 +44,7 @@ namespace XHD.Core.View.Controllers
             ISys_Param_CityService _cityService,
             ISys_Param_TypeService typeService,
             ISys_logService LogService,
-            ISys_infoService infoservice, ICaptcha captcha)
+            ISys_infoService infoservice)
         {
             _service = service;
             _LogService = LogService;
@@ -56,7 +54,6 @@ namespace XHD.Core.View.Controllers
             this._provincesService = _provincesService;
             this._cityService = _cityService;
             this._typeService = typeService;
-            _captcha= captcha;
         }
         public async Task<IActionResult> Index()
         {
@@ -130,7 +127,6 @@ namespace XHD.Core.View.Controllers
             ViewBag.AES_Key = code;
             return View();
         }
-
         /// <summary>
         /// 【改造后】读取初始化json数组文件，兼容AOT裁剪，使用Newtonsoft反序列化
         /// 上层调用完全不变 await LoadInitDataFromJsonFileAsync<T>("xxx.json")
@@ -145,43 +141,65 @@ namespace XHD.Core.View.Controllers
                     throw new FileNotFoundException($"未找到初始化文件：{fileName}");
             }
             var jsonContent = await System.IO.File.ReadAllTextAsync(jsonPath);
-
             // 不再使用 System.Text.Json.Deserialize<List<T>> （AOT裁剪会抛反射异常）
             // 使用 Newtonsoft.Json 反序列化数组
             var list = JsonConvert.DeserializeObject<List<T>>(jsonContent);
             return list ?? new List<T>();
         }
 
-        //验证码接口，替换原来的ValiCode
+        /// <summary>
+        /// 验证码【SVG版本，替换原来的CreateImageAsync】
+        /// </summary>
+        /// <returns>SVG矢量图</returns>
         public IActionResult ValiCode()
         {
-            // 1.自己生成唯一captchaId（Guid）
-            string captchaId = Guid.NewGuid().ToString("N");
-            // 2.把Id传给Generate
-            CaptchaData res = _captcha.Generate(captchaId);
+            int width = 120;
+            int height = 42;
+            Random random = new Random(Guid.NewGuid().GetHashCode());
+            string code = RandomNum(4);
+            //存入Session，原有逻辑不变
+            HttpContext.Session.SetString(CaptchaCodeSessionName, code);
 
-            // 3.把captchaId存入Session，登录校验时读取
-            HttpContext.Session.SetString("CaptchaId", captchaId);
+            StringBuilder sb = new StringBuilder();
+            sb.Append($@"<svg width='{width}' height='{height}' xmlns='http://www.w3.org/2000/svg'>
+  <rect width='{width}' height='{height}' fill='#ffffff'/>");
 
-            return File(res.Bytes, "image/png");
+            //绘制4条干扰线，对应原来的曲线干扰
+            for (int i = 0; i < 4; i++)
+            {
+                int x1 = random.Next(width);
+                int y1 = random.Next(height);
+                int x2 = random.Next(width);
+                int y2 = random.Next(height);
+                int r = random.Next(60, 160);
+                int g = random.Next(60, 160);
+                int b = random.Next(60, 160);
+                sb.Append($"<line x1='{x1}' y1='{y1}' x2='{x2}' y2='{y2}' stroke='rgb({r},{g},{b})' stroke-width='0.7'/>");
+            }
+
+            //绘制字符，带旋转偏移
+            for (int i = 0; i < code.Length; i++)
+            {
+                int r = random.Next(0, 255);
+                int g = random.Next(0, 255);
+                int b = random.Next(0, 255);
+                float x = 10 + i * 28;
+                float y = random.Next(2, 6);
+                int rotate = random.Next(-10, 10);
+                sb.Append($"<text x='{x}' y='{y + 30}' fill='rgb({r},{g},{b})' font-size='28'  transform='rotate({rotate},{x},{y + 30})'>{code[i]}</text>");
+            }
+            sb.Append("</svg>");
+
+            Response.ContentType = "image/svg+xml";
+            return Content(sb.ToString());
         }
 
         public async Task<string> Login(hr_employee model)
         {
             try
             {
-                // 只读取captchaId
-                var captchaId = HttpContext.Session.GetString("CaptchaId");
-                if (string.IsNullOrEmpty(captchaId))
-                {
-                    return XHDResult.Error(-9, "验证码已过期！").ToString();
-                }
-
-                var inputCode = Request.Form["valicode"].ToString() ?? "";
-
-                // 交给LazyCaptcha内部去比对，库内部自己拿captchaId去找保存好的验证码
-                bool captchaOk = _captcha.Validate(captchaId, inputCode);
-                if (!captchaOk)
+                var valicode_session = HttpContext.Session.GetString(CaptchaCodeSessionName);
+                if (valicode_session.ToLower() != Request.Form["valicode"].ToString().ToLower())
                 {
                     return XHDResult.Error("验证码错误！").ToString();
                 }
@@ -211,7 +229,6 @@ namespace XHD.Core.View.Controllers
                     new Claim (ClaimTypes.Sid,employee.Value<string>("id")),        //id
                     new Claim (ClaimTypes.Name,employee.Value<string>("name")),     //用户名
                     new Claim ("uid",employee.Value<string>("uid"))                 //登陆账号
-
                 };
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity));
@@ -233,19 +250,17 @@ namespace XHD.Core.View.Controllers
             _ = HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return XHDResult.Success().ToString();
         }
-
-        #region 生成验证码
-        //生成随机验证码数字字符串——4位数
+        #region 验证码工具方法
+        //生成随机验证码字符串——4位（字母数字，和你原来完全一致）
         private string RandomNum(int int_NumberLength)
         {
             char[] chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz".ToCharArray();
-            Random random = new Random();
+            Random random = new Random(Guid.NewGuid().GetHashCode());
             string validateCode = string.Empty;
             for (int i = 0; i < int_NumberLength; i++)
                 validateCode += chars[random.Next(0, chars.Length)].ToString();
             return validateCode;
         }
-       
         #endregion
     }
 }
