@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,21 +11,28 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using XHD.Core.IServices;
 using XHD.Core.Models;
 
 namespace XHD.Core.View.Controllers
 {
+    [Authorize]
     public class UploadController : Controller
     {
         private readonly ICRM_Customer_attaService _customerattaservice;
+        private readonly ICRM_CustomerService _customerservice;
+        private readonly IDBAuthService _dBAuthService;
 
-        public UploadController(ICRM_Customer_attaService customerattaservice)
+        public UploadController(ICRM_Customer_attaService customerattaservice, ICRM_CustomerService customerservice, IDBAuthService dBAuthService)
         {
             _customerattaservice = customerattaservice;
+            _customerservice = customerservice;
+            _dBAuthService = dBAuthService;
         }
 
+        [HttpPost]
         public async Task<string> Image()
         {
             byte[] buffer = Guid.NewGuid().ToByteArray();
@@ -70,6 +77,7 @@ namespace XHD.Core.View.Controllers
             return obj.ToString();
         }
 
+        [HttpPost]
         [DisableRequestSizeLimit]
         public async Task<string> FileUp()
         {
@@ -122,7 +130,7 @@ namespace XHD.Core.View.Controllers
         /// <param name="fileName">客户端接收的文件名（如 "我的报告.pdf"）</param>
         /// <returns>文件流</returns>
 
-        public IActionResult DownloadCustomerAtta(string id)
+        public async Task<IActionResult> DownloadCustomerAtta(string id)
         {
             Expression<Func<CRM_Customer_atta, bool>> exp = a => a.id == id;
 
@@ -135,17 +143,37 @@ namespace XHD.Core.View.Controllers
 
             var data = attadata.data[0];
 
-            //var url = '/upload/customer/' + data.cus_id + "/" + data.real_name;
+            // 数据权限：非全量用户只能下载本人客户或公客的附件
+            var empId = User.FindFirst(ClaimTypes.Sid)?.Value ?? string.Empty;
+            var roleData = await _dBAuthService.GetDataAuth(empId);
+            if (roleData.authtype == 0)
+            {
+                return Forbid();
+            }
 
-            // 1. 服务器本地文件路径（确保路径正确，建议使用绝对路径）
-            //string serverFilePath = Path.Combine(
-            //    Directory.GetCurrentDirectory(),  // 项目根目录
-            //    "/upload/customer/", data.cus_id, data.real_name  // 服务器存储的原始文件
-            //);
+            if (roleData.authtype != 4)
+            {
+                var customerResult = await _customerservice.GridAsync(a => a.id == data.cus_id, 1, 1);
+                if (customerResult.count == 0)
+                {
+                    return NotFound("文件不存在");
+                }
 
-            string serverFilePath = $"{Directory.GetCurrentDirectory()}/wwwroot/upload/customer/{data.cus_id}/{data.real_name}";
+                var customer = customerResult.data[0];
+                var allowedEmpIds = roleData.empList ?? new List<string>();
+                if (!allowedEmpIds.Contains(customer.emp_id) && customer.isPrivate != 1)
+                {
+                    return Forbid();
+                }
+            }
 
-            Console.WriteLine(serverFilePath);
+            // 防止 real_name/cus_id 中的路径穿越
+            var uploadRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "customer"));
+            var serverFilePath = Path.GetFullPath(Path.Combine(uploadRoot, data.cus_id ?? string.Empty, data.real_name ?? string.Empty));
+            if (!serverFilePath.StartsWith(uploadRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            {
+                return NotFound("文件不存在");
+            }
 
             // 2. 验证文件是否存在
             if (!System.IO.File.Exists(serverFilePath))

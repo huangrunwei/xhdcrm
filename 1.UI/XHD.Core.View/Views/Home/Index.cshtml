@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "小黄豆CRM";
     Layout = null;
 }
@@ -67,6 +67,9 @@
                             </dd>
                             <dd>
                                 <a href="javascript:;" layuimini-content-href="hremployee/password" data-title="修改密码" data-icon="fa fa-gears">修改密码</a>
+                            </dd>
+                            <dd>
+                                <a href="javascript:;" layuimini-content-href="ApiToken/Index" data-title="AI 接入令牌" data-icon="fa fa-key">AI 接入令牌</a>
                             </dd>
                             <dd>
                                 <hr>
@@ -191,6 +194,26 @@
                     miniTab.change(tabId);
 
 
+            }
+
+            window.openTab = function(url,title)
+            {
+                var op={};
+                var tabId = url;
+
+                op.tabId = tabId;
+                op.href = url;
+                op.title = title;
+                op.isIframe = true;
+
+                var ischeck = miniTab.check(tabId,true);
+
+                if(!ischeck)
+                {
+                    miniTab.create(op);
+                }
+
+                miniTab.change(tabId);
             }
         });
         

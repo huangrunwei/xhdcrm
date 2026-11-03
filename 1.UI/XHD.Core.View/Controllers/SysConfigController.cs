@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -59,6 +59,14 @@ namespace XHD.Core.View.Controllers
 
         public async Task<string> tryConnect(int servertype, string servername, string serverport, string serveruid, string serverpwd)
         {
+            // 初始化接口只允许在系统尚未配置时使用，避免已部署系统被匿名探测/重配数据库
+            IConfigurationBuilder configBuilder = new ConfigurationBuilder().AddJsonFile("appsettings.json", true, true);
+            IConfigurationRoot configRoot = configBuilder.Build();
+            if (configRoot["isConfig"] != "0")
+            {
+                return XHDResult.Error("系统已配置，不允许再次初始化！").ToString();
+            }
+
             var datatype = FreeSql.DataType.MySql;
             var connString = "";
             switch (servertype)
@@ -128,7 +136,7 @@ namespace XHD.Core.View.Controllers
             var type = root["type"].ToUpper();
             var connectionString = root["connectionString"];
 
-            if (!isConfig.Equals("0"))
+            if (isConfig != "0")
             {
                 return XHDResult.Error("不允许配置，请检查配置文件！").ToString();
             }

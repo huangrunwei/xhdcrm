@@ -1,10 +1,10 @@
-﻿@{
+@{
     ViewData["Title"] = "Index";
 }
 <div class="layui-row layui-col-space15">
     <div class="layui-col-sm3 layui-col-lg2">
         <div class="layuimini-card" style="min-height:600px;">
-            <div class="layuimini-card-header">参数类别</div>
+            <div class="layuimini-card-header">产品类别</div>
             
             <div class="layuimini-card-body">
                 <div id="param_category" class="demo-tree demo-tree-box"></div>
@@ -33,7 +33,7 @@
 </div>
 
 <style>
- /*   .layui-table, .layui-table-view{margin:0 !important;}*/
+    .layui-tree-txt.tree-txt-active { background: #eaf2ff; color: #2563eb; border-radius: 5px; padding: 2px 6px; }
 </style>
 <script type="text/javascript">
     var category_id = null;
@@ -49,7 +49,8 @@
         table.render({
             elem: '#munu-table',
             url: 'Grid',
-            page: false,
+            where: { T_type: '__none__' },
+            text: { none: '请先选择左侧产品类别' },
             cols: [[
                 { type: 'numbers',title:"序号"  },
                 { field: 'Category', width: 200, title: '类别',templet:function(t)
@@ -90,6 +91,7 @@
                     elem: "#param_category",
                     data: data,
                     //showLine: false,
+                    onlyIconControl: true,
                     id: "params_type",
                     click: function (node) {
                         console.log(node);
@@ -129,7 +131,6 @@
                 add();
             }
         });
-
 
         //监听工具条
         table.on('tool(currentTableFilter)', function (obj) {
@@ -180,21 +181,23 @@
 
         //添加目录
         function add(edit) {
+            if (!edit && !category_id) {
+                layer.msg('请先选择左侧产品类别', { icon: 0 });
+                return;
+            }
             var tit = "添加";
             if (edit) {
                 tit = "编辑";
             }
-            console.log(edit);
             var index = layui.layer.open({
                 title: tit,
                 type: 2,
                 anim: 1,
                 area: ['600px', '550px'],
                 maxmin: true,
-                content: "Add",
+                content: edit ? ("Add?id=" + edit.id) : ("Add?category_id=" + encodeURIComponent(category_id)),
                 btn: ['确定', '关闭'],
                 success: function (layero, index) {
-                    var iframe = window["layui-layer-iframe" + index];
                     var body = layui.layer.getChildFrame('body', index);
 
                     if (edit) {
@@ -205,7 +208,8 @@
                             }
                             body.find("#" + val).val(value);
                         }
-                        body.find("#params_type_id").val(edit.params_type);
+                    } else {
+                        body.find("#category_id").val(category_id);
                     }
 
                 },
@@ -263,7 +267,7 @@
                     curr: 1 //重新从第 1 页开始
                 }
                 , where: {
-                   T_type: $("#T_type").val()
+                   T_type: category_id
                 }
             }, 'data');
         }

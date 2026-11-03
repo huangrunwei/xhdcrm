@@ -32,6 +32,14 @@
     "Menu_order": 40
   },
   {
+    "id": "Knowledge",
+    "Menu_name": "知识库",
+    "Menu_url": "Knowledge/Index",
+    "Menu_icon": "fa-book",
+    "parentid": "mytable",
+    "Menu_order": 30
+  },
+  {
     "id": "CRM_Manager",
     "Menu_name": "客户管理",
     "Menu_url": null,    
@@ -114,10 +122,26 @@
   {
     "id": "Sale_Menu_order",
     "Menu_name": "订单管理",
-    "Menu_url": "Sale_order/Index",    
+    "Menu_url": "SaleOrder/Index",    
     "Menu_icon": "fa-copy",    
     "parentid": "SaleManager",
     "Menu_order": 10
+  },
+  {
+    "id": "Sale_Order_PayPlan",
+    "Menu_name": "收款计划",
+    "Menu_url": "SaleOrderPayPlan/Index",
+    "Menu_icon": "fa-rmb",
+    "parentid": "SaleManager",
+    "Menu_order": 15
+  },
+  {
+    "id": "Sale_Order_Follow",
+    "Menu_name": "订单跟进",
+    "Menu_url": "SaleOrderFollow/Index",
+    "Menu_icon": "fa-headphones",
+    "parentid": "SaleManager",
+    "Menu_order": 30
   },
   {
     "id": "Sale_Contract",

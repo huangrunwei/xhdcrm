@@ -1,0 +1,188 @@
+@{
+    ViewData["Title"] = "知识库";
+}
+
+<style>
+    body { background: #f5f7fa; }
+    .kb-hero { background: linear-gradient(135deg, #312e81 0%, #4f46e5 60%, #0ea5e9 100%); color: #fff; border-radius: 12px; padding: 24px 28px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 10px 26px rgba(79, 70, 229, .25); margin-bottom: 16px; }
+    .kb-hero h1 { font-size: 26px; font-weight: 800; letter-spacing: 2px; }
+    .kb-hero p { margin-top: 8px; font-size: 13px; opacity: .9; }
+    .kb-layout { display: flex; gap: 16px; align-items: flex-start; }
+    .kb-side { width: 220px; flex: 0 0 220px; background: #fff; border-radius: 10px; padding: 16px 12px; box-shadow: 0 1px 4px rgba(15,23,42,.06); }
+    .kb-side-title { font-size: 13px; color: #6b7280; padding: 0 10px 10px; border-bottom: 1px solid #f1f5f9; margin-bottom: 8px; }
+    .kb-side ul { list-style: none; margin: 0; padding: 0; }
+    .kb-side li { padding: 10px 12px; border-radius: 6px; cursor: pointer; color: #374151; font-size: 14px; display: flex; justify-content: space-between; align-items: center; }
+    .kb-side li:hover { background: #f1f5f9; }
+    .kb-side li.active { background: #eef2ff; color: #4f46e5; font-weight: 600; }
+    .kb-side li .count { color: #9ca3af; font-size: 12px; }
+    .kb-main { flex: 1; min-width: 0; }
+    .kb-search { background: #fff; border-radius: 10px; padding: 12px 16px; display: flex; gap: 10px; box-shadow: 0 1px 4px rgba(15,23,42,.06); margin-bottom: 14px; }
+    .kb-search input { flex: 1; }
+    .kb-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .kb-card { background: #fff; border-radius: 10px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(15,23,42,.06); cursor: pointer; transition: all .18s; border-top: 3px solid #4f46e5; display: flex; flex-direction: column; min-height: 190px; }
+    .kb-card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(79,70,229,.15); }
+    .kb-card .cat { font-size: 12px; color: #4f46e5; background: #eef2ff; display: inline-block; padding: 2px 10px; border-radius: 10px; align-self: flex-start; }
+    .kb-card .title { font-size: 17px; font-weight: 700; color: #111827; margin: 10px 0 8px; line-height: 1.5; }
+    .kb-card .summary { color: #6b7280; font-size: 13px; line-height: 1.7; flex: 1; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+    .kb-card .meta { margin-top: 12px; color: #9ca3af; font-size: 12px; display: flex; justify-content: space-between; }
+    .kb-pager { display: flex; justify-content: center; align-items: center; gap: 12px; margin: 18px 0; color: #6b7280; font-size: 13px; }
+    .kb-empty { background: #fff; border-radius: 10px; padding: 60px 0; text-align: center; color: #9ca3af; grid-column: 1 / -1; }
+    .kb-tag { display: inline-block; margin-left: 6px; padding: 1px 8px; background: #fef3c7; color: #b45309; border-radius: 8px; font-size: 11px; }
+</style>
+
+<div class="kb-hero">
+    <div>
+        <h1><i class="layui-icon layui-icon-read"></i> 知识库</h1>
+        <p>沉淀产品知识、销售话术、售后经验与制度流程，让团队经验可复用。</p>
+    </div>
+    <button class="layui-btn layui-btn-normal" id="btnAdd"><i class="layui-icon layui-icon-add-1"></i> 写知识</button>
+</div>
+
+<div class="kb-layout">
+    <div class="kb-side">
+        <div class="kb-side-title">知识分类</div>
+        <ul id="kbCategories">
+            <li data-cat="" class="active">全部知识 <span class="count" id="cat_all">0</span></li>
+        </ul>
+    </div>
+    <div class="kb-main">
+        <div class="kb-search">
+            <input type="text" id="kbKeyword" class="layui-input" placeholder="搜索标题、关键词、摘要…">
+            <button class="layui-btn layui-btn-normal" id="btnSearch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+        </div>
+        <div id="kbCards" class="kb-cards"></div>
+        <div class="kb-pager">
+            <button class="layui-btn layui-btn-primary layui-btn-sm" id="btnPrev">上一页</button>
+            <span id="kbPageInfo">第 1 页</span>
+            <button class="layui-btn layui-btn-primary layui-btn-sm" id="btnNext">下一页</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['layer'], function () {
+        var $ = layui.jquery;
+        var layer = layui.layer;
+
+        var categories = ['产品知识', '销售话术', '售后支持', '制度流程', '其他'];
+        var state = { category: '', keyword: '', page: 1, limit: 9, total: 0 };
+        var statsMap = {};
+        var totalCount = 0;
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        }
+
+        function loadStats() {
+            $.get('Stats', function (res) {
+                statsMap = {};
+                totalCount = res.total || 0;
+                (res.data || []).forEach(function (item) {
+                    statsMap[item.name] = item.count;
+                });
+                renderCategories();
+            }, 'json');
+        }
+
+        function renderCategories() {
+            var html = '<li data-cat="" class="' + (state.category === '' ? 'active' : '') + '">全部知识 <span class="count">' + totalCount + '</span></li>';
+            categories.forEach(function (c) {
+                html += '<li data-cat="' + c + '" class="' + (state.category === c ? 'active' : '') + '">' + c + ' <span class="count">' + (statsMap[c] || 0) + '</span></li>';
+            });
+            $('#kbCategories').html(html);
+        }
+
+        function loadCards() {
+            $.get('Grid', {
+                page: state.page,
+                limit: state.limit,
+                category: state.category,
+                keyword: state.keyword
+            }, function (res) {
+                state.total = res.count || 0;
+                var list = res.data || [];
+                if (list.length === 0) {
+                    $('#kbCards').html('<div class="kb-empty"><i class="layui-icon layui-icon-file" style="font-size:40px;"></i><div style="margin-top:12px;">暂无知识，点击右上角“写知识”开始沉淀。</div></div>');
+                } else {
+                    var html = '';
+                    list.forEach(function (item) {
+                        var summary = item.summary || (item.content ? String(item.content).replace(/<[^>]+>/g, '').substring(0, 120) : '');
+                        html += '<div class="kb-card" data-id="' + item.id + '" data-top="' + (item.is_top || 0) + '">' +
+                            '<span class="cat">' + (item.category || '未分类') + '</span>' +
+                            '<div class="title">' + escapeHtml(item.title) + (item.is_top == 1 ? '<span class="kb-tag">置顶</span>' : '') + '</div>' +
+                            '<div class="summary">' + escapeHtml(summary) + '</div>' +
+                            '<div class="meta"><span>' + (item.creater ? item.creater.name : '') + '</span><span><i class="layui-icon layui-icon-eye"></i> ' + (item.view_count || 0) + ' · ' + (item.update_time || item.create_time || '') + '</span></div>' +
+                            '</div>';
+                    });
+                    $('#kbCards').html(html);
+                }
+
+                var totalPage = Math.max(1, Math.ceil(state.total / state.limit));
+                if (state.page > totalPage) {
+                    state.page = totalPage;
+                    loadCards();
+                    return;
+                }
+                $('#kbPageInfo').text('第 ' + state.page + ' / ' + totalPage + ' 页，共 ' + state.total + ' 条');
+            }, 'json');
+        }
+
+        $('#kbCards').on('click', '.kb-card', function () {
+            var id = $(this).data('id');
+            window.location.href = 'Info?id=' + id;
+        });
+
+        $('#kbCategories').on('click', 'li', function () {
+            state.category = $(this).data('cat') || '';
+            state.page = 1;
+            renderCategories();
+            loadCards();
+        });
+
+        $('#btnSearch').on('click', function () {
+            state.keyword = $('#kbKeyword').val().trim();
+            state.page = 1;
+            loadCards();
+        });
+
+        $('#kbKeyword').on('keypress', function (e) {
+            if (e.which === 13) {
+                $('#btnSearch').click();
+            }
+        });
+
+        $('#btnPrev').on('click', function () {
+            if (state.page > 1) {
+                state.page--;
+                loadCards();
+            }
+        });
+
+        $('#btnNext').on('click', function () {
+            var totalPage = Math.max(1, Math.ceil(state.total / state.limit));
+            if (state.page < totalPage) {
+                state.page++;
+                loadCards();
+            }
+        });
+
+        $('#btnAdd').on('click', function () {
+            layer.open({
+                title: '写知识',
+                type: 2,
+                area: ['90%', '90%'],
+                maxmin: true,
+                content: 'Add',
+                btn: ['保存', '关闭'],
+                yes: function (index, layero) {
+                    layero.find('iframe').contents().find('#LAY-user-front-submit').trigger('click');
+                },
+                btn2: function (index) { layer.close(index); }
+            });
+        });
+
+        loadStats();
+        loadCards();
+    });
+</script>

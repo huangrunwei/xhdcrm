@@ -1,0 +1,229 @@
+@using XHD.Core.Models
+@using System.Linq
+@{
+    ViewData["Title"] = "知识详情";
+    var knowledge = ViewData["knowledge"] as Crm_Knowledge;
+    var keywords = string.IsNullOrWhiteSpace(knowledge?.keywords)
+        ? new string[0]
+        : knowledge.keywords.Split(new[] { ',', '，', ';', '；' }, StringSplitOptions.RemoveEmptyEntries);
+}
+
+<style>
+    body { background: #f5f7fa; }
+    .kb-article { max-width: 1080px; margin: 0 auto; box-sizing: border-box; }
+    .kb-article-head { background: linear-gradient(135deg, #312e81 0%, #4f46e5 100%); color: #fff; border-radius: 12px 12px 0 0; padding: 30px 36px 24px; }
+    .kb-category { display: inline-block; padding: 2px 12px; border-radius: 12px; background: rgba(255,255,255,.2); font-size: 12px; }
+    .kb-article-title { font-size: 28px; font-weight: 800; margin-top: 14px; line-height: 1.45; }
+    .kb-article-meta { margin-top: 14px; font-size: 13px; opacity: .88; display: flex; gap: 22px; flex-wrap: wrap; }
+    .kb-article-body { background: #fff; border-radius: 0 0 12px 12px; padding: 34px 40px 42px; box-shadow: 0 10px 28px rgba(15,23,42,.08); }
+    .kb-article-content { color: #1f2937; font-size: 15px; line-height: 1.95; word-break: break-word; }
+    .kb-article-content img { max-width: 100%; height: auto; border-radius: 6px; }
+    .kb-article-content table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    .kb-article-content table td, .kb-article-content table th { border: 1px solid #e5e7eb; padding: 8px 10px; }
+    .kb-article-content h1, .kb-article-content h2, .kb-article-content h3 { margin: 20px 0 12px; font-weight: 700; }
+    .kb-keywords { margin-top: 30px; padding-top: 18px; border-top: 1px dashed #e5e7eb; }
+    .kb-keywords span { display: inline-block; margin: 0 8px 8px 0; padding: 2px 10px; background: #eef2ff; color: #4f46e5; border-radius: 10px; font-size: 12px; }
+    .kb-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .kb-back { color: #4f46e5; cursor: pointer; font-size: 14px; }
+    .kb-back:hover { text-decoration: underline; }
+    #kbRawContent { display: none; }
+
+    @@page { size: A4 portrait; margin: 12mm 14mm; }
+
+    @@media print {
+        html, body {
+            width: auto;
+            margin: 0;
+            padding: 0;
+            background: #fff;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .no-print, .kb-toolbar { display: none !important; }
+
+        /* 只打印文章区域，保留原有配色 */
+        .kb-article {
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            border: 1px solid #dbe3ef;
+            border-radius: 0;
+            overflow: hidden;
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .kb-article-head {
+            background: linear-gradient(135deg, #312e81 0%, #4f46e5 100%) !important;
+            color: #fff !important;
+            border: none;
+            border-radius: 0;
+            padding: 6mm 5mm 5mm;
+            break-inside: avoid;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .kb-category {
+            background: rgba(255, 255, 255, .2) !important;
+            color: #fff !important;
+            border: none;
+            border-radius: 3mm;
+            font-size: 8pt;
+        }
+        .kb-category[style] {
+            background: #f59e0b !important;
+            color: #fff !important;
+        }
+        .kb-article-title { font-size: 19pt; line-height: 1.4; margin-top: 3mm; color: #fff !important; }
+        .kb-article-meta { color: rgba(255,255,255,.9) !important; opacity: 1 !important; font-size: 9pt; gap: 6mm; margin-top: 4mm; }
+        .kb-article-body {
+            background: #fff !important;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 6mm 5mm 0;
+        }
+        .kb-article-content {
+            color: #1f2937 !important;
+            font-size: 10.5pt;
+            line-height: 1.85;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .kb-article-content h1 { font-size: 16pt; }
+        .kb-article-content h2 { font-size: 14pt; }
+        .kb-article-content h3 { font-size: 12pt; }
+        .kb-article-content h1,
+        .kb-article-content h2,
+        .kb-article-content h3 { margin: 5mm 0 2.5mm; break-after: avoid; page-break-after: avoid; }
+        .kb-article-content p { margin: 2mm 0; }
+        .kb-article-content img { max-width: 100% !important; height: auto !important; break-inside: avoid; page-break-inside: avoid; }
+        .kb-article-content table {
+            width: 100% !important;
+            max-width: 100% !important;
+            table-layout: fixed;
+            border-collapse: collapse;
+            margin: 3mm 0;
+        }
+        .kb-article-content table td,
+        .kb-article-content table th {
+            border: 1px solid #cbd5e1 !important;
+            padding: 1.8mm 2mm !important;
+            font-size: 9pt !important;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+        }
+        .kb-article-content table th { background: #f8fafc !important; }
+        .kb-article-content tr { break-inside: avoid; page-break-inside: avoid; }
+        .kb-article-content pre,
+        .kb-article-content code {
+            white-space: pre-wrap !important;
+            word-break: break-all;
+            overflow-wrap: anywhere;
+        }
+        .kb-article-content a { color: #1677ff !important; text-decoration: underline; }
+        .kb-keywords {
+            margin-top: 7mm;
+            padding-top: 4mm;
+            border-top: 1px dashed #cbd5e1;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .kb-keywords span {
+            background: #eef2ff !important;
+            color: #4f46e5 !important;
+            border: none;
+            border-radius: 2mm;
+            font-size: 8pt;
+        }
+    }
+</style>
+
+<div class="kb-article">
+    <div class="kb-toolbar no-print">
+        <div class="kb-back" onclick="location.href='Index'"><i class="layui-icon layui-icon-return"></i> 返回知识库</div>
+        <div>
+            <button class="layui-btn layui-btn-sm layui-btn-normal" onclick="openEdit()"><i class="layui-icon layui-icon-edit"></i> 编辑</button>
+            <button class="layui-btn layui-btn-sm layui-btn-danger" onclick="delKnowledge()"><i class="layui-icon layui-icon-delete"></i> 删除</button>
+            <button class="layui-btn layui-btn-sm layui-btn-primary" onclick="window.print()"><i class="layui-icon layui-icon-print"></i> 打印</button>
+        </div>
+    </div>
+
+    <div class="kb-article-head">
+        <span class="kb-category">@(knowledge?.category ?? "未分类")</span>
+        @if (knowledge?.is_top == 1)
+        {
+            <span class="kb-category" style="background:#f59e0b;">置顶</span>
+        }
+        <div class="kb-article-title">@knowledge?.title</div>
+        <div class="kb-article-meta">
+            <span><i class="layui-icon layui-icon-username"></i> @(knowledge?.creater?.name ?? "系统")</span>
+            <span><i class="layui-icon layui-icon-date"></i> 更新于 @(knowledge?.update_time?.ToString("yyyy-MM-dd HH:mm") ?? knowledge?.create_time?.ToString("yyyy-MM-dd HH:mm"))</span>
+            <span><i class="layui-icon layui-icon-eye"></i> @(knowledge?.view_count ?? 0) 次浏览</span>
+        </div>
+    </div>
+
+    <div class="kb-article-body">
+        <div class="kb-article-content" id="kbContent"></div>
+        <div id="kbRawContent">@knowledge?.content</div>
+
+        @if (keywords.Length > 0)
+        {
+            <div class="kb-keywords">
+                <span style="background:none;color:#6b7280;padding-left:0;">关键词：</span>
+                @foreach (var k in keywords)
+                {
+                    <span>@k.Trim()</span>
+                }
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    (function () {
+        var raw = document.getElementById('kbRawContent');
+        var target = document.getElementById('kbContent');
+        if (raw && target) {
+            target.innerHTML = sanitizeRichHtml(raw.textContent || '');
+        }
+    })();
+
+    var knowledgeId = '@knowledge?.id';
+
+    function openEdit() {
+        layui.use(['layer'], function () {
+            var layer = layui.layer;
+            layer.open({
+                title: '编辑知识',
+                type: 2,
+                area: ['90%', '90%'],
+                maxmin: true,
+                content: 'Add?id=' + knowledgeId,
+                btn: ['保存', '关闭'],
+                yes: function (index, layero) {
+                    layero.find('iframe').contents().find('#LAY-user-front-submit').trigger('click');
+                },
+                btn2: function (index) { layer.close(index); }
+            });
+        });
+    }
+
+    function delKnowledge() {
+        layui.use(['layer'], function () {
+            var layer = layui.layer;
+            var $ = layui.$;
+            layer.confirm('确定删除这篇知识？', { icon: 3, title: '提示' }, function (index) {
+                $.post('Delete', { id: knowledgeId }, function (res) {
+                    if (res.code === 0) {
+                        layer.msg('删除成功', { icon: 1 });
+                        setTimeout(function () { location.href = 'Index'; }, 500);
+                    } else {
+                        layer.msg(res.msg, { icon: 2 });
+                    }
+                }, 'json');
+                layer.close(index);
+            });
+        });
+    }
+</script>

@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Index";
 }
 
@@ -222,34 +222,22 @@
         });
 
         function info(data) {
+            if (top.openTab) {
+                top.openTab('/SaleOrder/Info?id=' + data.id, '【订单】' + data.sn);
+                return;
+            }
+
             var index = layui.layer.open({
-                title: "详情",
+                title: "订单详情",
                 type: 2,
                 anim: 1,
-                area: ['80%', '80%'],
+                area: ['92%', '88%'],
                 maxmin: true,
-                content: "Add?id=" + data.id,
+                content: "Info?id=" + data.id,
                 btn: ['关闭'],
-                success: function (layero, index) {
-                    var iframe = window["layui-layer-iframe" + index];
-                    var body = layui.layer.getChildFrame('body', index);
-                    if (data) {
-                        for (var val in data) {
-                            var value = data[val];
-                            if (isNaN(value) && !isNaN(Date.parse(value))) {
-                                value = value.replace(' 00:00:00', '');
-                            }
-                            body.find("#" + val).val(value);
-                        }
-                        body.fine("#order_status_val").val(data.Order_status_id);
-                        body.find("#customer_val").val(data.customer_id);
-                        body.find("#customer_name").val(data.customer.cus_name);
-                    }
-                },
-                btn2: function (index, layero) {
+                yes: function (index, layero) {
                     layer.close(index);
                 }
-
             });
         }
 

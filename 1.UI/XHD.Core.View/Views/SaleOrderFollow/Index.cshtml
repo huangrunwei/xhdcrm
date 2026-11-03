@@ -1,0 +1,200 @@
+@{
+    ViewData["Title"] = "订单跟进";
+}
+
+<style>
+    .follow-stats { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 12px; }
+    .follow-stat { flex: 1 1 180px; background: #fff; border-radius: 8px; padding: 14px 18px; box-shadow: 0 1px 4px rgba(0,0,0,.06); border-left: 4px solid #1677ff; }
+    .follow-stat .label { color: #6b7280; font-size: 13px; }
+    .follow-stat .value { font-size: 22px; font-weight: 700; color: #111827; margin-top: 4px; }
+</style>
+
+<div class="table-search-fieldset">
+    <div>
+        <form class="layui-form layui-form-pane" action="">
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">关键字</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="keyword" id="keyword" placeholder="订单号/跟进内容" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">客户</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="cus_name" id="cus_name" placeholder="客户名称" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">状态</label>
+                <div class="layui-input-inline">
+                    <select id="service_status" name="service_status">
+                        <option value="">全部</option>
+                        <option value="0">待处理</option>
+                        <option value="1">处理中</option>
+                        <option value="2">已解决</option>
+                        <option value="3">已关闭</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item layui-inline">
+                <label class="layui-form-label">跟进时间</label>
+                <div class="layui-input-inline" style="width: 110px;">
+                    <input type="text" name="date1" id="date1" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline" style="width: 110px;">
+                    <input type="text" name="date2" id="date2" placeholder="yyyy-MM-dd" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="btn-group-inline">
+                <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon layui-icon-search"></i> 搜索</button>
+                <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon layui-icon-error"></i> 重置</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="layuimini-card">
+    <div class="layui-card-body">
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add"><i class="layui-icon layui-icon-add-1"></i> 新增售后跟进</button>
+            </div>
+        </script>
+        <script type="text/html" id="auth-state">
+            <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="edit">修改</a>
+            <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+        </script>
+
+        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+    </div>
+</div>
+
+<script>
+    layui.use(['table', 'form', 'layer', 'laydate'], function () {
+        var $ = layui.jquery;
+        var table = layui.table;
+        var form = layui.form;
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+
+        laydate.render({ elem: '#date1', trigger: 'click' });
+        laydate.render({ elem: '#date2', trigger: 'click' });
+
+        function statusBadge(status) {
+            switch (status) {
+                case 2: return '<span class="layui-badge layui-bg-green">已解决</span>';
+                case 3: return '<span class="layui-badge layui-bg-gray">已关闭</span>';
+                case 1: return '<span class="layui-badge layui-bg-orange">处理中</span>';
+                default: return '<span class="layui-badge">待处理</span>';
+            }
+        }
+
+        table.render({
+            elem: '#munu-table',
+            url: 'Grid',
+            toolbar: '#toolbarDemo',
+            defaultToolbar: ['filter'],
+            id: "orderFollowGrid",
+            cols: [[
+                { type: 'numbers', width: 60, title: '序号' },
+                {
+                    field: 'cus_name', width: 160, title: '客户', templet: function (t) {
+                        return t.customer ? t.customer.cus_name : "";
+                    }
+                },
+                {
+                    field: 'sn', width: 165, title: '订单号', templet: function (t) {
+                        return t.Order ? t.Order.sn : "";
+                    }
+                },
+                { field: 'service_type', width: 95, title: '售后类型' },
+                {
+                    field: 'service_status', width: 80, title: '状态', align: 'center', templet: function (t) {
+                        return statusBadge(t.service_status);
+                    }
+                },
+                { field: 'follow_content', width: 135, title: '跟进内容' },
+                { field: 'solution', width: 110, title: '处理结果' },
+                {
+                    field: 'follow_type_id', width: 95, title: '跟进方式', templet: function (t) {
+                        return t.FollowType ? t.FollowType.params_name : "";
+                    }
+                },
+                {
+                    field: 'follow_time', width: 150, title: '跟进时间', templet: function (t) {
+                        return t.follow_time ? t.follow_time.replace('T', ' ').substring(0, 16) : "";
+                    }
+                },
+                {
+                    field: 'next_time', width: 100, title: '下次跟进', templet: function (t) {
+                        return t.next_time ? t.next_time.split(' ')[0] : "";
+                    }
+                },
+                {
+                    field: 'employee', width: 80, title: '跟进人', templet: function (t) {
+                        return t.employee ? t.employee.name : "";
+                    }
+                },
+                { templet: '#auth-state', width: 120, align: 'center', fixed:'right',title: '操作' }
+            ]],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            done: function () {
+                layer.closeAll('loading');
+            }
+        });
+
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {
+                openForm('');
+            }
+        });
+
+        table.on('tool(currentTableFilter)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                openForm(data.id);
+            } else if (obj.event === 'del') {
+                layer.confirm('确定删除该跟进记录？', { icon: 3, title: '提示' }, function (index) {
+                    $.post('Delete', { id: data.id }, function (res) {
+                        if (res.code === 0) {
+                            table.reload('orderFollowGrid');
+                        } else {
+                            layer.msg(res.msg, { icon: 2 });
+                        }
+                    }, 'json');
+                    layer.close(index);
+                });
+            }
+        });
+
+        function openForm(id) {
+            layer.open({
+                title: id ? '修改售后跟进' : '新增售后跟进',
+                type: 2,
+                area: ['820px', '680px'],
+                maxmin: true,
+                content: 'Add' + (id ? '?id=' + id : ''),
+                btn: ['确定', '关闭'],
+                yes: function (index, layero) {
+                    layero.find('iframe').contents().find('#LAY-user-front-submit').trigger('click');
+                },
+                btn2: function (index) { layer.close(index); }
+            });
+        }
+
+        form.on('submit(data-search-btn)', function (data) {
+            var curr = $(".layui-laypage-skip").find("input").val() || 1;
+            table.reload('orderFollowGrid', { page: { curr: curr }, where: data.field }, 'data');
+            return false;
+        });
+
+        $('#btn_reset').on('click', function () {
+            setTimeout(function () {
+                table.reload('orderFollowGrid', { where: { keyword: '', cus_name: '', service_status: '', date1: '', date2: '' } }, 'data');
+            }, 30);
+        });
+    });
+</script>

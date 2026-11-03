@@ -1,6 +1,7 @@
 using FreeSql;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using XHD.Core.Common;
 using XHD.Core.View.Configs;
+using XHD.Core.View.Mcp;
 
 namespace XHD.Core.View
 {
@@ -54,6 +56,13 @@ namespace XHD.Core.View
             services.AddRepository();
 
             services.AddSession();
+            services.AddDataProtection();
+            services.AddHttpContextAccessor();
+            services.AddHttpClient("McpApi");
+            services.AddScoped<McpApiForwarder>();
+            services.AddMcpServer()
+                .WithHttpTransport()
+                .WithTools<CrmMcpWebTools>();
             services.AddDb(_env);
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
@@ -61,22 +70,25 @@ namespace XHD.Core.View
                     options.LoginPath = "/Account/Index";
                     options.LogoutPath = "/Account/SignOut";
                     options.ExpireTimeSpan = TimeSpan.FromMinutes(120);
+                    options.Cookie.HttpOnly = true;
+                    options.Cookie.SameSite = SameSiteMode.Lax;
+                    options.SlidingExpiration = true;
 
                 });
 
-#if DEBUG
+            #if DEBUG
             services.AddRazorPages().AddRazorRuntimeCompilation();
             #endif
 
-            //¿çÓò
+            //è·¨åŸŸ
             services.AddCors(options => options.AddPolicy("CorsPolicy",
                builder =>
                {
                    builder.AllowAnyMethod()
                        .AllowAnyHeader()
                        //.SetIsOriginAllowed(origin => origin.StartsWith("http://192.168.*.*"));
-                       .AllowAnyOrigin();  //²âÊÔ»·¾³²ÅÓÃÕâ¸ö
-                       //.WithOrigins("https://sfs.huilongtech.com");
+                       .AllowAnyOrigin();  //æµ‹è¯•çŽ¯å¢ƒæ‰ç”¨è¿™ä¸ª
+                       //.WithOrigins("https://wwww.xhdcrm.com");
 
                }));
 
@@ -106,7 +118,7 @@ namespace XHD.Core.View
                         var ex = exHeader.Error;
                         if (ex != default)
                         {
-                            await context.Response.WriteAsJsonAsync(new { code = 500, errPath = exHeader.Path, msg = $"·þÎñÆ÷ÄÚ²¿´íÎó->{ex.Message}" });
+                            await context.Response.WriteAsJsonAsync(new { code = 500, msg = "æœåŠ¡å™¨å†…éƒ¨é”™è¯¯ï¼Œè¯·ç¨åŽé‡è¯•" });
                         }
 
                         //NLogger.WriteLog("sys_Error1_", ex.Message);
@@ -127,6 +139,31 @@ namespace XHD.Core.View
             app.UseSession();
             app.UseHttpsRedirection();
 
+            app.Use(async (context, next) =>
+            {
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+                context.Response.Headers["X-Frame-Options"] = "SAMEORIGIN";
+                context.Response.Headers["Referrer-Policy"] = "same-origin";
+                await next();
+            });
+
+            // çŠ¶æ€å˜æ›´æŽ¥å£åªå…è®¸ POSTï¼Œé¿å…é€šè¿‡é¡¶å±‚ GET é“¾æŽ¥è§¦å‘åˆ é™¤ç­‰ CSRF æ“ä½œ
+            app.Use(async (context, next) =>
+            {
+                if (HttpMethods.IsGet(context.Request.Method) || HttpMethods.IsHead(context.Request.Method))
+                {
+                    var path = (context.Request.Path.Value ?? string.Empty).TrimEnd('/');
+                    if (path.EndsWith("/Delete", StringComparison.OrdinalIgnoreCase)
+                        || path.EndsWith("/Del", StringComparison.OrdinalIgnoreCase))
+                    {
+                        context.Response.StatusCode = StatusCodes.Status405MethodNotAllowed;
+                        return;
+                    }
+                }
+
+                await next();
+            });
+
             var filePath = AppContext.BaseDirectory;
 
             //app.UseStaticFiles();
@@ -144,12 +181,14 @@ namespace XHD.Core.View
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<McpTokenMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapMcp("/mcp");
             });
         }
 

@@ -20,11 +20,16 @@ namespace XHD.Core.Repository
 
         public async Task<List<string>> GetMenuByEmpID(string emp_id)
         {
-            //根据emp_id查找
-            List<string> rolelist = await _fsql.Select<hr_employee>().Where(a => a.id == emp_id).ToListAsync(a => a.id);
+            var employee = await _fsql.Select<hr_employee>().Where(a => a.id == emp_id).FirstAsync();
+            if (employee == null || string.IsNullOrWhiteSpace(employee.role_id))
+            {
+                return new List<string>();
+            }
 
-            //根据roleid查找目录
-            List<string> menulist = await _fsql.Select<Sys_authority>().Where(a => rolelist.Contains(a.Role_id) && a.Auth_type == 2).ToListAsync(a => a.Auth_id);
+            //鏍规嵁瑙掕壊鏌ユ壘宸叉巿鏉冪殑鐩綍/鎸夐挳
+            List<string> menulist = await _fsql.Select<Sys_authority>()
+                .Where(a => a.Role_id == employee.role_id)
+                .ToListAsync(a => a.Auth_id);
 
             return menulist;
         }

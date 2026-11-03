@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -121,12 +121,39 @@ namespace XHD.Core.View.Controllers
                 if (types != null && types.Any())
                     await _typeService.AddAsync(types);
             }
-            // 8. 生成 AES Key（保持不变）
+            // 8. 增量补齐菜单与按钮（兼容已初始化过的数据库）
+            await EnsureMenusAndButtonsAsync();
+
+            // 9. 生成 AES Key（保持不变）
             string code = RandomNum(16);
             HttpContext.Session.SetString("AES_Key", code);
             ViewBag.AES_Key = code;
             return View();
         }
+        /// <summary>
+        /// 增量补齐系统菜单和按钮（按id判断，只新增不覆盖）
+        /// </summary>
+        private async Task EnsureMenusAndButtonsAsync()
+        {
+            var menuData = await _menuService.GridAsync(a => true);
+            var existingMenuIds = new HashSet<string>(menuData.data.Select(a => a.id));
+            var menus = await LoadInitDataFromJsonFileAsync<Sys_Menu>("SysMenus.json");
+            var missingMenus = menus.Where(a => !existingMenuIds.Contains(a.id)).ToList();
+            if (missingMenus.Any())
+            {
+                await _menuService.AddAsync(missingMenus);
+            }
+
+            var buttonData = await _buttonService.GridAsync(a => true);
+            var existingButtonIds = new HashSet<string>(buttonData.data.Select(a => a.id));
+            var buttons = await LoadInitDataFromJsonFileAsync<Sys_Button>("SysButtons.json");
+            var missingButtons = buttons.Where(a => !existingButtonIds.Contains(a.id)).ToList();
+            if (missingButtons.Any())
+            {
+                await _buttonService.AddAsync(missingButtons);
+            }
+        }
+
         /// <summary>
         /// 【改造后】读取初始化json数组文件，兼容AOT裁剪，使用Newtonsoft反序列化
         /// 上层调用完全不变 await LoadInitDataFromJsonFileAsync<T>("xxx.json")

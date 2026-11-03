@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -25,6 +25,7 @@ using System.Linq.Expressions;
 using Newtonsoft.Json.Converters;
 using System.Collections;
 using XHD.Core.View.Configs;
+using XHD.Core.View.Services;
 
 namespace XHD.Core.View.Controllers
 {
@@ -36,13 +37,19 @@ namespace XHD.Core.View.Controllers
         private readonly ISale_orderService _OrderService;
         private readonly ISys_logService _LogService;
         private readonly IDBAuthService _dBAuthService;
+        private readonly ISale_order_pay_planService _PayPlanService;
+        private readonly ICalendarSyncService _CalendarSyncService;
+        private readonly IFreeSql _fsql;
         private readonly SysLogExt<Finance_Receive> logext = new SysLogExt<Finance_Receive>();  //日志
-        public FinanceReceiveController(ILogger<FinanceReceiveController> logger, IFinance_ReceiveService service, IFreeSql freeSql, ISale_orderService OrderService, ISys_logService LogService, IDBAuthService dBAuthService)
+        public FinanceReceiveController(ILogger<FinanceReceiveController> logger, IFinance_ReceiveService service, IFreeSql freeSql, ISale_orderService OrderService, ISys_logService LogService, IDBAuthService dBAuthService, ISale_order_pay_planService PayPlanService, ICalendarSyncService CalendarSyncService)
         {
             _service = service;
             _logger = logger;
+            _fsql = freeSql;
             _LogService = LogService;
             _OrderService = OrderService;
+            _PayPlanService = PayPlanService;
+            _CalendarSyncService = CalendarSyncService;
 
             _dBAuthService = dBAuthService;
         }
@@ -73,6 +80,21 @@ namespace XHD.Core.View.Controllers
             if (!string.IsNullOrWhiteSpace(Request.Query["emp_id"]))
             {
                 exp = exp.And(a => a.Payee_id == Request.Query["emp_id"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Request.Query["order_id"]))
+            {
+                exp = exp.And(a => a.order_id == Request.Query["order_id"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Request.Query["customer_id"]))
+            {
+                exp = exp.And(a => a.Order.customer_id == Request.Query["customer_id"]);
+            }
+
+            if (!string.IsNullOrWhiteSpace(Request.Query["pay_plan_id"]))
+            {
+                exp = exp.And(a => a.pay_plan_id == Request.Query["pay_plan_id"]);
             }
 
             if (PageValidate.IsDateTime(Request.Query["date1"]))
@@ -136,6 +158,12 @@ namespace XHD.Core.View.Controllers
                         return XHDResult.Error("找不到数据！").ToString();
                     }
 
+                    //编辑时若表单未携带收款计划，保留原关联
+                    if (string.IsNullOrWhiteSpace(model.pay_plan_id))
+                    {
+                        model.pay_plan_id = checknulldata.data[0].pay_plan_id;
+                    }
+
                     result = await _service.UpdateAsync(model);
 
                     //对比实体差别
@@ -173,7 +201,16 @@ namespace XHD.Core.View.Controllers
 
             //更新订单
             _OrderService.UpdateOrderReceive(model.order_id);
+            await _PayPlanService.RecalcOrderTotalsAsync(model.order_id);
 
+            //同步收款计划与日程
+            if (!string.IsNullOrWhiteSpace(model.pay_plan_id))
+            {
+                await _PayPlanService.RecalcAsync(model.pay_plan_id);
+                await _CalendarSyncService.SyncReceivePlanAsync(model.pay_plan_id);
+            }
+
+            await RecalcCustomerScoreAsync(model.order_id);
             return XHDResult.Success().ToString();
         }
 
@@ -228,8 +265,27 @@ namespace XHD.Core.View.Controllers
 
             //更新订单            
             _OrderService.UpdateOrderReceive(receiveInfo.data[0].order_id);
+            await _PayPlanService.RecalcOrderTotalsAsync(receiveInfo.data[0].order_id);
 
+            //同步收款计划与日程
+            var planId = receiveInfo.data[0].pay_plan_id;
+            if (!string.IsNullOrWhiteSpace(planId))
+            {
+                await _PayPlanService.RecalcAsync(planId);
+                await _CalendarSyncService.SyncReceivePlanAsync(planId);
+            }
+
+            await RecalcCustomerScoreAsync(receiveInfo.data[0].order_id);
             return XHDResult.Success().ToString();
+        }
+
+        private async Task RecalcCustomerScoreAsync(string orderId)
+        {
+            var order = await _fsql.Select<Sale_order>().Where(a => a.id == orderId).FirstAsync();
+            if (order != null)
+            {
+                await CustomerScoreService.RecalculateAsync(_fsql, order.customer_id);
+            }
         }
     }
 }

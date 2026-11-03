@@ -45,3 +45,6 @@ body { margin: 15px 15px 15px 15px; background: #f2f2f2; }
 .layuimini-card { margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; background: #fff; box-shadow: 0 0 1px rgba(0,0,0,.1); }
 .layuimini-card-header { position: relative; height: 42px; line-height: 42px; padding: 0 15px; border-bottom: 1px solid #ccc; color: #333; border-radius: 2px 2px 0 0; font-size: 14px; }
 .layuimini-card-body { position: relative; padding: 10px 15px; line-height: 24px; }
+
+/* treeTable 固定列行高对齐：避免树节点图标把主表行撑高，导致固定列错位 */
+.layui-table-tree-flexIcon, .layui-table-tree-nodeIcon { height: 28px !important; line-height: 28px !important; vertical-align: top !important; }

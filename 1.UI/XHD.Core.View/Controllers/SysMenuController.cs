@@ -116,6 +116,104 @@ namespace XHD.Core.View.Controllers
         }
 
         /// <summary>
+        /// 按钮目录混合表格 layui treeTable 无限层级树
+        /// children = 下级菜单；btn = 当前菜单绑定按钮数组（附属字段）
+        /// 根菜单 parentid = "root"
+        /// 【改用字典映射构建树，不再递归Where查询集合，规避诡异重复问题】
+        /// </summary>
+        /// <returns></returns>
+        public async Task<string> GridTree()
+        {
+            Expression<Func<Sys_Menu, bool>> expMenu = a => true;
+            if (User.FindFirst(ClaimTypes.Sid).Value != "admin")
+            {
+                expMenu = a => a.id != "Sys_Menu";
+            }
+
+            // 保留你原来的查询，全量菜单、全量按钮，不动这里
+            var MenuData = await _service.GridAsync(expMenu, "Menu_order");
+            var BtnData = await _serviceBtn.GridAsync(a => true, "Btn_order");
+
+            var allMenus = MenuData.data.ToList();
+            var allBtns = BtnData.data.ToList();
+
+            // 按钮字典 key:MenuId
+            var btnDic = allBtns.GroupBy(b => b.Menu_id)
+                .ToDictionary(g => g.Key, g => g.ToList());
+
+            // 1. 第一步：预构建所有菜单JObject，放入字典
+            var menuDict = new Dictionary<string, JObject>();
+            foreach (var menu in allMenus)
+            {
+                JObject menuObj = new JObject();
+                menuObj.Add("id", menu.id);
+                menuObj.Add("title", menu.Menu_name);
+                menuObj.Add("icon", string.IsNullOrEmpty(menu.Menu_icon) ? "" : $"fa {menu.Menu_icon}");
+                menuObj.Add("href", menu.Menu_url);
+                menuObj.Add("isMenu", 0);
+                menuObj.Add("parentid", menu.parentid);
+                menuObj.Add("order", menu.Menu_order);
+
+                // 组装按钮数组
+                JArray btnArr = new JArray();
+                if (btnDic.TryGetValue(menu.id, out var btnList))
+                {
+                    foreach (var btn in btnList)
+                    {
+                        JObject btnObj = new JObject();
+                        btnObj.Add("id", btn.id);
+                        btnObj.Add("title", btn.Btn_name);
+                        btnObj.Add("parentid", btn.Menu_id);
+                        btnObj.Add("order", btn.Btn_order);
+                        btnArr.Add(btnObj);
+                    }
+                }
+                menuObj.Add("btn", btnArr);
+                // 初始化children为空数组
+                menuObj.Add("children", new JArray());
+
+                menuDict.Add(menu.id, menuObj);
+            }
+
+            // 2. 第二步：遍历所有菜单，挂到父节点的children
+            JArray rootTree = new JArray();
+            foreach (var menu in allMenus)
+            {
+                var currentNode = menuDict[menu.id];
+                string pid = menu.parentid;
+
+                if (pid == "root")
+                {
+                    // 根节点，直接加到外层数组
+                    rootTree.Add(currentNode);
+                }
+                else
+                {
+                    // 找到父节点，把当前节点添加到父节点children
+                    if (menuDict.TryGetValue(pid, out var parentNode))
+                    {
+                        ((JArray)parentNode["children"]).Add(currentNode);
+                    }
+                    // 找不到父节点的脏数据直接丢弃
+                }
+            }
+
+            // 3. 根节点按Menu_order排序
+            var sortedRoot = new JArray(rootTree.Children()
+                .OrderBy(x => (int?)x["order"])
+                .ToList());
+
+            JObject resp = new JObject();
+            resp.Add("code", 0);
+            resp.Add("msg", "");
+            resp.Add("count", 0);
+            resp.Add("data", sortedRoot);
+
+            return resp.ToString();
+        }
+
+
+        /// <summary>
         /// 目录树
         /// </summary>
         /// <returns></returns>

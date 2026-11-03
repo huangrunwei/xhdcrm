@@ -1,0 +1,850 @@
+@using XHD.Core.Models
+@using System.Linq
+@{
+    ViewData["Title"] = "订单详情";
+    var order = ViewData["order"] as Sale_order;
+    var details = ViewData["details"] as List<Sale_order_details> ?? new List<Sale_order_details>();
+    var plans = ViewData["plans"] as List<Sale_order_pay_plan> ?? new List<Sale_order_pay_plan>();
+    var receives = ViewData["receives"] as List<Finance_Receive> ?? new List<Finance_Receive>();
+    var invoices = ViewData["invoices"] as List<Finance_Invoice> ?? new List<Finance_Invoice>();
+    var follows = ViewData["follows"] as List<Sale_order_follow> ?? new List<Sale_order_follow>();
+    var logs = ViewData["logs"] as List<Sys_log> ?? new List<Sys_log>();
+    var chartJson = ViewData["chartJson"]?.ToString();
+    var orderAmount = (decimal)(ViewData["orderAmount"] ?? 0m);
+    var received = (decimal)(ViewData["received"] ?? 0m);
+    var arrears = (decimal)(ViewData["arrears"] ?? 0m);
+    var invoiceAmount = (decimal)(ViewData["invoiceAmount"] ?? 0m);
+    var planTotal = (decimal)(ViewData["planTotal"] ?? 0m);
+    var planReceived = (decimal)(ViewData["planReceived"] ?? 0m);
+    var planRemain = (decimal)(ViewData["planRemain"] ?? 0m);
+    var overdueCount = (int)(ViewData["overdueCount"] ?? 0);
+    var rate = (decimal)(ViewData["rate"] ?? 0m);
+    var days = (int)(ViewData["days"] ?? 0);
+    var lastFollow = ViewData["lastFollow"] as DateTime?;
+    var followPending = follows.Count(a => (a.service_status ?? 0) == 0);
+    var followDoing = follows.Count(a => a.service_status == 1);
+    var followSolved = follows.Count(a => a.service_status == 2);
+    var followClosed = follows.Count(a => a.service_status == 3);
+}
+
+@functions {
+    string PlanBadge(int? status)
+    {
+        switch (status)
+        {
+            case 2: return "<span class=\"badge badge-green\">已收清</span>";
+            case 3: return "<span class=\"badge badge-red\">已逾期</span>";
+            case 1: return "<span class=\"badge badge-orange\">部分收款</span>";
+            default: return "<span class=\"badge badge-blue\">待收款</span>";
+        }
+    }
+
+    string FollowBadge(int? status)
+    {
+        switch (status)
+        {
+            case 2: return "<span class=\"badge badge-green\">已解决</span>";
+            case 3: return "<span class=\"badge badge-gray\">已关闭</span>";
+            case 1: return "<span class=\"badge badge-orange\">处理中</span>";
+            default: return "<span class=\"badge badge-red\">待处理</span>";
+        }
+    }
+
+    string Money(decimal? value)
+    {
+        return (value ?? 0m).ToString("N2");
+    }
+}
+
+<style>
+    body { background: #f5f7fa; }
+    .order-hero { background: linear-gradient(135deg, #1e3a8a 0%, #1677ff 100%); color: #fff; border-radius: 12px; padding: 22px 26px; display: flex; justify-content: space-between; align-items: flex-start; box-shadow: 0 8px 22px rgba(22, 119, 255, .22); }
+    .order-hero .sn { font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+    .order-hero .meta { margin-top: 10px; font-size: 13px; opacity: .9; line-height: 1.9; }
+    .order-hero .meta a { color: #fff; text-decoration: underline; cursor: pointer; }
+    .order-hero .actions { display: flex; gap: 8px; }
+    .hero-badge { display: inline-block; margin-left: 10px; padding: 2px 12px; border-radius: 12px; background: rgba(255,255,255,.18); font-size: 12px; vertical-align: middle; }
+    .kpi-row { display: flex; gap: 14px; flex-wrap: wrap; margin: 16px 0; }
+    .kpi-card { flex: 1 1 160px; background: #fff; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(15,23,42,.06); border-top: 3px solid #1677ff; }
+    .kpi-card .label { color: #6b7280; font-size: 13px; }
+    .kpi-card .value { font-size: 23px; font-weight: 700; color: #111827; margin-top: 6px; font-variant-numeric: tabular-nums; }
+    .kpi-card .sub { color: #9ca3af; font-size: 12px; margin-top: 4px; }
+    .kpi-card.green { border-top-color: #16a34a; }
+    .kpi-card.orange { border-top-color: #f59e0b; }
+    .kpi-card.red { border-top-color: #ef4444; }
+    .kpi-card.purple { border-top-color: #7c3aed; }
+    .kpi-card.cyan { border-top-color: #0ea5e9; }
+    .panel { background: #fff; border-radius: 10px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(15,23,42,.06); margin-bottom: 14px; }
+    .panel-title { font-size: 15px; font-weight: 700; color: #1f2937; margin-bottom: 12px; padding-left: 10px; border-left: 4px solid #1677ff; display: flex; justify-content: space-between; align-items: center; }
+    .badge { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 12px; color: #fff; }
+    .badge-green { background: #16a34a; }
+    .badge-red { background: #ef4444; }
+    .badge-orange { background: #f59e0b; }
+    .badge-blue { background: #1677ff; }
+    .badge-gray { background: #9ca3af; }
+    .table-money { font-variant-numeric: tabular-nums; }
+    .empty-box { text-align: center; color: #9ca3af; padding: 26px 0; font-size: 13px; }
+    .chart-box { width: 100%; height: 300px; }
+    .mini-toolbar { margin-bottom: 10px; }
+    .log-content { white-space: pre-wrap; color: #4b5563; font-size: 13px; max-width: 520px; }
+    .timeline-line { border-left: 2px solid #e5e7eb; margin-left: 6px; padding-left: 16px; }
+    .timeline-item { position: relative; padding-bottom: 14px; }
+    .timeline-item::before { content: ''; position: absolute; left: -23px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #1677ff; }
+
+    /* 收款计划 / 售后跟进卡片 */
+    .settle-summary { display: flex; flex-wrap: wrap; gap: 10px 34px; background: #f8fafc; border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px 18px; margin-bottom: 14px; }
+    .settle-summary .sum-item { min-width: 120px; }
+    .settle-summary .k { display: block; color: #6b7280; font-size: 12px; }
+    .settle-summary .v { display: block; font-size: 18px; font-weight: 700; color: #111827; margin-top: 3px; font-variant-numeric: tabular-nums; }
+    .settle-summary .v.green { color: #16a34a; }
+    .settle-summary .v.red { color: #ef4444; }
+    .settle-list { display: flex; flex-direction: column; gap: 12px; }
+    .settle-card { display: flex; gap: 16px; background: #fff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 14px 16px; break-inside: avoid; page-break-inside: avoid; }
+    .settle-index { width: 38px; height: 38px; flex: none; border-radius: 50%; background: #eef2ff; color: #1677ff; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+    .settle-main { flex: 1; min-width: 0; }
+    .settle-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+    .settle-name { font-size: 15px; font-weight: 700; color: #111827; line-height: 1.5; }
+    .settle-no { color: #9ca3af; font-size: 12px; margin-top: 3px; word-break: break-all; }
+    .settle-head-right { flex: none; display: flex; align-items: center; gap: 12px; }
+    .settle-date { color: #6b7280; font-size: 12px; }
+    .settle-metrics { display: flex; flex-wrap: wrap; gap: 8px 34px; margin-top: 10px; }
+    .settle-metrics .metric span { color: #9ca3af; font-size: 12px; margin-right: 6px; }
+    .settle-metrics .metric b { font-size: 14px; color: #111827; font-variant-numeric: tabular-nums; }
+    .settle-metrics .metric b.green { color: #16a34a; }
+    .settle-metrics .metric b.red { color: #ef4444; }
+    .settle-progress { height: 6px; border-radius: 3px; background: #f1f5f9; margin-top: 10px; overflow: hidden; }
+    .settle-progress span { display: block; height: 100%; background: linear-gradient(90deg, #1677ff, #16a34a); }
+    .settle-note { color: #6b7280; font-size: 12px; margin-top: 8px; line-height: 1.7; }
+    .settle-actions { display: flex; justify-content: flex-end; align-items: center; gap: 8px; margin-top: 10px; padding-top: 10px; border-top: 1px dashed #e5e7eb; }
+    .settle-actions .layui-btn { margin: 0; }
+    .follow-block { margin-top: 10px; background: #f8fafc; border-left: 3px solid #cbd5e1; border-radius: 0 6px 6px 0; padding: 8px 12px; }
+    .follow-block.result { background: #f0fdf4; border-left-color: #16a34a; }
+    .follow-label { color: #6b7280; font-size: 12px; margin-bottom: 4px; }
+    .follow-text { color: #1f2937; font-size: 13px; line-height: 1.75; white-space: pre-wrap; }
+    .settle-meta { display: flex; flex-wrap: wrap; gap: 6px 26px; margin-top: 10px; color: #6b7280; font-size: 12px; }
+
+    @@media print {
+        body { background: #fff; }
+        .no-print, .layui-tab-title { display: none !important; }
+        .order-hero { background: #fff !important; color: #111 !important; box-shadow: none; border: 1px solid #999; }
+        .order-hero .meta a { color: #111 !important; }
+        .hero-badge { background: #fff !important; color: #111 !important; border: 1px solid #666; }
+        .badge { background: #fff !important; color: #111 !important; border: 1px solid #666; }
+        .kpi-card { box-shadow: none; border: 1px solid #999; }
+        .panel { box-shadow: none; border: 1px solid #e5e7eb; }
+        .layui-tab-content > .layui-tab-item { display: none !important; }
+        .layui-tab-content > .layui-tab-item.layui-show { display: block !important; }
+        .settle-summary { background: #fff; border-color: #999; padding: 8px 12px; }
+        .settle-summary .v { font-size: 16px; }
+        .settle-list { gap: 8px; }
+        .settle-card { border-color: #999; padding: 10px 12px; }
+        .settle-index { background: #fff; border: 1px solid #999; color: #333; }
+        .settle-progress { display: none; }
+        .follow-block,
+        .follow-block.result { background: #fff; border-left-color: #999; }
+    }
+</style>
+
+<div class="order-hero">
+    <div>
+        <div>
+            <span class="sn">@order?.sn</span>
+            <span class="hero-badge">@(order?.OrderStatus?.params_name ?? "未设置状态")</span>
+        </div>
+        <div class="meta">
+            客户：<a onclick="openCustomer('@order?.customer_id', '@order?.customer?.cus_name')">@order?.customer?.cus_name</a>
+            &nbsp;·&nbsp; 成交人：@(order?.employee?.name ?? "未指定")
+            &nbsp;·&nbsp; 成交日期：@(order?.Order_date?.ToString("yyyy-MM-dd") ?? "-")
+            &nbsp;·&nbsp; 已合作 @days 天
+            <br />
+            付款方式：@(order?.PayType?.params_name ?? "未指定")
+            &nbsp;·&nbsp; 最近售后：@(lastFollow?.ToString("yyyy-MM-dd HH:mm") ?? "暂无")
+        </div>
+    </div>
+</div>
+
+<div class="kpi-row">
+    <div class="kpi-card">
+        <div class="label">订单金额</div>
+        <div class="value">¥@Money(orderAmount)</div>
+        <div class="sub">优惠 ¥@Money(order?.discount_amount)</div>
+    </div>
+    <div class="kpi-card green">
+        <div class="label">已回款</div>
+        <div class="value">¥@Money(received)</div>
+        <div class="sub">回款率 @rate.ToString("0.0")%</div>
+    </div>
+    <div class="kpi-card red">
+        <div class="label">未回款</div>
+        <div class="value">¥@Money(arrears)</div>
+        <div class="sub">@(arrears > 0 ? "仍需跟进" : "已全部收回")</div>
+    </div>
+    <div class="kpi-card purple">
+        <div class="label">已开票</div>
+        <div class="value">¥@Money(invoiceAmount)</div>
+        <div class="sub">未开票 ¥@Money(Math.Max(orderAmount - invoiceAmount, 0m))</div>
+    </div>
+    <div class="kpi-card cyan">
+        <div class="label">收款计划</div>
+        <div class="value">¥@Money(planTotal)</div>
+        <div class="sub">待收 ¥@Money(planRemain) · 逾期 @overdueCount 期</div>
+    </div>
+    <div class="kpi-card orange">
+        <div class="label">售后跟进</div>
+        <div class="value">@follows.Count</div>
+        <div class="sub">最近：@(lastFollow?.ToString("MM-dd HH:mm") ?? "暂无")</div>
+    </div>
+</div>
+
+<div class="layui-tab layui-tab-brief" lay-filter="orderTabs">
+    <ul class="layui-tab-title">
+        <li class="layui-this">经营报表</li>
+        <li>收款计划 <span class="layui-badge">@plans.Count</span></li>
+        <li>收款记录 <span class="layui-badge layui-bg-green">@receives.Count</span></li>
+        <li>发票 <span class="layui-badge layui-bg-blue">@invoices.Count</span></li>
+        <li>售后跟进 <span class="layui-badge layui-bg-orange">@follows.Count</span></li>
+        <li>操作日志</li>
+    </ul>
+    <div class="layui-tab-content">
+
+        <!-- 经营报表 -->
+        <div class="layui-tab-item layui-show">
+            <div class="layui-row layui-col-space14">
+                <div class="layui-col-md6">
+                    <div class="panel">
+                        <div class="panel-title">回款进度</div>
+                        <div id="chartRate" class="chart-box"></div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="panel">
+                        <div class="panel-title">金额构成</div>
+                        <div id="chartAmount" class="chart-box"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="layui-row layui-col-space14">
+                <div class="layui-col-md6">
+                    <div class="panel">
+                        <div class="panel-title">收款计划状态</div>
+                        <div id="chartPlanStatus" class="chart-box"></div>
+                    </div>
+                </div>
+                <div class="layui-col-md6">
+                    <div class="panel">
+                        <div class="panel-title">产品结构</div>
+                        <div id="chartProduct" class="chart-box"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">产品明细<span style="font-weight:400;color:#6b7280;font-size:13px;">共 @details.Count 项</span></div>
+                @if (details.Count == 0)
+                {
+                    <div class="empty-box">暂无产品明细</div>
+                }
+                else
+                {
+                    <table class="layui-table" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">序号</th>
+                                <th>产品</th>
+                                <th style="width:140px;text-align:right;">单价</th>
+                                <th style="width:100px;text-align:right;">数量</th>
+                                <th style="width:160px;text-align:right;">金额</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var di = 0; }
+                            @foreach (var d in details)
+                            {
+                                di++;
+                                <tr>
+                                    <td>@di</td>
+                                    <td>@(d.Product?.product_name ?? "")</td>
+                                    <td style="text-align:right;" class="table-money">¥@Money(d.price)</td>
+                                    <td style="text-align:right;">@d.quantity</td>
+                                    <td style="text-align:right;" class="table-money">¥@Money(d.amount)</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="4" style="text-align:right;">合计</th>
+                                <th style="text-align:right;">¥@Money(details.Sum(a => a.amount ?? 0m))</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+            </div>
+
+            <div class="panel">
+                <div class="panel-title">订单动态</div>
+                @if (follows.Count == 0 && logs.Count == 0)
+                {
+                    <div class="empty-box">暂无动态</div>
+                }
+                else
+                {
+                    <div class="timeline-line">
+                        @foreach (var f in follows.Take(6))
+                        {
+                            <div class="timeline-item">
+                                <div style="font-weight:600;color:#1f2937;">售后跟进 · @f.service_type @Html.Raw(FollowBadge(f.service_status))</div>
+                                <div style="color:#4b5563;margin-top:4px;">@f.follow_content</div>
+                                <div style="color:#9ca3af;font-size:12px;margin-top:4px;">@(f.follow_time?.ToString("yyyy-MM-dd HH:mm")) · @(f.employee?.name ?? "")</div>
+                            </div>
+                        }
+                        @foreach (var l in logs.Take(8))
+                        {
+                            <div class="timeline-item">
+                                <div style="font-weight:600;color:#1f2937;">@l.EventType</div>
+                                <div style="color:#4b5563;margin-top:4px;">@l.EventTitle</div>
+                                <div style="color:#9ca3af;font-size:12px;margin-top:4px;">@(l.EventDate?.ToString("yyyy-MM-dd HH:mm")) · @l.UserName</div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 收款计划 -->
+        <div class="layui-tab-item">
+            <div class="panel">
+                <div class="panel-title">
+                    <span>收款计划</span>
+                    <button class="layui-btn layui-btn-sm layui-btn-normal no-print" onclick="openPlanForm('')"><i class="layui-icon layui-icon-add-1"></i> 新建计划</button>
+                </div>
+                @if (plans.Count == 0)
+                {
+                    <div class="empty-box">暂无收款计划，点击右上角新建计划。</div>
+                }
+                else
+                {
+                    <div class="settle-summary">
+                        <div class="sum-item"><span class="k">计划总额</span><span class="v">¥@Money(planTotal)</span></div>
+                        <div class="sum-item"><span class="k">已收金额</span><span class="v green">¥@Money(planReceived)</span></div>
+                        <div class="sum-item"><span class="k">未收金额</span><span class="v red">¥@Money(planRemain)</span></div>
+                        <div class="sum-item"><span class="k">计划期数</span><span class="v">@plans.Count 期</span></div>
+                        <div class="sum-item"><span class="k">逾期计划</span><span class="v @(overdueCount > 0 ? "red" : "")">@overdueCount 期</span></div>
+                    </div>
+
+                    <div class="settle-list">
+                        @{ var pi = 0; }
+                        @foreach (var p in plans)
+                        {
+                            pi++;
+                            var planAmountItem = p.plan_amount ?? 0m;
+                            var planReceivedItem = p.received_amount ?? 0m;
+                            var remain = Math.Max(planAmountItem - planReceivedItem, 0m);
+                            var pct = planAmountItem > 0
+                                ? (int)Math.Round(Math.Min(planReceivedItem / planAmountItem * 100m, 100m))
+                                : 0;
+
+                            <div class="settle-card">
+                                <div class="settle-index">@pi</div>
+                                <div class="settle-main">
+                                    <div class="settle-head">
+                                        <div>
+                                            <div class="settle-name">@p.plan_name</div>
+                                            <div class="settle-no">@p.plan_no</div>
+                                        </div>
+                                        <div class="settle-head-right">
+                                            @Html.Raw(PlanBadge(p.plan_status))
+                                            <span class="settle-date">@(p.plan_date?.ToString("yyyy-MM-dd") ?? "未设置日期")</span>
+                                        </div>
+                                    </div>
+                                    <div class="settle-metrics">
+                                        <div class="metric"><span>计划金额</span><b>¥@Money(p.plan_amount)</b></div>
+                                        <div class="metric"><span>已收</span><b class="green">¥@Money(p.received_amount)</b></div>
+                                        <div class="metric"><span>未收</span><b class="@(remain > 0 ? "red" : "green")">¥@Money(remain)</b></div>
+                                        <div class="metric"><span>收款方式</span><b>@(p.PayType?.params_name ?? "未指定")</b></div>
+                                    </div>
+                                    <div class="settle-progress"><span style="width:@(pct)%"></span></div>
+                                    @if (!string.IsNullOrWhiteSpace(p.remarks))
+                                    {
+                                        <div class="settle-note">备注：@p.remarks</div>
+                                    }
+                                    <div class="settle-actions no-print">
+                                        <a class="layui-btn layui-btn-xs layui-btn-normal" onclick="openPlanReceipt('@p.id')">收款单</a>
+                                        <a class="layui-btn layui-btn-xs layui-btn-green" onclick="openPlanRegister('@p.id','@p.plan_name.Replace("'", "\\'")',@(p.plan_amount ?? 0m),@(p.received_amount ?? 0m))">登记收款</a>
+                                        <a class="layui-btn layui-btn-xs layui-btn-primary" onclick="openPlanForm('@p.id')">修改</a>
+                                        <a class="layui-btn layui-btn-xs layui-btn-danger" onclick="delPlan('@p.id')">删除</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 收款记录 -->
+        <div class="layui-tab-item">
+            <div class="panel">
+                <div class="panel-title">收款记录</div>
+                @if (receives.Count == 0)
+                {
+                    <div class="empty-box">暂无收款记录</div>
+                }
+                else
+                {
+                    <table class="layui-table" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">序号</th>
+                                <th>收款单号</th>
+                                <th style="width:120px;">收款日期</th>
+                                <th style="width:140px;text-align:right;">收款金额</th>
+                                <th style="width:120px;">收款方式</th>
+                                <th style="width:120px;">收款人</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var ri = 0; }
+                            @foreach (var r in receives)
+                            {
+                                ri++;
+                                <tr>
+                                    <td>@ri</td>
+                                    <td>@r.Receive_num</td>
+                                    <td>@(r.Receive_date?.ToString("yyyy-MM-dd"))</td>
+                                    <td style="text-align:right;color:#16a34a;" class="table-money">¥@Money(r.Receive_amount)</td>
+                                    <td>@(r.PayType?.params_name ?? "")</td>
+                                    <td>@(r.Payee?.name ?? "")</td>
+                                    <td>@r.Remarks</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" style="text-align:right;">合计</th>
+                                <th style="text-align:right;">¥@Money(received)</th>
+                                <th colspan="3"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+            </div>
+        </div>
+
+        <!-- 发票 -->
+        <div class="layui-tab-item">
+            <div class="panel">
+                <div class="panel-title">发票记录</div>
+                @if (invoices.Count == 0)
+                {
+                    <div class="empty-box">暂无发票记录</div>
+                }
+                else
+                {
+                    <table class="layui-table" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th style="width:60px;">序号</th>
+                                <th>发票号</th>
+                                <th style="width:130px;">开票日期</th>
+                                <th style="width:140px;text-align:right;">开票金额</th>
+                                <th style="width:130px;">发票类型</th>
+                                <th>开票内容</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ var ii = 0; }
+                            @foreach (var inv in invoices)
+                            {
+                                ii++;
+                                <tr>
+                                    <td>@ii</td>
+                                    <td>@inv.invoice_num</td>
+                                    <td>@(inv.invoice_date?.ToString("yyyy-MM-dd"))</td>
+                                    <td style="text-align:right;" class="table-money">¥@Money(inv.invoice_amount)</td>
+                                    <td>@(inv.InvoiceType?.params_name ?? "")</td>
+                                    <td>@inv.invoice_content</td>
+                                    <td>@inv.remarks</td>
+                                </tr>
+                            }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="3" style="text-align:right;">合计</th>
+                                <th style="text-align:right;">¥@Money(invoiceAmount)</th>
+                                <th colspan="3"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                }
+            </div>
+        </div>
+
+        <!-- 售后跟进 -->
+        <div class="layui-tab-item">
+            <div class="panel">
+                <div class="panel-title">
+                    <span>售后跟进</span>
+                    <button class="layui-btn layui-btn-sm layui-btn-normal no-print" onclick="openFollowForm('')"><i class="layui-icon layui-icon-add-1"></i> 新增跟进</button>
+                </div>
+                @if (follows.Count == 0)
+                {
+                    <div class="empty-box">暂无售后跟进记录</div>
+                }
+                else
+                {
+                    <div class="settle-summary">
+                        <div class="sum-item"><span class="k">跟进总数</span><span class="v">@follows.Count 条</span></div>
+                        <div class="sum-item"><span class="k">待处理</span><span class="v @(followPending > 0 ? "red" : "")">@followPending 条</span></div>
+                        <div class="sum-item"><span class="k">处理中</span><span class="v">@followDoing 条</span></div>
+                        <div class="sum-item"><span class="k">已解决</span><span class="v green">@followSolved 条</span></div>
+                        <div class="sum-item"><span class="k">已关闭</span><span class="v">@followClosed 条</span></div>
+                    </div>
+
+                    <div class="settle-list">
+                        @{ var fi = 0; }
+                        @foreach (var f in follows)
+                        {
+                            fi++;
+                            <div class="settle-card">
+                                <div class="settle-index">@fi</div>
+                                <div class="settle-main">
+                                    <div class="settle-head">
+                                        <div>
+                                            <div class="settle-name">@f.service_type @Html.Raw(FollowBadge(f.service_status))</div>
+                                            <div class="settle-no">@(f.follow_time?.ToString("yyyy-MM-dd HH:mm") ?? "未记录时间") · 跟进人：@(f.employee?.name ?? "未指定")</div>
+                                        </div>
+                                        <div class="settle-head-right">
+                                            <span class="settle-date">下次跟进：@(f.next_time?.ToString("yyyy-MM-dd") ?? "无")</span>
+                                        </div>
+                                    </div>
+                                    <div class="follow-block">
+                                        <div class="follow-label">跟进内容</div>
+                                        <div class="follow-text">@f.follow_content</div>
+                                    </div>
+                                    @if (!string.IsNullOrWhiteSpace(f.solution))
+                                    {
+                                        <div class="follow-block result">
+                                            <div class="follow-label">处理结果</div>
+                                            <div class="follow-text">@f.solution</div>
+                                        </div>
+                                    }
+                                    <div class="settle-meta">
+                                        <span>跟进方式：@(f.FollowType?.params_name ?? "未指定")</span>
+                                    </div>
+                                    <div class="settle-actions no-print">
+                                        <a class="layui-btn layui-btn-xs layui-btn-primary" onclick="openFollowForm('@f.id')">修改</a>
+                                        <a class="layui-btn layui-btn-xs layui-btn-danger" onclick="delFollow('@f.id')">删除</a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- 日志 -->
+        <div class="layui-tab-item">
+            <div class="panel">
+                <div class="panel-title">操作日志</div>
+                @if (logs.Count == 0)
+                {
+                    <div class="empty-box">暂无操作日志</div>
+                }
+                else
+                {
+                    <table class="layui-table" style="margin:0;">
+                        <thead>
+                            <tr>
+                                <th style="width:160px;">时间</th>
+                                <th style="width:140px;">类型</th>
+                                <th style="width:200px;">标题</th>
+                                <th style="width:120px;">操作人</th>
+                                <th>内容</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var l in logs)
+                            {
+                                <tr>
+                                    <td>@(l.EventDate?.ToString("yyyy-MM-dd HH:mm:ss"))</td>
+                                    <td>@l.EventType</td>
+                                    <td>@l.EventTitle</td>
+                                    <td>@l.UserName</td>
+                                    <td><div class="log-content">@l.Log_Content</div></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="planRegisterBox" style="display:none; padding:20px;">
+    <form class="layui-form">
+        <input type="hidden" id="reg_plan_id">
+        <div class="layui-form-item">
+            <label class="layui-form-label">收款计划</label>
+            <div class="layui-input-block">
+                <input type="text" id="reg_plan_name" class="layui-input" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">收款金额</label>
+            <div class="layui-input-block">
+                <input type="number" id="reg_amount" step="0.01" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">收款日期</label>
+            <div class="layui-input-block">
+                <input type="text" id="reg_date" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea id="reg_remarks" class="layui-textarea" placeholder="收款说明"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="~/js/home/echarts.min.js"></script>
+<script>
+    var orderId = '@order?.id';
+
+    function openCustomer(id, name) {
+        if (top.cusInfo) {
+            top.cusInfo(id, '【客户】' + name);
+        } else {
+            window.location.href = '/Customer/Info?id=' + id;
+        }
+    }
+
+    layui.use(['element', 'layer', 'form', 'laydate'], function () {
+        var $ = layui.jquery;
+        var element = layui.element;
+        var layer = layui.layer;
+        var form = layui.form;
+        var laydate = layui.laydate;
+
+        laydate.render({ elem: '#reg_date', trigger: 'click' });
+
+        // ============ 图表 ============
+        var chartData = @Html.Raw(string.IsNullOrWhiteSpace(chartJson) ? "{}" : chartJson);
+        var charts = [];
+
+        function initCharts() {
+            var rateChart = echarts.init(document.getElementById('chartRate'));
+            rateChart.setOption({
+                tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
+                legend: { bottom: 0, data: ['已回款', '未回款'] },
+                series: [{
+                    type: 'pie',
+                    radius: ['52%', '72%'],
+                    center: ['50%', '45%'],
+                    avoidLabelOverlap: false,
+                    label: { show: true, position: 'center', formatter: '{a|' + (chartData.rate || 0) + '%}\n{b|回款率}', rich: { a: { fontSize: 24, fontWeight: 'bold', color: '#1677ff' }, b: { fontSize: 12, color: '#6b7280' } } },
+                    data: [
+                        { value: chartData.received || 0, name: '已回款', itemStyle: { color: '#16a34a' } },
+                        { value: chartData.arrears || 0, name: '未回款', itemStyle: { color: '#ef4444' } }
+                    ]
+                }]
+            });
+            charts.push(rateChart);
+
+            var amountChart = echarts.init(document.getElementById('chartAmount'));
+            amountChart.setOption({
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: function (v) { return '¥' + Number(v).toLocaleString(); } },
+                grid: { left: 60, right: 24, top: 20, bottom: 30 },
+                xAxis: { type: 'category', data: ['订单金额', '已回款', '未回款', '已开票', '未开票'] },
+                yAxis: { type: 'value' },
+                series: [{
+                    type: 'bar',
+                    barWidth: 30,
+                    data: [
+                        { value: chartData.orderAmount || 0, itemStyle: { color: '#1677ff' } },
+                        { value: chartData.received || 0, itemStyle: { color: '#16a34a' } },
+                        { value: chartData.arrears || 0, itemStyle: { color: '#ef4444' } },
+                        { value: chartData.invoiceAmount || 0, itemStyle: { color: '#7c3aed' } },
+                        { value: chartData.uninvoice || 0, itemStyle: { color: '#f59e0b' } }
+                    ]
+                }]
+            });
+            charts.push(amountChart);
+
+            var statusChart = echarts.init(document.getElementById('chartPlanStatus'));
+            var statusData = chartData.planStatus || [0, 0, 0, 0];
+            statusChart.setOption({
+                tooltip: { trigger: 'item' },
+                legend: { bottom: 0 },
+                series: [{
+                    type: 'pie',
+                    radius: '62%',
+                    center: ['50%', '45%'],
+                    data: [
+                        { value: statusData[0], name: '待收款', itemStyle: { color: '#1677ff' } },
+                        { value: statusData[1], name: '部分收款', itemStyle: { color: '#f59e0b' } },
+                        { value: statusData[2], name: '已收清', itemStyle: { color: '#16a34a' } },
+                        { value: statusData[3], name: '已逾期', itemStyle: { color: '#ef4444' } }
+                    ]
+                }]
+            });
+            charts.push(statusChart);
+
+            var productChart = echarts.init(document.getElementById('chartProduct'));
+            var products = chartData.products || [];
+            productChart.setOption({
+                tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
+                legend: { bottom: 0, type: 'scroll' },
+                series: [{
+                    type: 'pie',
+                    radius: ['30%', '62%'],
+                    center: ['50%', '45%'],
+                    data: products.map(function (p, i) {
+                        var colors = ['#1677ff', '#16a34a', '#f59e0b', '#ef4444', '#7c3aed', '#0ea5e9', '#ec4899', '#84cc16'];
+                        return { value: p.amount, name: p.name, itemStyle: { color: colors[i % colors.length] } };
+                    })
+                }]
+            });
+            charts.push(productChart);
+
+            window.addEventListener('resize', function () {
+                charts.forEach(function (c) { c.resize(); });
+            });
+        }
+
+        if (typeof echarts !== 'undefined') {
+            initCharts();
+        }
+
+        // ============ 收款计划 ============
+        window.openPlanForm = function (id) {
+            var url = '/SaleOrderPayPlan/Add' + (id ? ('?id=' + id) : ('?order_id=' + orderId));
+            layer.open({
+                title: id ? '修改收款计划' : '新建收款计划',
+                type: 2,
+                area: ['760px', '560px'],
+                maxmin: true,
+                content: url,
+                btn: ['确定', '关闭'],
+                yes: function (index, layero) {
+                    layero.find('iframe').contents().find('#LAY-user-front-submit').trigger('click');
+                },
+                btn2: function (index) { layer.close(index); }
+            });
+        };
+
+        window.openPlanReceipt = function (id) {
+            layer.open({
+                title: '收款单',
+                type: 2,
+                area: ['1080px', '85%'],
+                maxmin: true,
+                content: '/SaleOrderPayPlan/Receipt?id=' + id,
+                btn: ['关闭'],
+                yes: function (index) { layer.close(index); }
+            });
+        };
+
+        window.openPlanRegister = function (id, name, amount, received) {
+            var remain = (parseFloat(amount) || 0) - (parseFloat(received) || 0);
+            if (remain <= 0) remain = parseFloat(amount) || 0;
+            $('#reg_plan_id').val(id);
+            $('#reg_plan_name').val(name);
+            $('#reg_amount').val(remain.toFixed(2));
+            $('#reg_date').val(new Date().toISOString().slice(0, 10));
+            $('#reg_remarks').val('');
+            layer.open({
+                title: '登记收款',
+                type: 1,
+                area: ['480px', '440px'],
+                content: $('#planRegisterBox'),
+                btn: ['确认收款', '取消'],
+                yes: function (index) {
+                    var val = parseFloat($('#reg_amount').val());
+                    if (!val || val <= 0) {
+                        layer.msg('请输入正确的收款金额', { icon: 2 });
+                        return false;
+                    }
+                    var loading = layer.load(2);
+                    $.ajax({
+                        url: '/SaleOrderPayPlan/RegisterReceive',
+                        type: 'post',
+                        data: {
+                            plan_id: $('#reg_plan_id').val(),
+                            amount: val,
+                            receive_date: $('#reg_date').val(),
+                            remarks: $('#reg_remarks').val()
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            layer.close(loading);
+                            if (res.code === 0) {
+                                layer.msg('收款登记成功', { icon: 1 });
+                                setTimeout(function () { window.location.reload(); }, 600);
+                            } else {
+                                layer.msg(res.msg, { icon: 2 });
+                            }
+                        },
+                        error: function () {
+                            layer.close(loading);
+                            layer.msg('请求失败', { icon: 2 });
+                        }
+                    });
+                    return false;
+                }
+            });
+        };
+
+        window.delPlan = function (id) {
+            layer.confirm('确定删除该收款计划？', { icon: 3, title: '提示' }, function (index) {
+                $.post('/SaleOrderPayPlan/Delete', { id: id }, function (res) {
+                    if (res.code === 0) {
+                        layer.msg('删除成功', { icon: 1 });
+                        setTimeout(function () { window.location.reload(); }, 500);
+                    } else {
+                        layer.msg(res.msg, { icon: 2 });
+                    }
+                }, 'json');
+                layer.close(index);
+            });
+        };
+
+        // ============ 售后跟进 ============
+        window.openFollowForm = function (id) {
+            var url = '/SaleOrderFollow/Add' + (id ? ('?id=' + id) : ('?order_id=' + orderId));
+            layer.open({
+                title: id ? '修改售后跟进' : '新增售后跟进',
+                type: 2,
+                area: ['780px', '640px'],
+                maxmin: true,
+                content: url,
+                btn: ['确定', '关闭'],
+                yes: function (index, layero) {
+                    layero.find('iframe').contents().find('#LAY-user-front-submit').trigger('click');
+                },
+                btn2: function (index) { layer.close(index); }
+            });
+        };
+
+        window.delFollow = function (id) {
+            layer.confirm('确定删除该跟进记录？', { icon: 3, title: '提示' }, function (index) {
+                $.post('/SaleOrderFollow/Delete', { id: id }, function (res) {
+                    if (res.code === 0) {
+                        layer.msg('删除成功', { icon: 1 });
+                        setTimeout(function () { window.location.reload(); }, 500);
+                    } else {
+                        layer.msg(res.msg, { icon: 2 });
+                    }
+                }, 'json');
+                layer.close(index);
+            });
+        };
+    });
+</script>

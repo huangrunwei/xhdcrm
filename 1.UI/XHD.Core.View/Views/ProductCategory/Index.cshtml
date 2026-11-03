@@ -1,191 +1,202 @@
-﻿@{
-    ViewData["Title"] = "Index";
+@{
+    ViewData["Title"] = "产品类别";
 }
 
-<div class="layuimini-card">
-    <div class="layui-card-body">
-        <script type="text/html" id="toolbarDemo">
-            <div class="layui-btn-container">
-                <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加</button>
-                <button class="layui-btn layui-btn-sm " lay-event="btn-expand">全部展开</button>
-                <button class="layui-btn layui-btn-sm " lay-event="btn-fold">全部折叠</button>
-            </div>
-        </script>
+<style>
+    .category-page { width: 100%; padding: 16px 20px 36px; box-sizing: border-box; }
+    .category-page .layui-card { border-radius: 12px; border: 1px solid #edf1f6; box-shadow: 0 1px 3px rgba(15,23,42,.05); }
+    .category-page .layui-card-body { padding: 16px 18px; }
+    .category-page .layui-table-view { margin: 0; }
+    .category-page .layui-table-cell { height: auto; line-height: 28px; }
+</style>
 
-        <table id="munu-table" class="layui-table" lay-filter="currentTableFilter"></table>
+<div class="category-page">
+    <div class="layui-card">
+        <div class="layui-card-body">
+            <script type="text/html" id="categoryToolbar">
+                <div class="layui-btn-container">
+                    <button class="layui-btn layui-btn-sm layui-btn-normal" lay-event="add">添加</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="expand">全部展开</button>
+                    <button class="layui-btn layui-btn-sm" lay-event="fold">全部折叠</button>
+                </div>
+            </script>
 
+            <script type="text/html" id="categoryBar">
+                <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+                <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
+            </script>
+
+            <table id="categoryTable" lay-filter="categoryTable"></table>
+        </div>
     </div>
 </div>
-<!-- 操作列 -->
-<script type="text/html" id="auth-state">
-    <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
-    <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
-</script>
-
 
 <script>
-    layui.use(['table', 'treetable'], function () {
-        var $ = layui.jquery;
-        var table = layui.table;
-        var treetable = layui.treetable;
+    layui.use(['treeTable', 'layer'], function () {
+        var treeTable = layui.treeTable;
+        var layer = layui.layer;
+        var $ = layui.$;
 
-        // 渲染表格
-        layer.load(2);
-        treetable.render({
-            treeColIndex: 1,
-            treeSpid: 'root',
-            treeIdName: 'id',
-            treePidName: 'parentid',
-            elem: '#munu-table',
+        treeTable.render({
+            elem: '#categoryTable',
+            id: 'categoryTable',
             url: 'Grid',
+            toolbar: '#categoryToolbar',
             page: false,
-            toolbar: '#toolbarDemo',
-            cols: [[
-                { type: 'numbers' ,title:"序号" },
-                { field: 'category_name', minWidth: 200, title: '类别名称' },
-                { templet: '#auth-state', width: 200, align: 'center', title: '操作' }
-            ]],
-            done: function () {
-                layer.closeAll('loading');
-            }
-        });
-
-        $('#btn-expand').click(function () {
-            treetable.expandAll('#munu-table');
-        });
-
-        $('#btn-fold').click(function () {
-            treetable.foldAll('#munu-table');
-        });
-
-        /**
-        * toolbar监听事件
-        */
-        table.on('toolbar(currentTableFilter)', function (obj) {
-            if (obj.event === 'add') {  // 监听添加操作
-                add();
-                return;
-            }
-            if (obj.event === 'btn-expand') {
-                treetable.expandAll('#munu-table');
-                return;
-            }
-
-            if (obj.event === 'btn-fold') {
-                treetable.foldAll('#munu-table');
-                return;
-            }
-        });
-
-        //监听工具条
-        table.on('tool(currentTableFilter)', function (obj) {
-            var data = obj.data;
-            var layEvent = obj.event;
-
-            if (layEvent === 'del') {
-                layer.confirm('确定删除？', { icon: 3, title: '提示信息' }, function (index) {
-                    del(data.id);
-                    layer.close(index);
-                });
-
-                //layer.msg('删除' + data.id);
-            }
-            else if (layEvent === 'edit') {
-               
-                add(data);
-            }
-            
-        });
-
-        function del(id) {
-            $.ajax({
-                type: 'POST',
-                url: "Delete",
-                data: { id: id },
-                dataType: "json",
-                success: function (res) {//res为相应体,function为回调函数
-                    if (res.code == 0) {
-                        window.location.reload();
-                    }
-                    else {
-                        layer.alert(res.msg, { icon: 5 });
-                    }
+            tree: {
+                customName: {
+                    id: 'id',
+                    pid: 'parentid',
+                    name: 'category_name',
+                    children: 'children',
+                    isParent: 'isParent'
                 },
-                error: function (XMLHttpRequest, textStatus, errorThrown) {
-                    layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                data: {
+                    isSimpleData: true,
+                    rootPid: 'root'
+                },
+                view: {
+                    expandAllDefault: true,
+                    showIcon: true
                 }
-            });
+            },
+            parseData: function (res) {
+                layui.each(res.data || [], function (i, item) {
+                    if (!item.parentid || item.parentid === '') {
+                        item.parentid = 'root';
+                    }
+                });
+                return res;
+            },
+            cols: [[
+                { type: 'numbers', title: '序号', width: 70 },
+                { field: 'category_name', title: '类别名称', minWidth: 360 },
+                { templet: '#categoryBar', title: '操作', width: 230, align: 'center' }
+            ]]
+        });
+
+        treeTable.on('toolbar(categoryTable)', function (obj) {
+            if (obj.event === 'add') {
+                openForm('新增根类别', null, 'root');
+            } else if (obj.event === 'expand') {
+                treeTable.expandAll('categoryTable', true);
+            } else if (obj.event === 'fold') {
+                treeTable.expandAll('categoryTable', false);
+            }
+        });
+
+        treeTable.on('tool(categoryTable)', function (obj) {
+            var data = obj.data;
+            if (obj.event === 'edit') {
+                openForm('修改产品类别', data, data.parentid || 'root', obj);
+            } else if (obj.event === 'del') {
+                layer.confirm('确定删除「' + (data.category_name || '') + '」？', { icon: 3, title: '提示' }, function (index) {
+                    $.post('Delete', { id: data.id }, function (res) {
+                        layer.close(index);
+                        if (res.code === 0) {
+                            // treeTable 的 obj.del 会只移除当前节点及其子树，不重新请求整张表
+                            obj.del();
+                        } else {
+                            layer.alert(res.msg || '删除失败', { icon: 5 });
+                        }
+                    }, 'json');
+                });
+            }
+        });
+
+        function cleanTreeData(nodes) {
+            if (!nodes) return;
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                delete node.LAY_DATA_INDEX;
+                delete node.LAY_DATA_INDEX_HISTORY;
+                delete node.LAY_PARENT_INDEX;
+                if (node.children && node.children.length) cleanTreeData(node.children);
+            }
         }
 
-
-        //添加目录
-        function add(edit) {
-            var tit = "添加";
-            if (edit) {
-                tit = "编辑";
-            }
-            var id = null;
-
-            if (edit) {
-                id = edit.id;
-            }
-
-            var index = layui.layer.open({
-                title: tit,
+        function openForm(title, edit, parentId, toolObj) {
+            var index = layer.open({
+                title: title,
                 type: 2,
-                anim: 1,
-                area: ['600px', '550px'],
+                area: ['560px', '480px'],
                 maxmin: true,
-                content: "Add?id=" + id,
+                content: 'Add?id=' + (edit ? edit.id : '') + '&parentid=' + encodeURIComponent(parentId || 'root'),
                 btn: ['确定', '关闭'],
-                success: function (layero, index) {
-                    var iframe = window["layui-layer-iframe" + index];
-                    var body = layui.layer.getChildFrame('body', index);
+                success: function (layero) {
+                    var body = layer.getChildFrame('body', index);
                     if (edit) {
-                        body.find("#id").val(edit.id);
-                        body.find("#category_name").val(edit.category_name);
-                        body.find("#parentid").val(edit.parentid);
+                        body.find('#id').val(edit.id);
+                        body.find('#category_name').val(edit.category_name);
+                        body.find('#parentid').val(edit.parentid || 'root');
+                        body.find('#treeclass').text(edit.parentid === 'root' ? '无（根类别）' : '已选择上级类别');
+                    } else {
+                        body.find('#parentid').val(parentId || 'root');
                     }
                 },
                 yes: function (index, layero) {
-                    //var res = window["layui-layer-iframe" + index].callbackdata();
-                    ////打印返回的值，看是否有我们想返回的值。
-                    //console.log(res);
-                    //layer.close(index);
-                    var iframeWindow = window['layui-layer-iframe' + index]
-                        , submitID = 'LAY-user-front-submit'
-                        , submit = layero.find('iframe').contents().find('#' + submitID);
-
-                    //监听提交
-                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
-                        var field = data.field; //获取提交的字段
-
-                        console.log(data.field);
-
-                        layer.close(index); //关闭弹层
-
-                        $.ajax({
-                            type: 'POST',
-                            url: 'Save',
-                            data: data.field,
-                            dataType: "json",
-                            success: function (res) {//res为相应体,function为回调函数
-                                window.location.reload();
-                            },
-                            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                                layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
+                    var iframeWindow = window['layui-layer-iframe' + index];
+                    var submit = layero.find('iframe').contents().find('#LAY-user-front-submit');
+                    iframeWindow.layui.form.on('submit(LAY-user-front-submit)', function (data) {
+                        $.post('Save', data.field, function (res) {
+                            if (res.code === 0) {
+                                layer.close(index);
+                                var nodeData = res.data;
+                                if (edit) {
+                                    var oldParentId = edit.parentid || 'root';
+                                    var newParentId = nodeData.parentid || 'root';
+                                    if (oldParentId !== newParentId) {
+                                        // 父级变化：原生 removeNode + addNodes，保留原子节点
+                                        var oldNode = treeTable.getNodeById('categoryTable', nodeData.id);
+                                        if (oldNode) {
+                                            var parentNode = newParentId === 'root'
+                                                ? null
+                                                : treeTable.getNodeById('categoryTable', newParentId);
+                                            if (parentNode && (parentNode.dataIndex === oldNode.dataIndex
+                                                || String(parentNode.dataIndex).indexOf(oldNode.dataIndex + '-') === 0)) {
+                                                layer.alert('不能移动到自己的子节点下！', { icon: 5 });
+                                            } else {
+                                                var moved = $.extend(true, {}, oldNode.data);
+                                                $.extend(true, moved, nodeData);
+                                                moved.parentid = newParentId;
+                                                // 清除 treeTable 内部索引，交给 addNodes 重新生成，避免重复节点
+                                                cleanTreeData([moved]);
+                                                treeTable.removeNode('categoryTable', oldNode.data);
+                                                // 删除后重新取父节点，避免父节点在旧节点后面时 dataIndex 偏移
+                                                var targetParent = newParentId === 'root'
+                                                    ? null
+                                                    : treeTable.getNodeById('categoryTable', newParentId);
+                                                treeTable.addNodes('categoryTable', {
+                                                    parentIndex: targetParent ? targetParent.dataIndex : null,
+                                                    data: moved,
+                                                    focus: true
+                                                });
+                                            }
+                                        }
+                                    } else if (toolObj && typeof toolObj.update === 'function') {
+                                        toolObj.update(nodeData);
+                                    } else {
+                                        var sameNode = treeTable.getNodeById('categoryTable', nodeData.id);
+                                        if (sameNode) sameNode.update(nodeData);
+                                    }
+                                } else {
+                                    var parentNode = nodeData.parentid && nodeData.parentid !== 'root'
+                                        ? treeTable.getNodeById('categoryTable', nodeData.parentid)
+                                        : null;
+                                    treeTable.addNodes('categoryTable', {
+                                        parentIndex: parentNode ? parentNode.dataIndex : null,
+                                        data: nodeData,
+                                        focus: true
+                                    });
+                                }
+                            } else {
+                                layer.alert(res.msg || '保存失败', { icon: 5 });
                             }
-                        });
+                        }, 'json');
                     });
-
                     submit.trigger('click');
-                },
-                btn2: function (index, layero) {
-                    layer.close(index);
                 }
-
             });
         }
-
     });
 </script>

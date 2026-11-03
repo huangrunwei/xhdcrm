@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -25,6 +25,7 @@ using System.Linq.Expressions;
 using Newtonsoft.Json.Converters;
 using System.Collections;
 using XHD.Core.View.Configs;
+using XHD.Core.View.Services;
 
 namespace XHD.Core.View.Controllers
 {
@@ -36,16 +37,19 @@ namespace XHD.Core.View.Controllers
         private readonly ISale_contract_attaService _detailservice;
         private readonly ISys_logService _LogService;
         private readonly IDBAuthService _dBAuthService;
+        private readonly ICalendarSyncService _CalendarSyncService;
+        private readonly IFreeSql _fsql;
         private readonly SysLogExt<Sale_contract> logext = new SysLogExt<Sale_contract>();  //日志
 
-        public SaleContractController(ILogger<SaleContractController> logger, ISale_contractService service, ISale_contract_attaService detailservice, ISys_logService LogService, IDBAuthService dBAuthService)
+        public SaleContractController(ILogger<SaleContractController> logger, ISale_contractService service, ISale_contract_attaService detailservice, ISys_logService LogService, IDBAuthService dBAuthService, ICalendarSyncService CalendarSyncService, IFreeSql fsql)
         {
             _service = service;
             _logger = logger;
             _detailservice = detailservice;
-
+            _fsql = fsql;
             _LogService = LogService;
             _dBAuthService = dBAuthService;
+            _CalendarSyncService = CalendarSyncService;
         }
 
         public IActionResult Index()
@@ -177,13 +181,18 @@ namespace XHD.Core.View.Controllers
             {
                 return XHDResult.Error("操作失败，系统错误！").ToString();
             }
-                        
+
+            //同步合同到期日程（挂靠我方签约人）
+            await _CalendarSyncService.SyncContractAsync(model.id);
+
+            await CustomerScoreService.RecalculateAsync(_fsql, model.customer_id);
             return XHDResult.Success(model.id).ToString();
         }
 
         public async Task<string> Delete(string id)
         {
             var result = 0;
+            var deletedCustomerId = string.Empty;
 
             //权限
             var authbtn = await _dBAuthService.GetAuth(User.FindFirst(ClaimTypes.Sid).Value, "Sale_Contract|del");
@@ -199,6 +208,7 @@ namespace XHD.Core.View.Controllers
                     return XHDResult.Error("找不到此数据！").ToString();
                 }
 
+                deletedCustomerId = checkdata.data[0].customer_id;
                 result = await _service.DeleteAsync(id);
 
                 //先存储删除的实体记录，用日志形式
@@ -236,6 +246,14 @@ namespace XHD.Core.View.Controllers
             Expression<Func<Sale_contract_atta, bool>> expatta = a => a.contract_id == id;
 
             await _detailservice.DeleteAsync(expatta);
+
+            //删除合同到期日程
+            await _CalendarSyncService.RemoveBySourceAsync("contract", id);
+
+            if (!string.IsNullOrWhiteSpace(deletedCustomerId))
+            {
+                await CustomerScoreService.RecalculateAsync(_fsql, deletedCustomerId);
+            }
 
             return XHDResult.Success().ToString();
         }

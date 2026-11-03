@@ -1,364 +1,315 @@
-﻿@{
-    ViewData["Title"] = "Index";
+@model XHD.Core.View.Models.OrderReportModel
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "订单报表";
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+    var trendJson = JsonConvert.SerializeObject(Model.Trend.Select(a => new { month = a.Month, count = a.Count, amount = a.Amount }), jsonSettings);
+    var statusJson = JsonConvert.SerializeObject(Model.Status.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
+    var payTypeJson = JsonConvert.SerializeObject(Model.PayTypes.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
+    var productJson = JsonConvert.SerializeObject(Model.Products.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
 }
 
+<link rel="stylesheet" href="~/css/report.css" />
 
-
-
-<div class="layuimini-main">
-
-    <div class="layui-row layui-col-space15">
-        <form class="layui-form layui-form-pane" action="">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">员工</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="employee" autocomplete="off" class="layui-input" lay-verify="required">
-                        <input type="text" name="emp_id" id="emp_id" style="display:none;">
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">年度</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="year" id="year" autocomplete="off" class="layui-input" lay-verify="required">
-                    </div>
-                </div>
-
-                <div class="layui-inline">
-                    <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon"></i> 搜 索</button>
-                    <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon"></i> 重置</button>
-                </div>
+<div class="report-page">
+    <div class="report-hero">
+        <div class="report-hero-main">
+            <div class="report-eyebrow"><i class="fa fa-shopping-cart"></i> ORDER PERFORMANCE</div>
+            <h1>订单报表</h1>
+            <p>围绕订单规模、回款质量、产品结构和销售团队表现，定位增长来源与经营风险。</p>
+            <div class="report-hero-tags">
+                <span>@Model.Year 年度</span>
+                <span>@Model.EmpName</span>
+                <span>数据按当前权限范围统计</span>
             </div>
+        </div>
+        <form class="report-filter" method="get" action="">
+            <div class="report-field">
+                <label>统计年度</label>
+                <select name="year" class="report-select">
+                    @foreach (var y in Model.Years)
+                    {
+                        <option value="@y.Value" selected="@(y.Selected ? "selected" : null)">@y.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="report-field">
+                <label>负责员工</label>
+                <select name="emp_id" class="report-select">
+                    @foreach (var e in Model.Employees)
+                    {
+                        <option value="@e.Value" selected="@(e.Selected ? "selected" : null)">@e.Text</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="report-btn"><i class="fa fa-filter"></i> 应用筛选</button>
+            <a class="report-btn ghost" href="?"><i class="fa fa-refresh"></i> 重置</a>
+            <button type="button" class="report-btn ghost" onclick="window.print()"><i class="fa fa-print"></i> 打印</button>
         </form>
     </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-xs12 layui-col-md6">
-            <div id="echarts-year" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md6">
-            <div id="echarts-sum" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
+
+    <div class="report-kpi-grid">
+        @foreach (var kpi in Model.Kpis)
+        {
+            <div class="report-kpi tone-@kpi.Tone">
+                <div class="report-kpi-top">
+                    <span>@kpi.Label</span>
+                    <i class="fa @kpi.Icon"></i>
+                </div>
+                <div class="report-kpi-value">@kpi.Value</div>
+                <div class="report-kpi-hint">@kpi.Hint</div>
+            </div>
+        }
     </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-xs12 layui-col-md6">
-            <div id="echarts-status" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md6">
-            <div id="echarts-pay" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-8">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">订单数量与金额趋势<small>@Model.Year 年按月统计订单数量与订单金额</small></h2>
+                <a class="report-link" href="/SaleOrder/Index">订单列表 <i class="fa fa-angle-right"></i></a>
+            </div>
+            <div id="orderTrend" class="report-chart chart-lg"></div>
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">订单状态分布<small>按订单状态统计数量</small></h2>
+            </div>
+            @if (Model.Status.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-pie-chart"></i>暂无订单状态数据</div>
+            }
+            else
+            {
+                <div id="statusChart" class="report-chart chart-lg"></div>
+            }
+        </section>
     </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">产品贡献排行<small>@Model.Year 年产品明细金额 Top 8</small></h2>
+            </div>
+            @if (Model.Products.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-cubes"></i>暂无产品明细数据</div>
+            }
+            else
+            {
+                <div id="productChart" class="report-chart chart-sm"></div>
+            }
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">支付方式<small>按订单金额统计</small></h2>
+            </div>
+            @if (Model.PayTypes.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-pie-chart"></i>暂无支付方式数据</div>
+            }
+            else
+            {
+                <div id="payTypeChart" class="report-chart chart-sm"></div>
+            }
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">销售业绩排行<small>@Model.Year 年订单金额排名</small></h2>
+            </div>
+            @if (Model.EmployeeRanking.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-trophy"></i>暂无销售业绩数据</div>
+            }
+            else
+            {
+                <div class="rank-list">
+                    @for (var i = 0; i < Model.EmployeeRanking.Count; i++)
+                    {
+                        var row = Model.EmployeeRanking[i];
+                        <div class="rank-item">
+                            <span class="rank-no">@(i + 1)</span>
+                            <div class="rank-main">
+                                <div class="rank-name">@row.Name</div>
+                                <div class="rank-extra">@row.Count 单 · @row.Extra</div>
+                            </div>
+                            <div class="rank-value">¥@row.Amount.ToString("N2")</div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-8">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">最近订单<small>@Model.Year 年成交的最新订单</small></h2>
+                <a class="report-link" href="/SaleOrder/Index">查看全部 <i class="fa fa-angle-right"></i></a>
+            </div>
+            @if (Model.RecentOrders.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-shopping-cart"></i>当前年度暂无订单</div>
+            }
+            else
+            {
+                <div class="table-wrap">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>订单号</th>
+                                <th>客户</th>
+                                <th>销售</th>
+                                <th>金额</th>
+                                <th>已回款</th>
+                                <th>状态</th>
+                                <th>日期</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var o in Model.RecentOrders)
+                            {
+                                <tr>
+                                    <td><a class="report-link" href="/SaleOrder/Info?id=@o.Id" style="font-weight:600;">@o.Sn</a></td>
+                                    <td class="cell-name">@o.Customer</td>
+                                    <td class="cell-owner">@o.Owner</td>
+                                    <td class="cell-money">¥@o.Amount.ToString("N2")</td>
+                                    <td class="cell-muted">¥@o.Received.ToString("N2")</td>
+                                    <td><span class="pill @o.StatusClass">@o.Status</span></td>
+                                    <td class="cell-muted">@(o.Date?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">客户成交排行<small>@Model.Year 年订单金额 Top 6</small></h2>
+            </div>
+            @if (Model.TopCustomers.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-users"></i>暂无客户成交数据</div>
+            }
+            else
+            {
+                <div class="rank-list">
+                    @for (var i = 0; i < Model.TopCustomers.Count; i++)
+                    {
+                        var c = Model.TopCustomers[i];
+                        <div class="rank-item">
+                            <span class="rank-no">@(i + 1)</span>
+                            <div class="rank-main">
+                                <div class="rank-name">@c.Name</div>
+                                <div class="rank-extra">@c.Owner · @c.OrderCount 单</div>
+                            </div>
+                            <div class="rank-value">¥@c.OrderAmount.ToString("N2")</div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+
+    <div class="report-footnote">小黄豆 CRM · 订单报表 · 数据实时统计</div>
 </div>
+
 <script type="text/javascript" src="/js/home/echarts.min.js"></script>
 <script>
-    layui.use(['table', 'treetable','form', 'tableSelect', 'laydate'], function () {
-        var $ = layui.jquery;
-        var table = layui.table;
-        var treetable = layui.treetable;
-        var form=layui.form;
-        var tableSelect = layui.tableSelect;
-        var laydate = layui.laydate;
+    (function () {
+        var trendData = @Html.Raw(trendJson);
+        var statusData = @Html.Raw(statusJson);
+        var payTypeData = @Html.Raw(payTypeJson);
+        var productData = @Html.Raw(productJson);
+        var charts = [];
+        var palette = ['#2563eb', '#16a34a', '#f59e0b', '#7c3aed', '#0891b2', '#ef4444', '#64748b', '#0ea5e9'];
 
+        function init(id, option) {
+            var dom = document.getElementById(id);
+            if (!dom || typeof echarts === 'undefined') return;
+            var chart = echarts.init(dom);
+            chart.setOption(option);
+            charts.push(chart);
+        }
 
-        //日期
-        laydate.render({
-            elem: '#year'
-            ,type: 'year'
-        });
+        function money(v) {
+            var n = Number(v) || 0;
+            return n >= 10000 ? (n / 10000).toFixed(1) + '万' : n.toFixed(0);
+        }
 
-
-        tableSelect.render({
-            elem: '#employee',
-            checkedKey: 'id',
-            table: {
-                url: '/HrEmployee/grid',
-                cols: [[
-                    { type: 'checkbox' },
-                    { field: 'name', width: 150, title: '员工姓名' },
-                    { field: 'dep_name', width: 150, title: '部门' ,templet:function(t){
-                        if(t.department)
-                        {
-                            return t.department.dep_name;
-                        }
-                        return "";
-                    }},
-                    { field: 'position_name', width: 150, title: '职务' ,templet:function(t){
-                        if(t.position)
-                        {
-                            return t.position.position_name;
-                        }
-                        return "";
-                    }},
-                    ]],
-                    limit: 100
-            },
-            done: function (elem, data) {
-                var NEWJSON = [];
-                var ids = [];
-
-                layui.each(data.data, function (index, item) {
-                    NEWJSON.push(item.name);
-                    ids.push(item.id);
-                })
-                elem.val(NEWJSON.join(","))
-
-                $("#emp_id").val(ids.join(','));
-
-
-            }
-        })
-
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            $.ajax({
-                url: "ReportYear",
-                data:data.field,
-                type: "gt",
-                dataType: "json",
-                success: function (data) {
-                    echarts_1(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportYearSum",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_2(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportStatus",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_3(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportPayType",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_4(data);
-                },
-            });
-
-            return false;
-        });
-
-        function echarts_1(data) {
-
-            var seriesdata=[];
-            for(var i=0;i<data.length;i++)
-            {
-                seriesdata.push(data[i].count);
-            }
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-year'));
-            option = {
-                title:{
-                    text:"订单年度统计图"
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: seriesdata,
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        },
-                        itemStyle:{
-                            normal:{
-                                        color: function(params) {
-                                // build a color map as your need.
-                                var colorList = [
-                                    '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                    '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                    '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                ];
-                                return colorList[params.dataIndex]
-                                }
-                            }
-                        }
-                    }
-                ]
-            };
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
+        function donut(id, data, name, unit) {
+            if (!data || !data.length) return;
+            init(id, {
+                color: palette,
+                tooltip: { trigger: 'item', formatter: '{b}<br/>{c} ' + (unit || '') + '（{d}%）' },
+                legend: { bottom: 0, type: 'scroll', icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: '#64748b', fontSize: 11 } },
+                series: [{
+                    name: name,
+                    type: 'pie',
+                    radius: ['44%', '68%'],
+                    center: ['50%', '43%'],
+                    itemStyle: { borderColor: '#fff', borderWidth: 3, borderRadius: 6 },
+                    label: { show: false },
+                    data: data
+                }]
             });
         }
 
-        function echarts_2(data) {
-
-            var seriesdata=[];
-            for(var i=0;i<data.length;i++)
-            {
-                seriesdata.push(data[i].count);
-            }
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-sum'));
-            option = {
-                title:{
-                    text:"订单金额年度统计图"
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '1月', '12月']
-                },
-                yAxis: {
-                    type: 'value'
-                },
+        if (document.getElementById('orderTrend')) {
+            init('orderTrend', {
+                color: ['#2563eb', '#f59e0b'],
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: function (v) { return typeof v === 'number' ? v.toLocaleString() : v; } },
+                legend: { top: 0, right: 0, icon: 'roundRect', itemWidth: 11, itemHeight: 11, textStyle: { color: '#64748b', fontSize: 11 } },
+                grid: { left: 42, right: 54, top: 38, bottom: 26 },
+                xAxis: { type: 'category', data: trendData.map(function (x) { return x.month; }), axisTick: { show: false }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisLabel: { color: '#9aa5b5', fontSize: 11 } },
+                yAxis: [
+                    { type: 'value', splitLine: { lineStyle: { color: '#f1f5f9' } }, axisLabel: { color: '#9aa5b5', fontSize: 10 } },
+                    { type: 'value', splitLine: { show: false }, axisLabel: { color: '#9aa5b5', fontSize: 10, formatter: money } }
+                ],
                 series: [
-                    {
-                        data: seriesdata,
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        },
-                        itemStyle:{
-                            normal:{
-                                        color: function(params) {
-                                // build a color map as your need.
-                                var colorList = [
-                                    '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                    '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                    '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                ];
-                                return colorList[params.dataIndex]
-                                }
-                            }
-                        }
-                    }
+                    { name: '订单数量', type: 'bar', barWidth: 18, data: trendData.map(function (x) { return x.count; }), itemStyle: { borderRadius: [5, 5, 0, 0], color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#bfdbfe' }]) } },
+                    { name: '订单金额', type: 'line', yAxisIndex: 1, smooth: true, symbol: 'circle', symbolSize: 6, data: trendData.map(function (x) { return x.amount; }), lineStyle: { width: 2.5, color: '#f59e0b' }, itemStyle: { color: '#f59e0b', borderColor: '#fff', borderWidth: 2 }, areaStyle: { color: 'rgba(245,158,11,.08)' } }
                 ]
-            };
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
             });
         }
 
-        function echarts_3(data) {
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-status'));
-                option = {
-                        color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                    title: {
-                        text: '订单状态分析',
-                        subtext: $("#year").val()+'年度',
-                        left: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item'
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'right'
-                    },
-                    series: [
-                        {
-                            name: '订单状态',
-                            type: 'pie',
-                            radius: ['30%', '70%'],
-                            itemStyle: {
-                                borderRadius: 10,
-                                borderColor: '#fff',
-                                borderWidth: 2
-                            },
-                            data: data,
-                            emphasis: {
-                                itemStyle: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                };
-
-                // 使用刚指定的配置项和数据显示图表。
-                myChart.setOption(option);
-                window.addEventListener("resize", function () {
-                    myChart.resize();
+        if (statusData.length) {
+            var statusChart = document.getElementById('statusChart');
+            if (statusChart) {
+                init('statusChart', {
+                    color: ['#f59e0b', '#2563eb', '#16a34a', '#7c3aed', '#ef4444', '#64748b'],
+                    tooltip: { trigger: 'item', formatter: '{b}<br/>{c} 单（{d}%）' },
+                    legend: { bottom: 0, type: 'scroll', icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: '#64748b', fontSize: 11 } },
+                    series: [{ name: '订单状态', type: 'pie', radius: ['44%', '68%'], center: ['50%', '43%'], itemStyle: { borderColor: '#fff', borderWidth: 3, borderRadius: 6 }, label: { show: false }, data: statusData }]
                 });
             }
-        function echarts_4(data) {
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-pay'));
-                option = {
-                        color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                    title: {
-                        text: '支付方式分析',
-                        subtext: $("#year").val()+'年度',
-                        left: 'center'
-                    },
-                    tooltip: {
-                        trigger: 'item'
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'right'
-                    },
-                    series: [
-                        {
-                            name: '支付方式',
-                            type: 'pie',
-                            radius: ['30%', '70%'],
-                            itemStyle: {
-                                borderRadius: 10,
-                                borderColor: '#fff',
-                                borderWidth: 2
-                            },
-                            data: data,
-                            emphasis: {
-                                itemStyle: {
-                                    shadowBlur: 10,
-                                    shadowOffsetX: 0,
-                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
-                                }
-                            }
-                        }
-                    ]
-                };
-
-                // 使用刚指定的配置项和数据显示图表。
-                myChart.setOption(option);
-                window.addEventListener("resize", function () {
-                    myChart.resize();
-                });
         }
-    });
+
+        donut('payTypeChart', payTypeData, '支付方式', '元');
+
+        if (productData.length) {
+            var names = productData.map(function (x) { return x.name; }).reverse();
+            var values = productData.map(function (x) { return x.value; }).reverse();
+            init('productChart', {
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: function (v) { return '¥' + Number(v).toLocaleString(); } },
+                grid: { left: 100, right: 18, top: 8, bottom: 8 },
+                xAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f5f9' } }, axisLabel: { color: '#9aa5b5', fontSize: 10, formatter: money } },
+                yAxis: { type: 'category', data: names, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: '#64748b', fontSize: 11 } },
+                series: [{
+                    type: 'bar',
+                    data: values,
+                    barWidth: 12,
+                    itemStyle: { borderRadius: [0, 6, 6, 0], color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#fcd34d' }, { offset: 1, color: '#f59e0b' }]) }
+                }]
+            });
+        }
+
+        window.addEventListener('resize', function () {
+            charts.forEach(function (c) { c.resize(); });
+        });
+    })();
 </script>

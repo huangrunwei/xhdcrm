@@ -1,773 +1,854 @@
-﻿@{
-    ViewData["Title"] = "home";
+@model XHD.Core.View.Models.HomeDashboard
+@using Newtonsoft.Json
+@{
     Layout = null;
+    ViewData["Title"] = "工作台";
+    var ratePercent = Math.Min((double)Model.PayRate, 100d);
+    var rateDeg = Math.Round(ratePercent * 3.6, 1).ToString("0.#", System.Globalization.CultureInfo.InvariantCulture);
+    var hasIndustry = Model.Industries.Count > 0;
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+
+    var canCustomer = Model.HasMenu("CRM_Customer");
+    var canFollow = Model.HasMenu("CRM_Follow");
+    var canOrder = Model.HasMenu("Sale_Menu_order");
+    var canContract = Model.HasMenu("Sale_Contract");
+    var canReceive = Model.HasMenu("Finance_Receive");
+    var canPlan = Model.HasMenu("Sale_Order_PayPlan");
+    var canOrderFollow = Model.HasMenu("Sale_Order_Follow");
+    var canKnowledge = Model.HasMenu("Knowledge");
+    var canCalendar = Model.HasMenu("mycalendar");
+
+    var hasQuick = canCustomer || canFollow || canOrder || canContract || canReceive || canPlan || canOrderFollow || canKnowledge || canCalendar;
+    var showTrend = canOrder && canReceive;
+    var showPayment = canReceive;
+    var showReminderBand = canPlan || canContract;
+    var showRecentOrders = canOrder;
+    var showRecentFollows = canFollow;
+    var showIndustry = canCustomer && hasIndustry;
+    var hasAnyModule = canCustomer || canFollow || canOrder || canContract || canReceive || canPlan || canOrderFollow || canKnowledge || canCalendar;
 }
 
 <!doctype html>
 <html>
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>工作台</title>
+    <link rel="stylesheet" href="/layuimini/lib/font-awesome-4.7.0/css/font-awesome.min.css">
+    <script src="/js/home/jquery.js"></script>
+    <script src="/js/home/echarts.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            background: #f1f4f9;
+            color: #111827;
+            font-family: "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+            font-size: 14px;
+        }
+        a { text-decoration: none; color: inherit; }
+        .page { max-width: 1680px; margin: 0 auto; padding: 20px 22px 28px; }
 
-    <title>某公司大数据监控平台</title>
-    <script type="text/javascript" src="/js/home/jquery.js"></script>
-    <script type="text/javascript" src="/js/home/echarts.min.js"></script>
-    <script type="text/javascript" src="/js/home/china.js"></script>
-    <script type="text/javascript" src="/js/home/map.js"></script>
-    <script type="text/javascript" src="/js/home/Bubble.js"></script>
-    <script type="text/javascript" src="/js/XHD.js"></script>
-    <link rel="stylesheet" href="/CSS/home.css">
+        /* ============ Hero ============ */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            padding: 28px 32px;
+            background: linear-gradient(115deg, #0b1220 0%, #162a5c 45%, #0e7490 100%);
+            color: #fff;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, .18);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+        .hero::before, .hero::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .hero::before { width: 340px; height: 340px; right: 6%; top: -190px; background: radial-gradient(circle, rgba(34, 211, 238, .36), transparent 68%); }
+        .hero::after { width: 260px; height: 260px; right: -60px; bottom: -170px; background: radial-gradient(circle, rgba(59, 130, 246, .35), transparent 68%); }
+        .hero-left { position: relative; z-index: 1; }
+        .hero-hello { font-size: 26px; font-weight: 800; letter-spacing: 1px; }
+        .hero-hello span { color: #67e8f9; }
+        .hero-date { margin-top: 10px; font-size: 13px; color: rgba(255, 255, 255, .72); }
+        .hero-metrics { display: flex; gap: 34px; margin-top: 22px; flex-wrap: wrap; }
+        .hero-metric .k { display: block; font-size: 12px; color: rgba(255, 255, 255, .62); margin-bottom: 5px; }
+        .hero-metric .v { display: block; font-size: 19px; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .hero-metric .v small { font-size: 12px; font-weight: 400; color: rgba(255, 255, 255, .6); margin-left: 4px; }
+        .hero-right { position: relative; z-index: 1; flex: none; padding-right: 6px; }
+        .rate-ring {
+            width: 132px;
+            height: 132px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .08), 0 10px 26px rgba(0, 0, 0, .18);
+        }
+        .rate-inner {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: rgba(10, 20, 42, .88);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, .08);
+        }
+        .rate-inner b { font-size: 26px; line-height: 1; font-weight: 800; color: #fff; }
+        .rate-inner span { margin-top: 6px; font-size: 11px; color: rgba(255, 255, 255, .65); letter-spacing: 1px; }
+
+        /* ============ 快捷入口 ============ */
+        .quick-bar {
+            position: relative;
+            z-index: 2;
+            margin: -20px 18px 0;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, .08);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            padding: 10px 8px;
+        }
+        .quick-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all .18s;
+            justify-content: center;
+        }
+        .quick-item:hover { background: #f1f5ff; transform: translateY(-1px); }
+        .quick-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #fff;
+            flex: none;
+        }
+        .quick-icon.blue { background: linear-gradient(135deg, #1677ff, #60a5fa); }
+        .quick-icon.green { background: linear-gradient(135deg, #16a34a, #4ade80); }
+        .quick-icon.orange { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .quick-icon.purple { background: linear-gradient(135deg, #7c3aed, #a78bfa); }
+        .quick-icon.cyan { background: linear-gradient(135deg, #0e7490, #22d3ee); }
+        .quick-icon.pink { background: linear-gradient(135deg, #db2777, #f472b6); }
+        .quick-text b { display: block; font-size: 13px; color: #1f2937; }
+        .quick-text span { display: block; font-size: 11px; color: #9ca3af; margin-top: 2px; }
+
+        /* ============ KPI ============ */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 14px; margin-top: 18px; }
+        .kpi-card {
+            position: relative;
+            background: #fff;
+            border-radius: 14px;
+            padding: 16px 18px;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, .06);
+            overflow: hidden;
+        }
+        .kpi-card::after { content: ""; position: absolute; right: -22px; bottom: -26px; width: 76px; height: 76px; border-radius: 50%; background: rgba(22, 119, 255, .05); }
+        .kpi-head { display: flex; align-items: center; justify-content: space-between; }
+        .kpi-label { color: #6b7280; font-size: 13px; }
+        .kpi-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 15px; }
+        .kpi-value { margin-top: 10px; font-size: 24px; font-weight: 800; letter-spacing: .3px; color: #111827; font-variant-numeric: tabular-nums; }
+        .kpi-sub { margin-top: 6px; font-size: 12px; color: #9ca3af; }
+        .kpi-sub b { font-weight: 600; color: #16a34a; }
+        .kpi-blue .kpi-icon { background: #eaf2ff; color: #1677ff; }
+        .kpi-green .kpi-icon { background: #e9f9ef; color: #16a34a; }
+        .kpi-orange .kpi-icon { background: #fff5e6; color: #f59e0b; }
+        .kpi-purple .kpi-icon { background: #f1ebff; color: #7c3aed; }
+        .kpi-cyan .kpi-icon { background: #e6f9fc; color: #0891b2; }
+        .kpi-red .kpi-icon { background: #feecec; color: #ef4444; }
+
+        /* ============ 业务提醒（显眼） ============ */
+        .reminder-band {
+            margin-top: 18px;
+            padding: 16px 20px 18px;
+            border-radius: 16px;
+            border: 1px solid #fde7c3;
+            border-left: 5px solid #f59e0b;
+            background: linear-gradient(135deg, #fffaf0 0%, #ffffff 58%, #f8fbff 100%);
+            box-shadow: 0 8px 22px rgba(245, 158, 11, .08);
+        }
+        .rb-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
+        .rb-title { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 800; color: #111827; }
+        .rb-icon {
+            width: 36px; height: 36px; border-radius: 11px; flex: none;
+            background: linear-gradient(135deg, #f59e0b, #fbbf24);
+            color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px;
+            box-shadow: 0 6px 14px rgba(245, 158, 11, .25);
+        }
+        .rb-count { background: #ef4444; color: #fff; border-radius: 10px; font-size: 12px; line-height: 18px; padding: 0 8px; }
+        .rb-desc { color: #9ca3af; font-size: 12px; }
+        .rb-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 10px; margin-top: 14px; }
+        .rb-card {
+            display: flex; align-items: center; gap: 10px;
+            background: #fff; border: 1px solid #f1f5f9; border-radius: 12px;
+            padding: 11px 13px; cursor: pointer; transition: all .18s; min-width: 0;
+        }
+        .rb-card:hover { border-color: #fcd34d; box-shadow: 0 6px 16px rgba(245, 158, 11, .12); transform: translateY(-1px); }
+        .rb-card-icon { width: 34px; height: 34px; border-radius: 10px; flex: none; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+        .rb-card-icon.plan { background: #fff5e6; color: #f59e0b; }
+        .rb-card-icon.contract { background: #eaf2ff; color: #1677ff; }
+        .rb-card-main { flex: 1; min-width: 0; }
+        .rb-card-title { font-size: 13px; font-weight: 600; color: #1f2937; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .rb-card-meta { margin-top: 3px; font-size: 11px; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .rb-card-right { flex: none; text-align: right; }
+        .rb-card-amount { font-size: 13px; font-weight: 700; color: #111827; font-variant-numeric: tabular-nums; }
+        .rb-card-date { margin-top: 3px; font-size: 11px; color: #9ca3af; }
+        .rb-card-date .tag { margin-left: 4px; }
+        .rb-empty { margin-top: 12px; color: #9ca3af; font-size: 13px; display: flex; align-items: center; gap: 8px; }
+        .rb-empty i { color: #d1d5db; font-size: 18px; }
+        .permission-empty { margin-top: 18px; background: #fff; border-radius: 14px; padding: 46px 20px; text-align: center; color: #9ca3af; box-shadow: 0 1px 4px rgba(15,23,42,.06); }
+        .permission-empty i { display: block; font-size: 38px; color: #dce3ed; margin-bottom: 12px; }
+        .permission-empty b { display: block; color: #4b5563; font-size: 15px; margin-bottom: 6px; }
+
+        /* ============ 通用面板 ============ */
+        .dash-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px; margin-top: 16px; }
+        .span-8 { grid-column: span 8; }
+        .span-4 { grid-column: span 4; }
+        .span-7 { grid-column: span 7; }
+        .span-5 { grid-column: span 5; }
+        .span-12 { grid-column: span 12; }
+        .panel { background: #fff; border-radius: 14px; padding: 18px 20px; box-shadow: 0 1px 4px rgba(15, 23, 42, .06); min-width: 0; }
+        .panel-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+        .panel-title { font-size: 16px; font-weight: 700; color: #111827; padding-left: 10px; border-left: 4px solid #1677ff; line-height: 1.3; }
+        .panel-title small { display: block; margin-top: 4px; font-size: 12px; font-weight: 400; color: #9ca3af; border: none; padding: 0; }
+        .panel-link { font-size: 12px; color: #1677ff; cursor: pointer; white-space: nowrap; padding-top: 2px; }
+        .panel-link:hover { text-decoration: underline; }
+        .panel-link i { font-size: 11px; margin-left: 4px; }
+
+        /* ============ 图表 ============ */
+        #trendChart { width: 100%; height: 320px; }
+        #industryChart { width: 100%; height: 270px; }
+        .pay-layout { display: flex; align-items: center; gap: 6px; }
+        .panel.span-12 .pay-layout { max-width: 800px; margin: 0 auto; }
+        .pay-chart-wrap { position: relative; width: 48%; min-width: 150px; height: 190px; flex: none; }
+        #payChart { width: 100%; height: 100%; }
+        .pay-center { position: absolute; left: 0; top: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+        .pay-center b { font-size: 24px; font-weight: 800; color: #111827; line-height: 1; }
+        .pay-center span { margin-top: 6px; font-size: 11px; color: #9ca3af; }
+        .pay-side { flex: 1; min-width: 0; }
+        .pay-side .row { display: flex; justify-content: space-between; align-items: center; padding: 9px 0; border-bottom: 1px dashed #f1f5f9; font-size: 12px; color: #6b7280; }
+        .pay-side .row:last-child { border-bottom: none; }
+        .pay-side .row b { font-size: 14px; color: #111827; font-variant-numeric: tabular-nums; }
+        .pay-side .row b.green { color: #16a34a; }
+        .pay-side .row b.red { color: #ef4444; }
+        .status-list { margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 12px; }
+        .status-item { margin-bottom: 12px; }
+        .status-item:last-child { margin-bottom: 0; }
+        .status-head { display: flex; justify-content: space-between; font-size: 12px; color: #6b7280; margin-bottom: 6px; }
+        .status-head b { color: #111827; font-weight: 600; }
+        .status-track { height: 7px; border-radius: 4px; background: #f1f5f9; overflow: hidden; }
+        .status-track span { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, #1677ff, #60a5fa); }
+        .status-item:nth-child(2) .status-track span { background: linear-gradient(90deg, #16a34a, #4ade80); }
+        .status-item:nth-child(3) .status-track span { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .status-item:nth-child(4) .status-track span { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+        .status-item:nth-child(5) .status-track span { background: linear-gradient(90deg, #ef4444, #f87171); }
+
+        /* ============ 数据表 ============ */
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; font-size: 12px; font-weight: 500; color: #9ca3af; padding: 9px 8px; border-bottom: 1px solid #eef2f7; white-space: nowrap; }
+        .data-table td { padding: 11px 8px; font-size: 13px; color: #374151; border-bottom: 1px solid #f5f7fa; vertical-align: middle; }
+        .data-table tr:last-child td { border-bottom: none; }
+        .data-table tbody tr { cursor: pointer; transition: background .15s; }
+        .data-table tbody tr:hover { background: #f8faff; }
+        .data-table .money { font-variant-numeric: tabular-nums; font-weight: 600; color: #111827; white-space: nowrap; }
+        .data-table .sn { color: #1677ff; font-weight: 600; white-space: nowrap; }
+        .data-table .customer { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .pill { display: inline-block; padding: 2px 10px; border-radius: 10px; font-size: 11px; white-space: nowrap; }
+        .pill.success { background: #e9f9ef; color: #16a34a; }
+        .pill.warn { background: #fff5e6; color: #d97706; }
+        .pill.info { background: #eaf2ff; color: #1677ff; }
+        .pill.gray { background: #f1f5f9; color: #6b7280; }
+
+        /* ============ 提醒 ============ */
+        .reminder-list { display: flex; flex-direction: column; }
+        .reminder-item { display: flex; gap: 12px; padding: 11px 4px; border-bottom: 1px dashed #f1f5f9; cursor: pointer; border-radius: 8px; transition: background .15s; }
+        .reminder-item:last-child { border-bottom: none; }
+        .reminder-item:hover { background: #f8faff; }
+        .reminder-icon { width: 34px; height: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex: none; }
+        .reminder-icon.plan { background: #fff5e6; color: #f59e0b; }
+        .reminder-icon.contract { background: #eaf2ff; color: #1677ff; }
+        .reminder-main { flex: 1; min-width: 0; }
+        .reminder-title { font-size: 13px; font-weight: 600; color: #1f2937; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .reminder-meta { margin-top: 3px; font-size: 12px; color: #9ca3af; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .reminder-right { flex: none; text-align: right; }
+        .reminder-amount { font-size: 13px; font-weight: 700; color: #111827; font-variant-numeric: tabular-nums; }
+        .reminder-date { margin-top: 3px; font-size: 11px; color: #9ca3af; }
+        .tag { display: inline-block; padding: 1px 8px; border-radius: 9px; font-size: 10px; margin-top: 4px; }
+        .tag.danger { background: #feecec; color: #ef4444; }
+        .tag.warn { background: #fff5e6; color: #d97706; }
+        .tag.info { background: #eaf2ff; color: #1677ff; }
+        .empty-state { padding: 46px 0; text-align: center; color: #c0c7d2; font-size: 13px; }
+        .empty-state i { display: block; font-size: 34px; margin-bottom: 10px; color: #dce3ed; }
+
+        /* ============ 最近跟进 ============ */
+        .follow-list { display: flex; flex-direction: column; }
+        .follow-item { display: flex; gap: 12px; padding: 12px 4px; border-bottom: 1px dashed #f1f5f9; cursor: pointer; border-radius: 8px; transition: background .15s; }
+        .follow-item:last-child { border-bottom: none; }
+        .follow-item:hover { background: #f8faff; }
+        .follow-avatar { width: 34px; height: 34px; border-radius: 10px; background: linear-gradient(135deg, #eaf2ff, #dbeafe); color: #1677ff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex: none; }
+        .follow-main { flex: 1; min-width: 0; }
+        .follow-top { display: flex; justify-content: space-between; gap: 8px; font-size: 13px; }
+        .follow-customer { font-weight: 600; color: #1f2937; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .follow-time { color: #9ca3af; font-size: 11px; white-space: nowrap; }
+        .follow-content { margin-top: 4px; font-size: 12px; color: #6b7280; line-height: 1.65; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .follow-footer { margin-top: 5px; font-size: 11px; color: #b0b8c4; }
+
+        .footer { margin-top: 22px; text-align: center; color: #b3bcc9; font-size: 12px; letter-spacing: .5px; }
+
+        @@media (max-width: 1280px) {
+            .hero-hello { font-size: 23px; }
+        }
+        @@media (max-width: 1100px) {
+            .span-8, .span-4, .span-7, .span-5 { grid-column: span 12; }
+            .hero { flex-direction: column; align-items: flex-start; }
+            .hero-right { display: none; }
+        }
+        @@media (max-width: 720px) {
+            .page { padding: 12px; }
+            .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+            .quick-bar { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-left: 0; margin-right: 0; }
+            .hero { padding: 22px; }
+            .hero-hello { font-size: 21px; }
+            .hero-metrics { gap: 20px; }
+            .pay-layout { flex-direction: column; align-items: stretch; }
+            .pay-chart-wrap { width: 100%; }
+        }
+    </style>
 </head>
 <body>
-    <div class="head clearfix">
-    </div>
-    <div class="mainbox">
-
-        <ul class="clearfix nav1">
-            <li style="width: 22%">
-                <div class="box">
-                    <div class="tit">客户行业</div>
-                    <div class="boxnav" style="height: 200px;" id="echarts-industry">
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="tit">客户类型</div>
-                    <div class="boxnav" style="height: 250px;" id="echarts-type">
-                    </div>
-                </div>
-            </li>
-            <li style="width: 56%">
-
-                <div class="box">
-                    <div class="boxnav mapc" style="height: 550px; position: relative">
-                        <div class="mapnav">
-                            <ul>
-                                <li><div><span>客户</span><p>@ViewData["cuscount"]</p></div></li>                                
-                                <li><div><span>跟进</span><p>@ViewData["followcount"]</p></div></li>
-                                <li><div><span>订单</span><p>@ViewData["ordercount"]</p></div></li>
-                                <li><div><span>合同</span><p>@ViewData["contractcount"]</p></div></li>
-                                <li><div><span>收款</span><p>@ViewData["receivecount"]</p></div></li>
-                            </ul>
+    <div class="page">
+        <!-- Hero -->
+        <div class="hero">
+            <div class="hero-left">
+                <div class="hero-hello">@Model.Greeting，<span>@Model.UserName</span></div>
+                <div class="hero-date">@Model.TodayText &nbsp;·&nbsp; 今天也要保持好状态，下面是今天的业务概览</div>
+                <div class="hero-metrics">
+                    @if (canOrder)
+                    {
+                        <div class="hero-metric">
+                            <span class="k">本月订单金额</span>
+                            <span class="v">¥@Model.MonthOrderAmount.ToString("N2")</span>
                         </div>
-                        <div class="mapnav2">
-
-                            <div class="box">
-                                <div class="tit">客户统计</div>
-                                <div class="boxnav" style="height: 180px;" id="echarts-customer">
-                                </div>
-                            </div>
+                    }
+                    @if (canReceive)
+                    {
+                        <div class="hero-metric">
+                            <span class="k">本月回款金额</span>
+                            <span class="v">¥@Model.MonthReceiveAmount.ToString("N2")</span>
                         </div>
-                        <div class="map" id="map"></div>
-
-                        <script>
-                            $(".mapbtn a").hover(function(){
-                                var ind=$(this).index()
-                                $(".mapnav ul").eq(ind).show().siblings().hide()
-                            })
-                        </script>
+                    }
+                    @if (canPlan)
+                    {
+                        <div class="hero-metric">
+                            <span class="k">待收款计划</span>
+                            <span class="v">@Model.PendingPlanCount <small>笔</small></span>
+                        </div>
+                    }
+                </div>
+            </div>
+            @if (canReceive)
+            {
+                <div class="hero-right">
+                    <div class="rate-ring" style="background: conic-gradient(#22d3ee 0deg @(rateDeg)deg, rgba(255,255,255,.16) @(rateDeg)deg 360deg);">
+                        <div class="rate-inner">
+                            <b>@Model.PayRate.ToString("0.0")%</b>
+                            <span>整体回款率</span>
+                        </div>
                     </div>
                 </div>
-
-            </li>
-            <li style="width: 22%">
-
-                <div class="box">
-                    <div class="tit">客户级别</div>
-                    <div class="boxnav" id="echarts-level" style="height: 200px;">
-                    </div>
-                </div>
-                <div class="box">
-                    <div class="tit">客户来源</div>
-                    <div class="boxnav" style="height: 250px;" id="echarts-source" >
-                    </div>
-                </div>
-
-            </li>
-        </ul>
-
-        <div class="box" style="padding: 20px 0;">
-            <ul class="clearfix nav2 ">
-                <li style="width:25%">
-                    <div class="tit01">跟进统计</div>
-                    <div class="ftechart" id="echarts-follow"></div>
-                </li>
-                <li style="width:25%">
-                    <div class="tit01">订单统计</div>
-                    <div class="ftechart" id="echarts-order"></div>
-                </li>
-                <li style="width:25%">
-                    <div class="tit01">收款统计</div>
-                    <div class="ftechart" id="echarts-receive"></div>
-
-                </li>
-                <li style="width:25%">
-                    <div class="tit01">发票统计</div>
-
-                    <div class="ftechart" id="echarts-invoice"></div>
-
-                </li>
-            </ul>
+            }
         </div>
 
+        <!-- 快捷入口 -->
+        @if (hasQuick)
+        {
+            <div class="quick-bar">
+                @if (canCustomer)
+                {
+                    <div class="quick-item" onclick="go('/Customer/Index','客户管理')">
+                        <div class="quick-icon blue"><i class="fa fa-users"></i></div>
+                        <div class="quick-text"><b>客户管理</b><span>客户与联系人</span></div>
+                    </div>
+                }
+                @if (canFollow)
+                {
+                    <div class="quick-item" onclick="go('/CRMFollow/Index','跟进管理')">
+                        <div class="quick-icon cyan"><i class="fa fa-comments"></i></div>
+                        <div class="quick-text"><b>跟进管理</b><span>客户沟通记录</span></div>
+                    </div>
+                }
+                @if (canOrder)
+                {
+                    <div class="quick-item" onclick="go('/SaleOrder/Index','订单管理')">
+                        <div class="quick-icon green"><i class="fa fa-shopping-cart"></i></div>
+                        <div class="quick-text"><b>订单管理</b><span>订单与产品明细</span></div>
+                    </div>
+                }
+                @if (canContract)
+                {
+                    <div class="quick-item" onclick="go('/SaleContract/Index','合同管理')">
+                        <div class="quick-icon purple"><i class="fa fa-file-text-o"></i></div>
+                        <div class="quick-text"><b>合同管理</b><span>合同与到期提醒</span></div>
+                    </div>
+                }
+                @if (canReceive)
+                {
+                    <div class="quick-item" onclick="go('/FinanceReceive/Index','收款管理')">
+                        <div class="quick-icon orange"><i class="fa fa-credit-card"></i></div>
+                        <div class="quick-text"><b>收款管理</b><span>收款流水记录</span></div>
+                    </div>
+                }
+                @if (canPlan)
+                {
+                    <div class="quick-item" onclick="go('/SaleOrderPayPlan/Index','收款计划')">
+                        <div class="quick-icon orange"><i class="fa fa-rmb"></i></div>
+                        <div class="quick-text"><b>收款计划</b><span>回款与收款单</span></div>
+                    </div>
+                }
+                @if (canOrderFollow)
+                {
+                    <div class="quick-item" onclick="go('/SaleOrderFollow/Index','订单跟进')">
+                        <div class="quick-icon purple"><i class="fa fa-headphones"></i></div>
+                        <div class="quick-text"><b>订单跟进</b><span>售后服务记录</span></div>
+                    </div>
+                }
+                @if (canKnowledge)
+                {
+                    <div class="quick-item" onclick="go('/Knowledge/Index','知识库')">
+                        <div class="quick-icon cyan"><i class="fa fa-book"></i></div>
+                        <div class="quick-text"><b>知识库</b><span>经验沉淀复用</span></div>
+                    </div>
+                }
+                @if (canCalendar)
+                {
+                    <div class="quick-item" onclick="go('/MyCalendar/Index','我的日程')">
+                        <div class="quick-icon pink"><i class="fa fa-calendar"></i></div>
+                        <div class="quick-text"><b>我的日程</b><span>收款与合同提醒</span></div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (showReminderBand)
+        {
+            <div class="reminder-band">
+                <div class="rb-head">
+                    <div class="rb-title">
+                        <span class="rb-icon"><i class="fa fa-bell"></i></span>
+                        业务提醒
+                        <span class="rb-count">@Model.Reminders.Count</span>
+                    </div>
+                    <div class="rb-desc">待收款计划与即将到期合同，建议优先处理</div>
+                </div>
+                @if (Model.Reminders.Count == 0)
+                {
+                    <div class="rb-empty"><i class="fa fa-check-circle-o"></i>今日暂无待办提醒，继续保持</div>
+                }
+                else
+                {
+                    <div class="rb-list">
+                        @foreach (var r in Model.Reminders)
+                        {
+                            <div class="rb-card" onclick="go('@r.Link','@r.Type')">
+                                <div class="rb-card-icon @(r.Type == "收款计划" ? "plan" : "contract")">
+                                    <i class="fa @(r.Type == "收款计划" ? "fa-rmb" : "fa-file-text-o")"></i>
+                                </div>
+                                <div class="rb-card-main">
+                                    <div class="rb-card-title">@r.Title</div>
+                                    <div class="rb-card-meta">@r.Customer &nbsp;·&nbsp; @r.Meta</div>
+                                </div>
+                                <div class="rb-card-right">
+                                    <div class="rb-card-amount">¥@r.Amount.ToString("N2")</div>
+                                    <div class="rb-card-date">@r.DateText <span class="tag @r.TagClass">@r.Tag</span></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @if (!hasAnyModule)
+        {
+            <div class="permission-empty">
+                <i class="fa fa-lock"></i>
+                <b>当前账号暂无可访问的业务模块</b>
+                请联系管理员在“系统管理 → 角色权限”中分配菜单权限。
+            </div>
+        }
+
+        @if (canCustomer || canFollow || canOrder || canContract || canReceive)
+        {
+            <!-- KPI -->
+            <div class="kpi-grid">
+                @if (canCustomer)
+                {
+                    <div class="kpi-card kpi-blue">
+                        <div class="kpi-head"><span class="kpi-label">客户总数</span><span class="kpi-icon"><i class="fa fa-users"></i></span></div>
+                        <div class="kpi-value">@Model.CustomerCount</div>
+                        <div class="kpi-sub">本月新增 <b>@Model.MonthNewCustomers</b> 位客户</div>
+                    </div>
+                }
+                @if (canFollow)
+                {
+                    <div class="kpi-card kpi-green">
+                        <div class="kpi-head"><span class="kpi-label">跟进总数</span><span class="kpi-icon"><i class="fa fa-phone"></i></span></div>
+                        <div class="kpi-value">@Model.FollowCount</div>
+                        <div class="kpi-sub">本月跟进 <b>@Model.MonthFollows</b> 次</div>
+                    </div>
+                }
+                @if (canOrder)
+                {
+                    <div class="kpi-card kpi-orange">
+                        <div class="kpi-head"><span class="kpi-label">订单总数</span><span class="kpi-icon"><i class="fa fa-shopping-cart"></i></span></div>
+                        <div class="kpi-value">@Model.OrderCount</div>
+                        <div class="kpi-sub">订单总额 ¥@Model.OrderAmount.ToString("N2")</div>
+                    </div>
+                }
+                @if (canContract)
+                {
+                    <div class="kpi-card kpi-purple">
+                        <div class="kpi-head"><span class="kpi-label">合同总数</span><span class="kpi-icon"><i class="fa fa-file-text-o"></i></span></div>
+                        <div class="kpi-value">@Model.ContractCount</div>
+                        <div class="kpi-sub">合同金额 ¥@Model.ContractAmount.ToString("N2")</div>
+                    </div>
+                }
+                @if (canReceive)
+                {
+                    <div class="kpi-card kpi-cyan">
+                        <div class="kpi-head"><span class="kpi-label">累计回款</span><span class="kpi-icon"><i class="fa fa-rmb"></i></span></div>
+                        <div class="kpi-value">¥@Model.ReceiveAmount.ToString("N2")</div>
+                        <div class="kpi-sub">本月回款 <b>¥@Model.MonthReceiveAmount.ToString("N2")</b></div>
+                    </div>
+                    <div class="kpi-card kpi-red">
+                        <div class="kpi-head"><span class="kpi-label">应收余额</span><span class="kpi-icon"><i class="fa fa-exclamation-circle"></i></span></div>
+                        <div class="kpi-value">¥@Model.Arrears.ToString("N2")</div>
+                        <div class="kpi-sub">整体回款率 @Model.PayRate.ToString("0.0")%</div>
+                    </div>
+                }
+            </div>
+        }
+
+        @if (showTrend || showPayment)
+        {
+            <!-- 趋势 + 回款 -->
+            <div class="dash-grid">
+                @if (showTrend)
+                {
+                    <div class="panel @(showPayment ? "span-8" : "span-12")">
+                        <div class="panel-head">
+                            <div class="panel-title">销售与回款趋势<small>近 6 个月订单金额与回款金额</small></div>
+                            <div class="panel-link" onclick="go('/Report_Order/Index','订单报表')">订单报表 <i class="fa fa-angle-right"></i></div>
+                        </div>
+                        <div id="trendChart"></div>
+                    </div>
+                }
+                @if (showPayment)
+                {
+                    <div class="panel @(showTrend ? "span-4" : "span-12")">
+                        <div class="panel-head">
+                            <div class="panel-title">回款完成度<small>订单金额与已回款对比</small></div>
+                            <div class="panel-link" onclick="go('/FinanceReceive/Index','收款管理')">收款管理 <i class="fa fa-angle-right"></i></div>
+                        </div>
+                        <div class="pay-layout">
+                            <div class="pay-chart-wrap">
+                                <div id="payChart"></div>
+                                <div class="pay-center">
+                                    <b>@Model.PayRate.ToString("0.0")%</b>
+                                    <span>已回款</span>
+                                </div>
+                            </div>
+                            <div class="pay-side">
+                                <div class="row"><span>订单总额</span><b>¥@Model.OrderAmount.ToString("N2")</b></div>
+                                <div class="row"><span>已回款</span><b class="green">¥@Model.ReceiveAmount.ToString("N2")</b></div>
+                                <div class="row"><span>未回款</span><b class="red">¥@Model.Arrears.ToString("N2")</b></div>
+                                <div class="row"><span>已开票</span><b>¥@Model.InvoiceAmount.ToString("N2")</b></div>
+                            </div>
+                        </div>
+                        @if (canOrder)
+                        {
+                            <div class="status-list">
+                                @if (Model.OrderStatuses.Count == 0)
+                                {
+                                    <div class="empty-state" style="padding:20px 0;"><i class="fa fa-inbox"></i>暂无订单状态数据</div>
+                                }
+                                else
+                                {
+                                    foreach (var s in Model.OrderStatuses)
+                                    {
+                                        <div class="status-item">
+                                            <div class="status-head"><span>@s.Name</span><span><b>@s.Count</b> 单 · @s.Percent.ToString("0")%</span></div>
+                                            <div class="status-track"><span style="width:@s.Percent.ToString("0.#")%"></span></div>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @if (showRecentOrders)
+        {
+            <!-- 最近订单 -->
+            <div class="dash-grid">
+                <div class="panel span-12">
+                    <div class="panel-head">
+                        <div class="panel-title">最近订单<small>按成交时间排序的最新订单</small></div>
+                        <div class="panel-link" onclick="go('/SaleOrder/Index','订单管理')">查看全部 <i class="fa fa-angle-right"></i></div>
+                    </div>
+                    @if (Model.RecentOrders.Count == 0)
+                    {
+                        <div class="empty-state"><i class="fa fa-shopping-cart"></i>暂无订单数据</div>
+                    }
+                    else
+                    {
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>订单号</th>
+                                    <th>客户</th>
+                                    <th>金额</th>
+                                    <th>状态</th>
+                                    <th>成交时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var o in Model.RecentOrders)
+                                {
+                                    var pillClass = o.Status == "已完成" ? "success" : o.Status == "待付款" ? "warn" : o.Status == "执行中" ? "info" : "gray";
+                                    <tr onclick="go('/SaleOrder/Info?id=@o.Id','【订单】@o.Sn')">
+                                        <td><span class="sn">@o.Sn</span></td>
+                                        <td class="customer">@o.Customer</td>
+                                        <td class="money">¥@o.Amount.ToString("N2")</td>
+                                        <td><span class="pill @pillClass">@o.Status</span></td>
+                                        <td>@(o.Date?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (showRecentFollows || showIndustry)
+        {
+            <!-- 最近跟进 + 客户行业 -->
+            <div class="dash-grid">
+                @if (showRecentFollows)
+                {
+                    <div class="panel @(showIndustry ? "span-7" : "span-12")">
+                        <div class="panel-head">
+                            <div class="panel-title">最近跟进<small>销售团队最新的客户沟通记录</small></div>
+                            <div class="panel-link" onclick="go('/CRMFollow/Index','跟进管理')">查看全部 <i class="fa fa-angle-right"></i></div>
+                        </div>
+                        @if (Model.RecentFollows.Count == 0)
+                        {
+                            <div class="empty-state"><i class="fa fa-comments-o"></i>暂无跟进记录</div>
+                        }
+                        else
+                        {
+                            <div class="follow-list">
+                                @foreach (var f in Model.RecentFollows)
+                                {
+                                    var initial = string.IsNullOrEmpty(f.Customer) ? "客" : f.Customer.Substring(0, 1);
+                                    <div class="follow-item" onclick="goCustomer('@f.CustomerId','@f.Customer')">
+                                        <div class="follow-avatar">@initial</div>
+                                        <div class="follow-main">
+                                            <div class="follow-top">
+                                                <span class="follow-customer">@f.Customer</span>
+                                                <span class="follow-time">@(f.Time?.ToString("MM-dd HH:mm") ?? "")</span>
+                                            </div>
+                                            <div class="follow-content">@f.Content</div>
+                                            <div class="follow-footer">跟进人：@(string.IsNullOrEmpty(f.Employee) ? "-" : f.Employee)</div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+
+                @if (showIndustry)
+                {
+                    <div class="panel @(showRecentFollows ? "span-5" : "span-12")">
+                        <div class="panel-head">
+                            <div class="panel-title">客户行业分布<small>按客户所属行业统计</small></div>
+                            <div class="panel-link" onclick="go('/Report_Customer/Index','客户报表')">客户报表 <i class="fa fa-angle-right"></i></div>
+                        </div>
+                        <div id="industryChart"></div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div class="footer">小黄豆CRM · 工作台数据实时统计</div>
     </div>
-</body>
-<script>
-    $.ajax({
-        url: "/Report_Customer/ReportYear",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_customer(data);
-        },
-    });
 
-    $.ajax({
-        url: "/Report_Customer/ReportFollowYear",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_follow(data);
-        },
-    });
+    <script>
+        var trendMonths = @Html.Raw(JsonConvert.SerializeObject(Model.TrendMonths, jsonSettings));
+        var trendOrderAmount = @Html.Raw(JsonConvert.SerializeObject(Model.TrendOrderAmount, jsonSettings));
+        var trendReceiveAmount = @Html.Raw(JsonConvert.SerializeObject(Model.TrendReceiveAmount, jsonSettings));
+        var industryData = @Html.Raw(JsonConvert.SerializeObject(Model.Industries.Select(a => new { name = a.Name, value = a.Count }), jsonSettings));
+        var payReceived = @Model.ReceiveAmount.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+        var payArrears = @Model.Arrears.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
 
-    $.ajax({
-        url: "/Report_Order/ReportYear",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_order(data);
-        },
-    });
-
-    $.ajax({
-        url: "/Report_Finance/ReportYear",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_receive(data);
-        },
-    });
-
-    $.ajax({
-        url: "/Report_Finance/ReportInvoice",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_invoice(data);
-        },
-    });
-
-    $.ajax({
-        url: "/Report_Customer/ReportIndustry",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_Industry(data);
-        },
-    });
-
-    $.ajax({
-        url: "/Report_Customer/ReportLevel",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_level(data);
-        },
-    });
-
-    $.ajax({
-        url: "/Report_Customer/ReportType",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_type(data);
-        },
-    });
-
-    $.ajax({
-        url: "/Report_Customer/ReportSource",
-        type: "get",
-        dataType: "json",
-        success: function (data) {
-            echarts_source(data);
-        },
-    });
-
-    //$.ajax({
-    //    url: "/Report_Customer/ReportProvinces",
-    //    type: "get",
-    //    dataType: "json",
-    //    success: function (data) {
-    //        map(data);
-    //    },
-    //});
-
-    function echarts_customer(data) {
-
-        var seriesdata=[];
-        for(var i=0;i<data.length;i++)
-        {
-            seriesdata.push(data[i].count);
-        }
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-customer'));
-        option = {            
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            yAxis: {
-                type: 'value',
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            grid:{
-                left:'10%',
-                right:'1%',
-                top:'10%',
-                bottom:'15%'
-            },
-            series: [
-                {
-                    data: seriesdata,
-                    type: 'bar',
-                    showBackground: false,
-                    backgroundStyle: {
-                        color: 'rgba(180, 180, 180, 0.2)'
-                    }
-                }
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_follow(data) {
-
-        var seriesdata=[];
-        for(var i=0;i<data.length;i++)
-        {
-            seriesdata.push(data[i].count);
-        }
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-follow'));
-        option = {            
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            yAxis: {
-                type: 'value',
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            grid:{
-                left:'10%',
-                right:'1%',
-                top:'10%',
-                bottom:'15%'
-            },
-            series: [
-                {
-                    data: seriesdata,
-                    type: 'bar',
-                    showBackground: false,
-                    backgroundStyle: {
-                        color: 'rgba(180, 180, 180, 0.2)'
-                    }
-                }
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_order(data) {
-
-        var seriesdata=[];
-        for(var i=0;i<data.length;i++)
-        {
-            seriesdata.push(data[i].count);
-        }
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-order'));
-        option = {            
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            yAxis: {
-                type: 'value',
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            grid:{
-                left:'10%',
-                right:'1%',
-                top:'10%',
-                bottom:'15%'
-            },
-            series: [
-                {
-                    data: seriesdata,
-                    type: 'bar',
-                    showBackground: false,
-                    backgroundStyle: {
-                        color: 'rgba(180, 180, 180, 0.2)'
-                    }
-                }
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_receive(data) {
-
-        var seriesdata=[];
-        for(var i=0;i<data.length;i++)
-        {
-            seriesdata.push(data[i].count);
-        }
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-receive'));
-        option = {            
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            yAxis: {
-                type: 'value',
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            grid:{
-                left:'10%',
-                right:'1%',
-                top:'10%',
-                bottom:'15%'
-            },
-            series: [
-                {
-                    data: seriesdata,
-                    type: 'bar',
-                    showBackground: false,
-                    backgroundStyle: {
-                        color: 'rgba(180, 180, 180, 0.2)'
-                    }
-                }
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_invoice(data) {
-
-        var seriesdata=[];
-        for(var i=0;i<data.length;i++)
-        {
-            seriesdata.push(data[i].count);
-        }
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-invoice'));
-        option = {            
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            yAxis: {
-                type: 'value',
-                splitLine:{
-                    show:false
-                },
-                axisLabel:{
-                        color: '#ffffff'
-                    }
-            },
-            grid:{
-                left:'10%',
-                right:'1%',
-                top:'10%',
-                bottom:'15%'
-            },
-            series: [
-                {
-                    data: seriesdata,
-                    type: 'bar',
-                    showBackground: false,
-                    backgroundStyle: {
-                        color: 'rgba(180, 180, 180, 0.2)'
-                    }
-                }
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_Industry(data) {       
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-industry'));
-        option = {
-            tooltip: {
-                trigger: 'item'                    
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'right',
-                textStyle:{
-                    color: '#ffffff'
-                }
-            },
-            series: [
-                {
-                    name: '客户行业',
-                    type: 'pie',
-                    radius: ['30%', '70%'],
-                    itemStyle: {
-                        borderRadius: 10,
-                        borderColor: '#fff',
-                        borderWidth: 2
-                    },
-                    data: data,
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_level(data) {       
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-level'));
-        option = {
-            tooltip: {
-                trigger: 'item'                    
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'right',
-                textStyle:{
-                    color: '#ffffff'
-                }
-            },
-            series: [
-                {
-                    name: '客户级别',
-                    type: 'pie',
-                    radius: ['30%', '70%'],
-                    itemStyle: {
-                        borderRadius: 10,
-                        borderColor: '#fff',
-                        borderWidth: 2
-                    },
-                    data: data,
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_type(data) {       
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-type'));
-        option = {
-            tooltip: {
-                trigger: 'item'                    
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'right',
-                textStyle:{
-                    color: '#ffffff'
-                }
-            },
-            series: [
-                {
-                    name: '客户类型',
-                    type: 'pie',
-                    radius: ['30%', '70%'],
-                    itemStyle: {
-                        borderRadius: 10,
-                        borderColor: '#fff',
-                        borderWidth: 2
-                    },
-                    data: data,
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_source(data) {       
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-source'));
-        option = {
-            tooltip: {
-                trigger: 'item'                    
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'right',
-                textStyle:{
-                    color: '#ffffff'
-                }
-            },
-            series: [
-                {
-                    name: '客户来源',
-                    type: 'pie',
-                    radius: ['30%', '70%'],
-                    itemStyle: {
-                        borderRadius: 10,
-                        borderColor: '#fff',
-                        borderWidth: 2
-                    },
-                    data: data,
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowOffsetX: 0,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
-                }
-            ]
-        };
-
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function map(data)
-    {
-        var myChart = echarts.init(document.getElementById('map'));
-        let scatterData = [
-            {
-                value: [112.549248, 37.857014]
-            },
-            {
-                value:[117.283042, 31.86119]
+        function go(url, title) {
+            if (window.top && window.top !== window && typeof window.top.openTab === 'function') {
+                window.top.openTab(url, title);
+            } else {
+                window.location.href = url;
             }
-        ]
+        }
 
-        var option = {
-            // backgroundColor: '#404a59',
-            title: {
-                //text: '客户',
-                //subtext: '来源：big-data-view',
-                sublink: 'https://gitee.com/iGaoWei/big-data-view',
-                left: 'center',
-                textStyle: {
-                    color: '#fff'
-                }
-            },
-            tooltip: {
-                //trigger: 'item'
-                formatter(params)
-                {
-                    return '地区：${params.name}</br>客户：${params.value}';
-                }
-            },
+        function goCustomer(id, name) {
+            if (window.top && window.top !== window && typeof window.top.cusInfo === 'function') {
+                window.top.cusInfo(id, '【客户】' + name);
+            } else {
+                go('/Customer/Info?id=' + id, '【客户】' + name);
+            }
+        }
 
-            geo: {
-                map: 'china',
-                label: {
-                    emphasis: {
-                        show: false
+        function formatMoney(v) {
+            var n = Number(v) || 0;
+            return '¥' + n.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function initCharts() {
+            if (typeof echarts === 'undefined') return;
+
+            var charts = [];
+            var trendDom = document.getElementById('trendChart');
+            if (trendDom) {
+                var trendChart = echarts.init(trendDom);
+                trendChart.setOption({
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: { type: 'shadow' },
+                    valueFormatter: function (v) { return formatMoney(v); }
+                },
+                legend: { top: 0, right: 0, icon: 'roundRect', itemWidth: 11, itemHeight: 11, textStyle: { color: '#6b7280', fontSize: 12 } },
+                grid: { left: 56, right: 22, top: 46, bottom: 28 },
+                xAxis: {
+                    type: 'category',
+                    data: trendMonths,
+                    axisLine: { lineStyle: { color: '#e5e7eb' } },
+                    axisTick: { show: false },
+                    axisLabel: { color: '#9ca3af', fontSize: 12 }
+                },
+                yAxis: {
+                    type: 'value',
+                    splitLine: { lineStyle: { color: '#f1f5f9' } },
+                    axisLabel: {
+                        color: '#9ca3af',
+                        fontSize: 11,
+                        formatter: function (v) { return v >= 10000 ? (v / 10000) + '万' : v; }
                     }
                 },
-                roam: false,
-                zoom: 1.2,
-                itemStyle: {
-                    normal: {
-                        areaColor: 'rgba(2,37,101,.5)',
-                        borderColor: 'rgba(112,187,252,.5)'
-                    },
-                    emphasis: {
-                        areaColor: 'rgba(2,37,101,.8)'
-                    }
-                }
-            },
-            series: [
-                {
-                    name: '标题名称',
-                    type: 'scatter',
-                    coordinateSystem: 'geo',
-                    data: data,
-                    symbolSize: function (val) {
-                        return val[2] / 15;
-                    },
-                    label: {
-                        normal: {
-                            formatter: '{b}',
-                            position: 'right',
-                            show: false
-                        },
-                        emphasis: {
-                            show: true
+                series: [
+                    {
+                        name: '订单金额',
+                        type: 'bar',
+                        barWidth: 26,
+                        data: trendOrderAmount,
+                        itemStyle: {
+                            borderRadius: [6, 6, 0, 0],
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: '#3b82f6' },
+                                { offset: 1, color: '#93c5fd' }
+                            ])
                         }
                     },
-                    itemStyle: {
-                        normal: {
-                            color: '#ffeb7b'
-                        }
-                    },
-                    
-                },
-                {
-                        type: 'effectScatter',
-                        data: scatterData, //配置散点的坐标数据
-                        coordinateSystem:'geo', //指明散点使用的坐标系统  geo的坐标系统
-                        rippleEffect:{
-                            scale: 10
+                    {
+                        name: '回款金额',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 7,
+                        data: trendReceiveAmount,
+                        lineStyle: { width: 3, color: '#16a34a' },
+                        itemStyle: { color: '#16a34a', borderColor: '#fff', borderWidth: 2 },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(22, 163, 74, .20)' },
+                                { offset: 1, color: 'rgba(22, 163, 74, .01)' }
+                            ])
                         }
                     }
+                ]
+                });
+                charts.push(trendChart);
+            }
 
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-    
-</script>
+            var payDom = document.getElementById('payChart');
+            if (payDom) {
+                var payChart = echarts.init(payDom);
+                payChart.setOption({
+                tooltip: { trigger: 'item', formatter: '{b}: {c} ({d}%)' },
+                series: [{
+                    type: 'pie',
+                    radius: ['66%', '86%'],
+                    center: ['50%', '50%'],
+                    avoidLabelOverlap: false,
+                    label: { show: false },
+                    labelLine: { show: false },
+                    data: [
+                        { value: payReceived, name: '已回款', itemStyle: { color: '#16a34a' } },
+                        { value: payArrears, name: '未回款', itemStyle: { color: '#e5e7eb' } }
+                    ]
+                }]
+                });
+                charts.push(payChart);
+            }
+
+            var industryDom = document.getElementById('industryChart');
+            var industryChart = null;
+            if (industryDom && industryData.length > 0) {
+                industryChart = echarts.init(industryDom);
+                var colors = ['#1677ff', '#16a34a', '#f59e0b', '#7c3aed', '#0ea5e9', '#ef4444'];
+                industryChart.setOption({
+                    tooltip: { trigger: 'item', formatter: '{b}: {c} 位客户 ({d}%)' },
+                    legend: { bottom: 0, icon: 'circle', itemWidth: 9, itemHeight: 9, textStyle: { color: '#6b7280', fontSize: 12 } },
+                    series: [{
+                        type: 'pie',
+                        radius: ['40%', '66%'],
+                        center: ['50%', '44%'],
+                        itemStyle: { borderColor: '#fff', borderWidth: 2, borderRadius: 6 },
+                        label: { show: false },
+                        data: industryData.map(function (item, i) {
+                            return { name: item.name, value: item.value, itemStyle: { color: colors[i % colors.length] } };
+                        })
+                    }]
+                });
+            }
+
+            if (industryChart) charts.push(industryChart);
+            window.addEventListener('resize', function () {
+                charts.forEach(function (c) { c.resize(); });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initCharts);
+        } else {
+            initCharts();
+        }
+    </script>
+</body>
 </html>
-
-

@@ -1,4 +1,4 @@
-﻿
+
 //货币格式
 
 function toMoney(num) {
@@ -274,6 +274,73 @@ function encryptAES(plainText, secretKey) {
 
     // 返回 Base64 字符串
     return encrypted.toString();
+}
+
+/**
+ * 富文本白名单过滤，避免知识库等内容中的脚本/事件属性被执行。
+ * 仅保留常见的排版标签和安全属性。
+ */
+function sanitizeRichHtml(html) {
+    if (!html) return "";
+    var doc = new DOMParser().parseFromString(String(html), "text/html");
+    var allowed = {
+        a: 1, abbr: 1, b: 1, blockquote: 1, br: 1, caption: 1, center: 1, code: 1,
+        col: 1, colgroup: 1, dd: 1, div: 1, dl: 1, dt: 1, em: 1, figcaption: 1,
+        figure: 1, font: 1, h1: 1, h2: 1, h3: 1, h4: 1, h5: 1, h6: 1, hr: 1,
+        i: 1, img: 1, li: 1, mark: 1, ol: 1, p: 1, pre: 1, s: 1, small: 1,
+        span: 1, strike: 1, strong: 1, sub: 1, sup: 1, table: 1, tbody: 1,
+        td: 1, tfoot: 1, th: 1, thead: 1, tr: 1, u: 1, ul: 1
+    };
+    var blocked = {
+        script: 1, style: 1, iframe: 1, object: 1, embed: 1, link: 1, meta: 1,
+        base: 1, form: 1, input: 1, button: 1, textarea: 1, select: 1,
+        option: 1, svg: 1, math: 1, template: 1, audio: 1, video: 1
+    };
+    var walk = function (parent) {
+        var nodes = Array.prototype.slice.call(parent.childNodes);
+        nodes.forEach(function (node) {
+            if (node.nodeType === 1) {
+                var tag = node.tagName.toLowerCase();
+                if (blocked[tag]) {
+                    parent.removeChild(node);
+                    return;
+                }
+                if (!allowed[tag]) {
+                    while (node.firstChild) {
+                        parent.insertBefore(node.firstChild, node);
+                    }
+                    parent.removeChild(node);
+                    return;
+                }
+                Array.prototype.slice.call(node.attributes).forEach(function (attr) {
+                    var name = attr.name.toLowerCase();
+                    var value = attr.value || "";
+                    if (name.indexOf("on") === 0 || name === "srcdoc" || name === "formaction" || name === "xlink:href") {
+                        node.removeAttribute(attr.name);
+                        return;
+                    }
+                    if (name === "href" || name === "src") {
+                        if (/^\s*(javascript|vbscript|data:text\/html)/i.test(value)) {
+                            node.removeAttribute(attr.name);
+                            return;
+                        }
+                        if (name === "src" && /^\s*data:image\/svg\+xml/i.test(value)) {
+                            node.removeAttribute(attr.name);
+                            return;
+                        }
+                    }
+                    if (name === "style" && /(expression|behavior|@import|url\s*\(|position\s*:\s*fixed)/i.test(value)) {
+                        node.removeAttribute(attr.name);
+                    }
+                });
+                walk(node);
+            } else if (node.nodeType === 8) {
+                parent.removeChild(node);
+            }
+        });
+    };
+    walk(doc.body);
+    return doc.body.innerHTML;
 }
 
 

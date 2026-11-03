@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -33,6 +33,14 @@ namespace XHD.Core.View.Controllers
     [Authorize]
     public class CustomerAttaController : Controller
     {
+        private static readonly HashSet<string> BlockedAttachmentExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".html", ".htm", ".xhtml", ".shtml", ".svg", ".xml", ".js", ".mjs",
+            ".php", ".asp", ".aspx", ".jsp", ".exe", ".dll", ".bat", ".cmd",
+            ".ps1", ".sh", ".jar", ".msi", ".scr", ".com", ".pif", ".cpl",
+            ".hta", ".vbs", ".wsf", ".wsh"
+        };
+
         private readonly ILogger<CustomerAttaController> _logger;
         private readonly ICRM_CustomerService _service;
         private readonly ICRM_Customer_attaService _detailservice;
@@ -103,15 +111,17 @@ namespace XHD.Core.View.Controllers
 
                     if (Request.Form.Any(a => a.Key == "chunks" ))
                     {
-                        //分片上传
-                        //var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/upload/contract/{ Request.Form["guid"] }-{Request.Form["id"]}/");
-                        var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/wwwroot/upload/customer/{Request.Form["guid"]}-{Request.Form["id"]}/");
+                        //分片上传：guid/id/chunk 均只取文件名，防止路径穿越
+                        var chunkGuid = Path.GetFileName(Request.Form["guid"].ToString());
+                        var chunkId = Path.GetFileName(Request.Form["id"].ToString());
+                        var chunkName = Path.GetFileName(Request.Form["chunk"].ToString());
+                        var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "customer", $"{chunkGuid}-{chunkId}");
 
                         if (!Directory.Exists(basePath))
                         {
                             Directory.CreateDirectory(basePath);
                         }
-                        var filePath = basePath + "/" + Request.Form["chunk"];
+                        var filePath = Path.Combine(basePath, chunkName);
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await formFile.CopyToAsync(stream);
@@ -128,6 +138,10 @@ namespace XHD.Core.View.Controllers
                         }
                         string fileName = Request.Form["name"];//文件名
                         string fileExt = Path.GetExtension(fileName);//获取文件后缀
+                        if (BlockedAttachmentExtensions.Contains(fileExt))
+                        {
+                            return XHDResult.Error("不支持的文件类型！").ToString();
+                        }
 
                         byte[] buffer = Guid.NewGuid().ToByteArray();
                         var out_trad_id = BitConverter.ToInt64(buffer, 0).ToString();
@@ -171,9 +185,11 @@ namespace XHD.Core.View.Controllers
 
             var customer_id = HttpContext.Session.GetString("newCustomerID");
 
-            //var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/upload/contract/{ Request.Form["guid"] }/{Request.Form["id"]}/");
-            var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/wwwroot/upload/customer/");
-            var savePath = Path.GetDirectoryName($"{basePath}/{ customer_id }/");
+            //分片合并：只允许在客户附件目录内操作
+            var mergeGuid = Path.GetFileName(Request.Form["guid"].ToString());
+            var mergeId = Path.GetFileName(Request.Form["id"].ToString());
+            var uploadRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "customer");
+            var savePath = Path.Combine(uploadRoot, customer_id ?? string.Empty);
 
 
 
@@ -184,7 +200,7 @@ namespace XHD.Core.View.Controllers
                     Directory.CreateDirectory(savePath);
                 }
 
-                var temporary = Path.GetDirectoryName($"{basePath}/{ Request.Form["guid"] }-{Request.Form["id"]}/");//临时文件夹
+                var temporary = Path.Combine(uploadRoot, $"{mergeGuid}-{mergeId}");//临时文件夹
 
                 if (!Directory.Exists(savePath))
                 {
@@ -194,6 +210,10 @@ namespace XHD.Core.View.Controllers
 
                 string fileName = Request.Form["name"];//文件名
                 string fileExt = Path.GetExtension(fileName);//获取文件后缀
+                if (BlockedAttachmentExtensions.Contains(fileExt))
+                {
+                    return XHDResult.Error("不支持的文件类型！").ToString();
+                }
                 var files = Directory.GetFiles(temporary);//获得下面的所有文件
 
                 byte[] buffer = Guid.NewGuid().ToByteArray();
@@ -242,11 +262,20 @@ namespace XHD.Core.View.Controllers
 
             var data = await _detailservice.GridAsync(exp);
 
+            if (data.count == 0)
+            {
+                return XHDResult.Error("文件不存在！").ToString();
+            }
+
             await _detailservice.DeleteAsync(exp);
 
-            var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/wwwroot/upload/customer/");
-            var savePath = Path.GetDirectoryName($"{basePath}/{Request.Form["cus_id"]}/");
-            var filePath = Path.Combine(savePath, data.data[0].real_name);
+            var uploadRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "customer"));
+            var filePath = Path.GetFullPath(Path.Combine(uploadRoot, data.data[0].cus_id ?? string.Empty, data.data[0].real_name ?? string.Empty));
+
+            if (!filePath.StartsWith(uploadRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            {
+                return XHDResult.Error("文件不存在！").ToString();
+            }
 
             try
             {

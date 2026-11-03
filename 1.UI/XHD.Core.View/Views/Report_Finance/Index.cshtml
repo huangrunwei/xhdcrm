@@ -1,507 +1,318 @@
-﻿@{
-    ViewData["Title"] = "Index";
+@model XHD.Core.View.Models.FinanceReportModel
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "财务报表";
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+    var trendJson = JsonConvert.SerializeObject(Model.Trend.Select(a => new { month = a.Month, received = a.Count, invoiced = a.Amount }), jsonSettings);
+    var payTypeJson = JsonConvert.SerializeObject(Model.PayTypes.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
+    var invoiceTypeJson = JsonConvert.SerializeObject(Model.InvoiceTypes.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
+    var agingJson = JsonConvert.SerializeObject(Model.Aging.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
 }
 
+<link rel="stylesheet" href="~/css/report.css" />
 
-
-
-<div class="layuimini-main">
-
-    <div class="layui-row layui-col-space15">
-        <form class="layui-form layui-form-pane" action="">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">员工</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="employee" autocomplete="off" class="layui-input" lay-verify="required">
-                        <input type="text" name="emp_id" id="emp_id" style="display:none;">
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">年度</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="year" id="year" autocomplete="off" class="layui-input" lay-verify="required">
-                    </div>
-                </div>
-
-                <div class="layui-inline">
-                    <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon"></i> 搜 索</button>
-                    <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon"></i> 重置</button>
-                </div>
+<div class="report-page">
+    <div class="report-hero">
+        <div class="report-hero-main">
+            <div class="report-eyebrow"><i class="fa fa-rmb"></i> FINANCE OVERVIEW</div>
+            <h1>财务报表</h1>
+            <p>跟踪回款、开票、应收余额和收款计划，及时识别逾期风险与资金缺口。</p>
+            <div class="report-hero-tags">
+                <span>@Model.Year 年度</span>
+                <span>@Model.EmpName</span>
+                <span>数据按当前权限范围统计</span>
             </div>
+        </div>
+        <form class="report-filter" method="get" action="">
+            <div class="report-field">
+                <label>统计年度</label>
+                <select name="year" class="report-select">
+                    @foreach (var y in Model.Years)
+                    {
+                        <option value="@y.Value" selected="@(y.Selected ? "selected" : null)">@y.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="report-field">
+                <label>负责员工</label>
+                <select name="emp_id" class="report-select">
+                    @foreach (var e in Model.Employees)
+                    {
+                        <option value="@e.Value" selected="@(e.Selected ? "selected" : null)">@e.Text</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="report-btn"><i class="fa fa-filter"></i> 应用筛选</button>
+            <a class="report-btn ghost" href="?"><i class="fa fa-refresh"></i> 重置</a>
+            <button type="button" class="report-btn ghost" onclick="window.print()"><i class="fa fa-print"></i> 打印</button>
         </form>
     </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-xs12 layui-col-md4">
-            <div id="echarts-finance" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md4">
-            <div id="echarts-financesum" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
 
-        <div class="layui-col-xs12 layui-col-md4">
-            <div id="echarts-paytype" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
+    <div class="report-kpi-grid">
+        @foreach (var kpi in Model.Kpis)
+        {
+            <div class="report-kpi tone-@kpi.Tone">
+                <div class="report-kpi-top">
+                    <span>@kpi.Label</span>
+                    <i class="fa @kpi.Icon"></i>
+                </div>
+                <div class="report-kpi-value">@kpi.Value</div>
+                <div class="report-kpi-hint">@kpi.Hint</div>
+            </div>
+        }
     </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-xs12 layui-col-md4">
-            <div id="echarts-invoice" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md4">
-            <div id="echarts-invoicesum" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md4">
-            <div id="echarts-invoicetype" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-8">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">回款与开票趋势<small>@Model.Year 年按月统计回款金额与开票金额</small></h2>
+                <a class="report-link" href="/FinanceReceive/Index">收款管理 <i class="fa fa-angle-right"></i></a>
+            </div>
+            <div id="financeTrend" class="report-chart chart-lg"></div>
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">待收款账龄<small>按计划日期统计未收款金额</small></h2>
+            </div>
+            @if (Model.Aging.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-calendar"></i>暂无待收计划</div>
+            }
+            else
+            {
+                <div id="agingChart" class="report-chart chart-lg"></div>
+            }
+        </section>
     </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">回款方式<small>@Model.Year 年收款金额构成</small></h2>
+            </div>
+            @if (Model.PayTypes.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-pie-chart"></i>暂无回款数据</div>
+            }
+            else
+            {
+                <div id="payTypeChart" class="report-chart chart-sm"></div>
+            }
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">发票类别<small>@Model.Year 年开票金额构成</small></h2>
+            </div>
+            @if (Model.InvoiceTypes.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-file-text-o"></i>暂无开票数据</div>
+            }
+            else
+            {
+                <div id="invoiceTypeChart" class="report-chart chart-sm"></div>
+            }
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">回款客户排行<small>@Model.Year 年回款金额 Top 6</small></h2>
+            </div>
+            @if (Model.TopCustomers.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-users"></i>暂无客户回款数据</div>
+            }
+            else
+            {
+                <div class="rank-list">
+                    @for (var i = 0; i < Model.TopCustomers.Count; i++)
+                    {
+                        var c = Model.TopCustomers[i];
+                        <div class="rank-item">
+                            <span class="rank-no">@(i + 1)</span>
+                            <div class="rank-main">
+                                <div class="rank-name">@c.Name</div>
+                                <div class="rank-extra">@c.Owner · @c.OrderCount 笔</div>
+                            </div>
+                            <div class="rank-value">¥@c.OrderAmount.ToString("N2")</div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-7">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">最近收款<small>@Model.Year 年最新收款记录</small></h2>
+                <a class="report-link" href="/FinanceReceive/Index">查看全部 <i class="fa fa-angle-right"></i></a>
+            </div>
+            @if (Model.RecentReceives.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-rmb"></i>当前年度暂无收款记录</div>
+            }
+            else
+            {
+                <div class="table-wrap">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>收款单号</th>
+                                <th>客户</th>
+                                <th>订单</th>
+                                <th>金额</th>
+                                <th>方式</th>
+                                <th>日期</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var r in Model.RecentReceives)
+                            {
+                                <tr>
+                                    <td class="cell-name">@r.Num</td>
+                                    <td class="cell-name">@r.Customer</td>
+                                    <td class="cell-muted">@r.OrderSn</td>
+                                    <td class="cell-money">¥@r.Amount.ToString("N2")</td>
+                                    <td>@r.PayType</td>
+                                    <td class="cell-muted">@(r.Date?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+
+        <section class="report-panel span-5">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">待收款计划<small>按计划日期排序，优先处理逾期</small></h2>
+            </div>
+            @if (Model.PendingPlans.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-check-circle-o"></i>暂无待收款计划</div>
+            }
+            else
+            {
+                <div class="table-wrap">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>计划</th>
+                                <th>客户</th>
+                                <th>金额</th>
+                                <th>日期</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var p in Model.PendingPlans)
+                            {
+                                <tr>
+                                    <td>
+                                        <a class="report-link" href="/SaleOrderPayPlan/Receipt?id=@p.Id" style="font-weight:600;">@p.PlanName</a>
+                                        <div class="cell-muted" style="margin-top:2px;">@p.OrderSn</div>
+                                    </td>
+                                    <td class="cell-name">@p.Customer</td>
+                                    <td class="cell-money">¥@p.Amount.ToString("N2")</td>
+                                    <td class="cell-muted">@(p.PlanDate?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                    <td><span class="pill @p.TagClass">@p.Tag</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+    </div>
+
+    <div class="report-footnote">小黄豆 CRM · 财务报表 · 数据实时统计</div>
 </div>
+
 <script type="text/javascript" src="/js/home/echarts.min.js"></script>
 <script>
-    layui.use(['table', 'treetable','form', 'tableSelect', 'laydate'], function () {
-        var $ = layui.jquery;
-        var table = layui.table;
-        var treetable = layui.treetable;
-        var form=layui.form;
-        var tableSelect = layui.tableSelect;
-        var laydate = layui.laydate;
+    (function () {
+        var trendData = @Html.Raw(trendJson);
+        var payTypeData = @Html.Raw(payTypeJson);
+        var invoiceTypeData = @Html.Raw(invoiceTypeJson);
+        var agingData = @Html.Raw(agingJson);
+        var charts = [];
+        var palette = ['#16a34a', '#2563eb', '#f59e0b', '#7c3aed', '#0891b2', '#ef4444', '#64748b', '#0ea5e9'];
 
+        function init(id, option) {
+            var dom = document.getElementById(id);
+            if (!dom || typeof echarts === 'undefined') return;
+            var chart = echarts.init(dom);
+            chart.setOption(option);
+            charts.push(chart);
+        }
 
-        //日期
-        laydate.render({
-            elem: '#year'
-            ,type: 'year'
+        function money(v) {
+            var n = Number(v) || 0;
+            return n >= 10000 ? (n / 10000).toFixed(1) + '万' : n.toFixed(0);
+        }
+
+        function donut(id, data, name, unit) {
+            if (!data || !data.length) return;
+            init(id, {
+                color: palette,
+                tooltip: { trigger: 'item', formatter: '{b}<br/>¥{c}（{d}%）' },
+                legend: { bottom: 0, type: 'scroll', icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: '#64748b', fontSize: 11 } },
+                series: [{
+                    name: name,
+                    type: 'pie',
+                    radius: ['44%', '68%'],
+                    center: ['50%', '43%'],
+                    itemStyle: { borderColor: '#fff', borderWidth: 3, borderRadius: 6 },
+                    label: { show: false },
+                    data: data
+                }]
+            });
+        }
+
+        if (document.getElementById('financeTrend')) {
+            init('financeTrend', {
+                color: ['#16a34a', '#2563eb'],
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: function (v) { return '¥' + Number(v).toLocaleString(); } },
+                legend: { top: 0, right: 0, icon: 'roundRect', itemWidth: 11, itemHeight: 11, textStyle: { color: '#64748b', fontSize: 11 } },
+                grid: { left: 52, right: 24, top: 38, bottom: 26 },
+                xAxis: { type: 'category', data: trendData.map(function (x) { return x.month; }), axisTick: { show: false }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisLabel: { color: '#9aa5b5', fontSize: 11 } },
+                yAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f5f9' } }, axisLabel: { color: '#9aa5b5', fontSize: 10, formatter: money } },
+                series: [
+                    { name: '回款金额', type: 'bar', barWidth: 18, data: trendData.map(function (x) { return x.received; }), itemStyle: { borderRadius: [5, 5, 0, 0], color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#16a34a' }, { offset: 1, color: '#bbf7d0' }]) } },
+                    { name: '开票金额', type: 'line', smooth: true, symbol: 'circle', symbolSize: 6, data: trendData.map(function (x) { return x.invoiced; }), lineStyle: { width: 2.5, color: '#2563eb' }, itemStyle: { color: '#2563eb', borderColor: '#fff', borderWidth: 2 }, areaStyle: { color: 'rgba(37,99,235,.08)' } }
+                ]
+            });
+        }
+
+        if (agingData.length) {
+            var names = agingData.map(function (x) { return x.name; }).reverse();
+            var values = agingData.map(function (x) { return x.value; }).reverse();
+            init('agingChart', {
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: function (v) { return '¥' + Number(v).toLocaleString(); } },
+                grid: { left: 66, right: 18, top: 8, bottom: 8 },
+                xAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f5f9' } }, axisLabel: { color: '#9aa5b5', fontSize: 10, formatter: money } },
+                yAxis: { type: 'category', data: names, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: '#64748b', fontSize: 11 } },
+                series: [{
+                    type: 'bar',
+                    data: values,
+                    barWidth: 15,
+                    itemStyle: {
+                        borderRadius: [0, 6, 6, 0],
+                        color: function (p) {
+                            return ['#16a34a', '#0891b2', '#f59e0b', '#ef4444'][p.dataIndex] || '#2563eb';
+                        }
+                    }
+                }]
+            });
+        }
+
+        donut('payTypeChart', payTypeData, '回款方式', '元');
+        donut('invoiceTypeChart', invoiceTypeData, '发票类别', '元');
+
+        window.addEventListener('resize', function () {
+            charts.forEach(function (c) { c.resize(); });
         });
-
-
-        tableSelect.render({
-            elem: '#employee',
-            checkedKey: 'id',
-            table: {
-                url: '/HrEmployee/grid',
-                cols: [[
-                    { type: 'checkbox' },
-                    { field: 'name', width: 150, title: '员工姓名' },
-                    { field: 'dep_name', width: 150, title: '部门' ,templet:function(t){
-                        if(t.department)
-                        {
-                            return t.department.dep_name;
-                        }
-                        return "";
-                    }},
-                    { field: 'position_name', width: 150, title: '职务' ,templet:function(t){
-                        if(t.position)
-                        {
-                            return t.position.position_name;
-                        }
-                        return "";
-                    }},
-                    ]],
-                    limit: 100
-            },
-            done: function (elem, data) {
-                var NEWJSON = [];
-                var ids = [];
-
-                layui.each(data.data, function (index, item) {
-                    NEWJSON.push(item.name);
-                    ids.push(item.id);
-                })
-                elem.val(NEWJSON.join(","))
-
-                $("#emp_id").val(ids.join(','));
-
-
-            }
-        })
-
-        // 监听搜索操作
-        form.on('submit(data-search-btn)', function (data) {
-            $.ajax({
-                url: "ReportYear",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_1(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportYearSum",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_2(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportPayType",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_3(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportInvoice",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_4(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportInvoiceSum",
-                data:data.field,
-                type: "get",
-                dataType: "json",
-                success: function (data) {
-                    echarts_5(data);
-                },
-            });
-
-            $.ajax({
-                url: "ReportInvoiceType",
-                data:data.field,
-                type: "egt",
-                dataType: "json",
-                success: function (data) {
-                    echarts_6(data);
-                },
-            });
-
-            return false;
-        });
-
-        function echarts_1(data) {
-
-            var seriesdata=[];
-            for(var i=0;i<data.length;i++)
-            {
-                seriesdata.push(data[i].count);
-            }
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-finance'));
-            option = {
-                title:{
-                    text:"收款年度统计图"
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: seriesdata,
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        },
-                        itemStyle:{
-                            normal:{
-                                        color: function(params) {
-                                // build a color map as your need.
-                                var colorList = [
-                                    '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                    '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                    '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                ];
-                                return colorList[params.dataIndex]
-                                }
-                            }
-                        }
-                    }
-                ]
-            };
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-        }
-
-        function echarts_2(data) {
-
-            var seriesdata=[];
-            for(var i=0;i<data.length;i++)
-            {
-                seriesdata.push(data[i].count);
-            }
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-financesum'));
-            option = {
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                title:{
-                    text:"收款金额年度统计图"
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '1月', '12月']
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: seriesdata,
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        },
-                        itemStyle:{
-                            normal:{
-                                        color: function(params) {
-                                // build a color map as your need.
-                                var colorList = [
-                                    '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                    '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                    '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                ];
-                                return colorList[params.dataIndex]
-                                }
-                            }
-                        }
-                    }
-                ]
-            };
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-        }
-
-        function echarts_3(data) {
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-paytype'));
-            option = {
-                color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                title: {
-                    text: '收款支付方式分析',
-                    subtext: $("#year").val()+'年度',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'right'
-                },
-                series: [
-                    {
-                        name: '支付方式',
-                        type: 'pie',
-                        radius: ['30%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-        }
-
-        function echarts_4(data) {
-
-            var seriesdata=[];
-            for(var i=0;i<data.length;i++)
-            {
-                seriesdata.push(data[i].count);
-            }
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-invoice'));
-            option = {
-                title:{
-                    text:"发票年度统计图"
-                },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: seriesdata,
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        },
-                        itemStyle:{
-                            normal:{
-                                        color: function(params) {
-                                // build a color map as your need.
-                                var colorList = [
-                                    '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                    '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                    '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                ];
-                                return colorList[params.dataIndex]
-                                }
-                            }
-                        }
-                    }
-                ]
-            };
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-        }
-
-        function echarts_5(data) {
-
-            var seriesdata=[];
-            for(var i=0;i<data.length;i++)
-            {
-                seriesdata.push(data[i].count);
-            }
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-invoicesum'));
-            option = {
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                title:{
-                    text:"发票金额年度统计图"
-                },
-                xAxis: {
-                    type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '1月', '12月']
-                },
-                yAxis: {
-                    type: 'value'
-                },
-                series: [
-                    {
-                        data: seriesdata,
-                        type: 'bar',
-                        showBackground: true,
-                        backgroundStyle: {
-                            color: 'rgba(180, 180, 180, 0.2)'
-                        },
-                        itemStyle:{
-                            normal:{
-                                        color: function(params) {
-                                // build a color map as your need.
-                                var colorList = [
-                                    '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                    '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                    '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                ];
-                                return colorList[params.dataIndex]
-                                }
-                            }
-                        }
-                    }
-                ]
-            };
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-        }
-
-        function echarts_6(data) {
-
-            // 基于准备好的dom，初始化echarts实例
-            var myChart = echarts.init(document.getElementById('echarts-invoicetype'));
-            option = {
-                color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                title: {
-                    text: '发票类别分析',
-                    subtext: $("#year").val()+'年度',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'right'
-                },
-                series: [
-                    {
-                        name: '发票类别',
-                        type: 'pie',
-                        radius: ['30%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-        }
-    });
+    })();
 </script>

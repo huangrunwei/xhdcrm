@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -82,5 +82,17 @@ namespace XHD.Core.Models
         /// </summary>
         [JsonProperty]
         public int? allDay { get; set; }
+
+        /// <summary>
+        /// 来源类型：receive_plan=收款计划，contract=合同到期（为空表示手工日程）
+        /// </summary>
+        [JsonProperty, Column(StringLength = 50)]
+        public string source_type { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 来源业务id（收款计划id / 合同id）
+        /// </summary>
+        [JsonProperty, Column(StringLength = 50)]
+        public string source_id { get; set; } = string.Empty;
     }
 }

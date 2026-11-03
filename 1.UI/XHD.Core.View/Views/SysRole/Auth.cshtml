@@ -88,14 +88,14 @@
         form.on('switch(IsLock)', function (data) {
             console.log(data);
 
-            var loading = layer.msg('正在提交', { icon: 16, shade: 0.3, time: 0 });
+            //var loading = layer.msg('正在提交', { icon: 16, shade: 0.3, time: 0 });
             $.ajax({
                 type: 'POST',
                 url: "/SysAuth/save",
                 data: { role_id: getparastr("id"), auth_id: data.value, auth_on: data.elem.checked ? 1 : 0 },
                 dataType: "json",
                 success: function (obj) {//res为相应体,function为回调函数
-                    layer.close(loading);
+                    //layer.close(loading);
                     if (obj.code == 0) {
 
                     }
@@ -123,14 +123,14 @@
             //var id = $(data.elem).attr("id");
 
             //console.log("id=>" + id);
-            var loading = layer.msg('正在提交', { icon: 16, shade: 0.3, time: 0 });
+            //var loading = layer.msg('正在提交', { icon: 16, shade: 0.3, time: 0 });
             $.ajax({
                 type: 'POST',
                 url: "/SysAuth/save",
                 data: { role_id: getparastr("id"), auth_id: $(data.elem).attr("id"), auth_on: data.elem.checked ? 1 : 0 },
                 dataType: "json",
                 success: function (obj) {//res为相应体,function为回调函数
-                    layer.close(loading);
+                    //layer.close(loading);
                     if (obj.code == 0) {
 
                     }

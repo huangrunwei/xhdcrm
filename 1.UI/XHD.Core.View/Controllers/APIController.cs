@@ -1,7 +1,8 @@
-﻿
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Session;
@@ -25,12 +26,14 @@ using XHD.Core.IRepository;
 using XHD.Core.IServices;
 using XHD.Core.Models;
 using XHD.Core.View.Configs;
+using XHD.Core.View.Services;
 
 namespace XHD.Core.View.Controllers
 {
-    public class APIController : Controller
+    public partial class APIController : Controller
     {
-        private static hr_employee employee = null;
+        private hr_employee employee = null;
+        private readonly IDataProtector _tokenProtector;
         private readonly Ihr_employeeService _empservice;
         private readonly ICRM_CustomerService _customerservice;
         private readonly ICRM_followService _followservice;
@@ -46,7 +49,7 @@ namespace XHD.Core.View.Controllers
         private readonly ISys_logService _LogService;
         private readonly IFreeSql _fsql;
 
-        public APIController(Ihr_employeeService empservice, ICRM_CustomerService customerservice, IDBAuthService dBAuthService, ICRM_followService followservice, ISale_orderService orderService, ISale_contractService contractservice, IFinance_ReceiveService receiveService, ICRM_ContactService contactservice, ISys_ParamService sysParamService, ISys_logService logService, IProductService productservice, ISale_order_detailsService orderDetailsService, ISale_contract_attaService contractattaservice, IFreeSql fsql)
+        public APIController(Ihr_employeeService empservice, ICRM_CustomerService customerservice, IDBAuthService dBAuthService, ICRM_followService followservice, ISale_orderService orderService, ISale_contractService contractservice, IFinance_ReceiveService receiveService, ICRM_ContactService contactservice, ISys_ParamService sysParamService, ISys_logService logService, IProductService productservice, ISale_order_detailsService orderDetailsService, ISale_contract_attaService contractattaservice, IFreeSql fsql, IDataProtectionProvider dataProtectionProvider)
         {
             _empservice = empservice;
             _customerservice = customerservice;
@@ -62,6 +65,7 @@ namespace XHD.Core.View.Controllers
             _OrderDetailsService = orderDetailsService;
             _contractattaservice = contractattaservice;
             _fsql = fsql;
+            _tokenProtector = dataProtectionProvider.CreateProtector("XHD.Api.Token.v1");
         }
 
         #region 登录认证
@@ -74,8 +78,7 @@ namespace XHD.Core.View.Controllers
         [HttpGet]
         public async Task<string> Login(string uid, string? pwd)
         {
-            //var password = MD5Comm.MD5Hash(pwd);
-            pwd = pwd.ToUpper();
+            pwd = (pwd ?? string.Empty).ToUpper();
 
             Expression<Func<hr_employee, bool>> expwhere = a => a.uid == uid && a.pwd == pwd;
 
@@ -86,29 +89,31 @@ namespace XHD.Core.View.Controllers
 
             var list = await _empservice.GridAsync(expwhere);
 
-            if (list.count > 0)
+            if (list.count == 0)
             {
-                var l = list.data[0];
-
-                string id = l.id;
-                var outtime = DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd hh:mm:ss");
-
-                string tokentext = $"{id},{outtime}";
-                string encrypttoken = DESEncrypt.Encrypt(tokentext);
-
-                //返回Token
-                JObject obj = new JObject();
-                obj.Add("token", encrypttoken);
-                obj.Add("id", id);
-                obj.Add("outtime", outtime);
-                obj.Add("RealName", l.name);
-                //obj.Add("password", l.pwd);
-                obj.Add("phone", l.tel);
-
-                return XHDResult.Success(obj).ToString();
-
+                return XHDResult.Error("账号密码不匹配！").ToString();
             }
-            return XHDResult.Error("账号密码不匹配！").ToString();
+
+            var l = list.data[0];
+
+            string id = l.id;
+            var outtime = DateTime.Now.AddMonths(1).ToString("yyyy-MM-dd HH:mm:ss");
+            var expires = DateTimeOffset.UtcNow.AddMonths(1).ToUnixTimeSeconds();
+
+            // 使用 ASP.NET Core Data Protection 生成防篡改令牌，不再使用固定密钥的 DES
+            string tokentext = $"{id}|{expires}";
+            string encrypttoken = _tokenProtector.Protect(tokentext);
+
+            //返回Token
+            JObject obj = new JObject();
+            obj.Add("token", encrypttoken);
+            obj.Add("id", id);
+            obj.Add("outtime", outtime);
+            obj.Add("RealName", l.name);
+            //obj.Add("password", l.pwd);
+            obj.Add("phone", l.tel);
+
+            return XHDResult.Success(obj).ToString();
         }
 
         /// <summary>
@@ -130,33 +135,94 @@ namespace XHD.Core.View.Controllers
                     return XHDResult.Error(-9, "Token错误！");
                 }
 
-                var _token = authValue.Replace("Bearer ", "").Replace(" ", "");
+                var _token = authValue.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase)
+                    ? authValue.Substring(7).Trim()
+                    : authValue.Trim();
 
-                string encrypttoken = PageValidate.InputText(_token, 150);
+                if (_token.Length == 0 || _token.Length > 2000)
+                {
+                    return XHDResult.Error(-9, "Token错误！");
+                }
 
-                string decrypttoken = DESEncrypt.Decrypt(encrypttoken);
+                // 用户在 Web 后台生成的长期 API / MCP Token
+                if (ApiTokenUtil.IsApiToken(_token))
+                {
+                    try
+                    {
+                        var tokenHash = ApiTokenUtil.Hash(_token);
+                        var apiToken = _fsql.Select<Sys_ApiToken>()
+                            .Where(a => a.token_hash == tokenHash && a.is_revoked != 1)
+                            .First();
 
-                //Console.WriteLine(decrypttoken);
+                        if (apiToken == null || (apiToken.expires_at.HasValue && apiToken.expires_at.Value < DateTime.Now))
+                        {
+                            return XHDResult.Error(-9, "API Token无效或已过期，请重新生成！");
+                        }
 
-                string[] tokenitems = decrypttoken.Split(',');
+                        var apiUser = _fsql.Select<hr_employee>().Where(a => a.id == apiToken.emp_id).First();
+                        if (apiUser == null)
+                        {
+                            return XHDResult.Error(-9, "找不到此用户！");
+                        }
+
+                        if (!string.Equals(apiUser.uid, "admin", StringComparison.OrdinalIgnoreCase)
+                            && (apiUser.status != 1 || apiUser.canlogin == 0))
+                        {
+                            return XHDResult.Error(-9, "账号已被禁用！");
+                        }
+
+                        if (string.IsNullOrWhiteSpace(apiToken.token_suffix))
+                        {
+                            _fsql.Update<Sys_ApiToken>()
+                                .Where(a => a.id == apiToken.id)
+                                .Set(a => a.last_used_at, DateTime.Now)
+                                .Set(a => a.token_suffix, _token.Length > 8 ? _token[^8..] : _token)
+                                .ExecuteAffrows();
+                        }
+                        else
+                        {
+                            _fsql.Update<Sys_ApiToken>()
+                                .Where(a => a.id == apiToken.id)
+                                .Set(a => a.last_used_at, DateTime.Now)
+                                .ExecuteAffrows();
+                        }
+
+                        employee = apiUser;
+                        return XHDResult.Success();
+                    }
+                    catch
+                    {
+                        return XHDResult.Error(-9, "API Token校验失败，请重新生成！");
+                    }
+                }
+
+                string decrypttoken;
+                try
+                {
+                    decrypttoken = _tokenProtector.Unprotect(_token);
+                }
+                catch
+                {
+                    return XHDResult.Error(-9, "Token错误！");
+                }
+
+                string[] tokenitems = decrypttoken.Split('|');
 
                 string id = "";
                 string tokentime = "";
 
-                if (tokenitems.Length >= 2)
+                if (tokenitems.Length == 2)
                 {
                     id = tokenitems[0];
                     tokentime = tokenitems[1];
                 }
 
-                //if (!PageValidate.checkID(id))
-                //{
-                //    return XHDResult.Error(-9, "id格式错误！");
-                //}
+                if (string.IsNullOrWhiteSpace(id) || !long.TryParse(tokentime, out var expireUnix))
+                {
+                    return XHDResult.Error(-9, "Token错误！");
+                }
 
-                DateTime limittime = DateTime.Parse(tokentime);
-
-                if (limittime <= DateTime.Now)
+                if (expireUnix <= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
                 {
                     return XHDResult.Error(-9, "身份验证过期，请重新登录！");
                 }
@@ -171,7 +237,13 @@ namespace XHD.Core.View.Controllers
                     return XHDResult.Error(-9, "找不到此用户！");
                 }
 
-                employee = list.data[0];
+                var currentUser = list.data[0];
+                if (currentUser.uid != "admin" && (currentUser.status != 1 || currentUser.canlogin == 0))
+                {
+                    return XHDResult.Error(-9, "账号已被禁用！");
+                }
+
+                employee = currentUser;
 
                 return XHDResult.Success();
 
@@ -225,6 +297,11 @@ namespace XHD.Core.View.Controllers
                 return userresult.ToString();
             }
 
+            if (!await _dBAuthService.GetAuth(employee.id, "CRM_Customer"))
+            {
+                return XHDResult.Error("无客户菜单权限！").ToString();
+            }
+
             //查询数据
             Expression<Func<CRM_Customer, bool>> exp = a => 1 == 1;
 
@@ -273,6 +350,7 @@ namespace XHD.Core.View.Controllers
                 model.isDelete = 0;
                 model.create_id = employee.id;
                 model.create_time = DateTime.Now;
+                if (string.IsNullOrWhiteSpace(model.emp_id)) model.emp_id = employee.id;
 
                 //权限
                 var authbtn = await _dBAuthService.GetAuth(employee.id, "CRM_Customer|add");
@@ -300,6 +378,11 @@ namespace XHD.Core.View.Controllers
                     if (checknulldata.count == 0)
                     {
                         return XHDResult.Error("找不到数据！").ToString();
+                    }
+
+                    if (!await CanAccessCustomerAsync(model.id))
+                    {
+                        return XHDResult.Error("无权操作该客户！").ToString();
                     }
 
                     result = await _customerservice.UpdateAsync(model);
@@ -410,6 +493,11 @@ namespace XHD.Core.View.Controllers
                 model.create_id = employee.id;
                 model.create_time = DateTime.Now;
 
+                if (!await CanAccessCustomerAsync(model.customer_id))
+                {
+                    return XHDResult.Error("无权操作该客户！").ToString();
+                }
+
                 //权限
                 var authbtn = await _dBAuthService.GetAuth(employee.id, "CRM_Contact|add");
 
@@ -436,6 +524,11 @@ namespace XHD.Core.View.Controllers
                     if (checknulldata.count == 0)
                     {
                         return XHDResult.Error("找不到数据！").ToString();
+                    }
+
+                    if (!await CanAccessCustomerAsync(checknulldata.data[0].customer_id))
+                    {
+                        return XHDResult.Error("无权操作该联系人！").ToString();
                     }
 
                     result = await _contactservice.UpdateAsync(model);
@@ -497,6 +590,11 @@ namespace XHD.Core.View.Controllers
                 return userresult.ToString();
             }
 
+            if (!await _dBAuthService.GetAuth(employee.id, "CRM_Follow"))
+            {
+                return XHDResult.Error("无跟进菜单权限！").ToString();
+            }
+
             //查询数据
             Expression<Func<CRM_follow, bool>> exp = a => 1 == 1;
 
@@ -546,6 +644,11 @@ namespace XHD.Core.View.Controllers
                 model.employee_id = employee.id;
                 model.follow_time = DateTime.Now;
 
+                if (!await CanAccessCustomerAsync(model.customer_id))
+                {
+                    return XHDResult.Error("无权操作该客户！").ToString();
+                }
+
                 //权限
                 var authbtn = await _dBAuthService.GetAuth(employee.id, "CRM_Follow|add");
 
@@ -575,6 +678,11 @@ namespace XHD.Core.View.Controllers
                     if (checknulldata.count == 0)
                     {
                         return XHDResult.Error("找不到数据！").ToString();
+                    }
+
+                    if (!await CanAccessCustomerAsync(checknulldata.data[0].customer_id))
+                    {
+                        return XHDResult.Error("无权操作该跟进记录！").ToString();
                     }
 
                     result = await _followservice.UpdateAsync(model);
@@ -615,6 +723,7 @@ namespace XHD.Core.View.Controllers
                 return XHDResult.Error("操作失败，系统错误！").ToString();
             }
 
+            await CustomerScoreService.RecalculateAsync(_fsql, model.customer_id);
             return XHDResult.Success().ToString();
         }
 
@@ -636,6 +745,11 @@ namespace XHD.Core.View.Controllers
             if (userresult.Value<int>("code") != 0)
             {
                 return userresult.ToString();
+            }
+
+            if (!await _dBAuthService.GetAuth(employee.id, "Sale_Menu_order"))
+            {
+                return XHDResult.Error("无订单菜单权限！").ToString();
             }
 
             //查询数据
@@ -671,6 +785,22 @@ namespace XHD.Core.View.Controllers
 
         public async Task<string> OrderDetails(string order_id)
         {
+            var userresult = checkToken();
+            if (userresult.Value<int>("code") != 0)
+            {
+                return userresult.ToString();
+            }
+
+            if (!await _dBAuthService.GetAuth(employee.id, "Sale_Menu_order"))
+            {
+                return XHDResult.Error("无订单菜单权限！").ToString();
+            }
+
+            if (!await CanAccessOrderAsync(order_id))
+            {
+                return XHDResult.Error("无权访问该订单！").ToString();
+            }
+
             Expression<Func<Sale_order_details, bool>> exp = a => a.order_id == order_id;
 
             //if (!string.IsNullOrWhiteSpace(Request.Query["T_name"]))
@@ -723,6 +853,12 @@ namespace XHD.Core.View.Controllers
                 model.id = UUIDNext.Uuid.NewSequential().ToString();
                 model.create_id = employee.id;
                 model.create_time = DateTime.Now;
+                if (string.IsNullOrWhiteSpace(model.emp_id)) model.emp_id = employee.id;
+
+                if (!await CanAccessCustomerAsync(model.customer_id))
+                {
+                    return XHDResult.Error("无权操作该客户！").ToString();
+                }
 
                 //权限
                 var authbtn = await _dBAuthService.GetAuth(employee.id, "Sale_Order|add");
@@ -750,6 +886,11 @@ namespace XHD.Core.View.Controllers
                     if (checknulldata.count == 0)
                     {
                         return XHDResult.Error("找不到数据！").ToString();
+                    }
+
+                    if (!await CanAccessCustomerAsync(checknulldata.data[0].customer_id))
+                    {
+                        return XHDResult.Error("无权操作该订单！").ToString();
                     }
 
                     result = await _OrderService.UpdateAsync(model);
@@ -808,6 +949,7 @@ namespace XHD.Core.View.Controllers
                 await _OrderDetailsService.AddAsync(modelsdetail);
             }
 
+            await CustomerScoreService.RecalculateAsync(_fsql, model.customer_id);
             return XHDResult.Success().ToString();
         }
 
@@ -830,6 +972,11 @@ namespace XHD.Core.View.Controllers
             if (userresult.Value<int>("code") != 0)
             {
                 return userresult.ToString();
+            }
+
+            if (!await _dBAuthService.GetAuth(employee.id, "Sale_Contract"))
+            {
+                return XHDResult.Error("无合同菜单权限！").ToString();
             }
 
             //查询数据
@@ -861,6 +1008,18 @@ namespace XHD.Core.View.Controllers
 
         public async Task<string> ContractAtta(string contract_id)
         {
+            var userresult = checkToken();
+            if (userresult.Value<int>("code") != 0)
+            {
+                return userresult.ToString();
+            }
+
+            var contract = await _fsql.Select<Sale_contract>().Where(a => a.id == contract_id).FirstAsync();
+            if (contract == null || !await CanAccessCustomerAsync(contract.customer_id))
+            {
+                return XHDResult.Error("无权访问该合同！").ToString();
+            }
+
             Expression<Func<Sale_contract_atta, bool>> exp = a => a.contract_id == contract_id;
 
             //if (!string.IsNullOrWhiteSpace(Request.Query["T_name"]))
@@ -891,6 +1050,11 @@ namespace XHD.Core.View.Controllers
                 model.Our_Contractor_id = employee.id;
                 model.create_time = DateTime.Now;
 
+                if (!await CanAccessCustomerAsync(model.customer_id))
+                {
+                    return XHDResult.Error("无权操作该客户！").ToString();
+                }
+
                 //权限
                 var authbtn = await _dBAuthService.GetAuth(employee.id, "Sale_contract|add");
 
@@ -920,6 +1084,11 @@ namespace XHD.Core.View.Controllers
                     if (checknulldata.count == 0)
                     {
                         return XHDResult.Error("找不到数据！").ToString();
+                    }
+
+                    if (!await CanAccessCustomerAsync(checknulldata.data[0].customer_id))
+                    {
+                        return XHDResult.Error("无权操作该合同！").ToString();
                     }
 
                     result = await _contractservice.UpdateAsync(model);
@@ -960,6 +1129,7 @@ namespace XHD.Core.View.Controllers
                 return XHDResult.Error("操作失败，系统错误！").ToString();
             }
 
+            await CustomerScoreService.RecalculateAsync(_fsql, model.customer_id);
             return XHDResult.Success().ToString();
         }
 
@@ -982,6 +1152,11 @@ namespace XHD.Core.View.Controllers
             if (userresult.Value<int>("code") != 0)
             {
                 return userresult.ToString();
+            }
+
+            if (!await _dBAuthService.GetAuth(employee.id, "Finance_Receive"))
+            {
+                return XHDResult.Error("无财务菜单权限！").ToString();
             }
 
             //查询数据
@@ -1030,6 +1205,12 @@ namespace XHD.Core.View.Controllers
                 model.id = UUIDNext.Uuid.NewSequential().ToString();
                 model.create_id = employee.id;
                 model.create_time = DateTime.Now;
+                if (string.IsNullOrWhiteSpace(model.Payee_id)) model.Payee_id = employee.id;
+
+                if (!await CanAccessOrderAsync(model.order_id))
+                {
+                    return XHDResult.Error("无权操作该订单！").ToString();
+                }
 
                 //权限
                 var authbtn = await _dBAuthService.GetAuth(employee.id, "Finance_Receive|add");
@@ -1037,6 +1218,12 @@ namespace XHD.Core.View.Controllers
                 if (authbtn)
                 {
                     result = await _ReceiveService.AddAsync(model);
+
+                    var receiveScoreOrder = await _fsql.Select<Sale_order>().Where(a => a.id == model.order_id).FirstAsync();
+                    if (receiveScoreOrder != null)
+                    {
+                        await CustomerScoreService.RecalculateAsync(_fsql, receiveScoreOrder.customer_id);
+                    }
                 }
                 else
                 {
@@ -1059,7 +1246,18 @@ namespace XHD.Core.View.Controllers
                         return XHDResult.Error("找不到数据！").ToString();
                     }
 
+                    if (!await CanAccessOrderAsync(checknulldata.data[0].order_id))
+                    {
+                        return XHDResult.Error("无权操作该收款记录！").ToString();
+                    }
+
                     result = await _ReceiveService.UpdateAsync(model);
+
+                    var receiveScoreOrder = await _fsql.Select<Sale_order>().Where(a => a.id == model.order_id).FirstAsync();
+                    if (receiveScoreOrder != null)
+                    {
+                        await CustomerScoreService.RecalculateAsync(_fsql, receiveScoreOrder.customer_id);
+                    }
 
                     //对比实体差别
 
@@ -1148,8 +1346,52 @@ namespace XHD.Core.View.Controllers
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
+        private async Task<bool> CanAccessCustomerAsync(string customerId)
+        {
+            if (string.IsNullOrWhiteSpace(customerId))
+            {
+                return false;
+            }
+
+            var customer = await _fsql.Select<CRM_Customer>().Where(a => a.id == customerId).FirstAsync();
+            if (customer == null)
+            {
+                return false;
+            }
+
+            var roledata = await _dBAuthService.GetDataAuth(employee.id);
+            if (roledata.authtype == 4)
+            {
+                return true;
+            }
+
+            if (roledata.authtype == 0)
+            {
+                return false;
+            }
+
+            return (roledata.empList ?? new List<string>()).Contains(customer.emp_id);
+        }
+
+        private async Task<bool> CanAccessOrderAsync(string orderId)
+        {
+            if (string.IsNullOrWhiteSpace(orderId))
+            {
+                return false;
+            }
+
+            var order = await _fsql.Select<Sale_order>().Where(a => a.id == orderId).FirstAsync();
+            return order != null && await CanAccessCustomerAsync(order.customer_id);
+        }
+
         public async Task<string> paramsCombo(string type)
         {
+            var userresult = checkToken();
+            if (userresult.Value<int>("code") != 0)
+            {
+                return userresult.ToString();
+            }
+
             Expression<Func<Sys_Param, bool>> exp = a => a.params_type == type;
 
             var result = await _SysParamService.GridAsync(exp, "params_order");
@@ -1165,6 +1407,12 @@ namespace XHD.Core.View.Controllers
         /// <returns></returns>
         public async Task<string> ProductList(string? serchtxt, int page = 1, int limit = 10)
         {
+            var userresult = checkToken();
+            if (userresult.Value<int>("code") != 0)
+            {
+                return userresult.ToString();
+            }
+
             //查询数据
             Expression<Func<Product, bool>> exp = a => 1 == 1;
 

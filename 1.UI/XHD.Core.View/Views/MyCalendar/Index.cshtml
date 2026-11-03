@@ -1,4 +1,4 @@
-﻿<style>
+<style>
     body { background-color: #f2f2f2; }
     .demo-container { /* max-width: 1400px;  */ margin: 0 auto; }
     .demo-section { background: white; border-radius: 8px; /* box-shadow: 0 2px 12px rgba(0,0,0,0.1);  */ padding: 20px; margin-bottom: 20px; }
@@ -19,7 +19,10 @@
 </style>
 
 <div class="demo-container">
-        
+        <div style="background:#fff;border-radius:8px;padding:10px 16px;margin-bottom:12px;color:#6b7280;font-size:13px;">
+            <i class="layui-icon layui-icon-tips" style="color:#1677ff;"></i>
+            收款计划、合同到期会自动加入日程并挂靠到成交人/我方签约人；系统自动生成的日程点击后可查看业务详情，不支持手动修改。
+        </div>
         <div id="calendarDemo" class="calendar-demo"></div>
 
     
@@ -129,6 +132,10 @@
             },
             onTaskClick: function(task) {
                 log(`📌 点击任务: ${task.title}`);
+                if (task.source_type) {
+                    showLinkedTask(task);
+                    return;
+                }
                 showTaskForm(task);
             },
             onDayClick: function(date) {
@@ -149,9 +156,42 @@
         }
 
         
+        // 自动同步日程（收款计划 / 合同到期）只读展示
+        function showLinkedTask(task) {
+            var isPlan = task.source_type === 'receive_plan';
+            var title = isPlan ? '收款计划提醒' : '合同到期提醒';
+            var content = (task.description || '').replace(/\n/g, '<br>');
+            var html = '<div style="padding:18px 22px;line-height:2;color:#374151;font-size:14px;">' +
+                content +
+                '<div style="margin-top:14px;padding-top:10px;border-top:1px dashed #e5e7eb;color:#9ca3af;font-size:12px;">' +
+                '该日程由' + (isPlan ? '收款计划' : '合同') + '自动生成，修改业务数据后会同步更新。' +
+                '</div></div>';
+
+            layer.open({
+                type: 1,
+                title: title,
+                area: ['520px', '420px'],
+                content: html,
+                btn: ['打开业务详情', '关闭'],
+                yes: function (index) {
+                    if (top.openTab) {
+                        if (isPlan) {
+                            top.openTab('/SaleOrderPayPlan/Receipt?id=' + task.source_id, '收款单');
+                        } else {
+                            top.openTab('/SaleContract/Add?id=' + task.source_id, '合同详情');
+                        }
+                    } else if (isPlan) {
+                        window.open('/SaleOrderPayPlan/Receipt?id=' + task.source_id);
+                    } else {
+                        window.open('/SaleContract/Add?id=' + task.source_id);
+                    }
+                    layer.close(index);
+                }
+            });
+        }
+
         // 显示任务表单（支持新增/编辑）
-        function showTaskForm(task, defaultDate) {
-            const isEdit = !!task;
+        function showTaskForm(task, defaultDate) {            const isEdit = !!task;
             let startDate = defaultDate || new Date();
             if (isEdit && task.startDate) startDate = new Date(task.startDate);
             let endDate = new Date(startDate);

@@ -1,487 +1,361 @@
-﻿@{
-    ViewData["Title"] = "Index";
+@model XHD.Core.View.Models.CustomerReportModel
+@using Newtonsoft.Json
+@{
+    ViewData["Title"] = "客户报表";
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+    var trendJson = JsonConvert.SerializeObject(Model.Trend.Select(a => new { month = a.Month, count = a.Count, follows = a.Amount }), jsonSettings);
+    var industryJson = JsonConvert.SerializeObject(Model.Industry.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
+    var levelJson = JsonConvert.SerializeObject(Model.Level.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
+    var sourceJson = JsonConvert.SerializeObject(Model.Source.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
+    var typeJson = JsonConvert.SerializeObject(Model.Type.Select(a => new { name = a.Name, value = a.Value }), jsonSettings);
 }
 
+<link rel="stylesheet" href="~/css/report.css" />
 
-
-
-<div class="layuimini-main">
-
-    <div class="layui-row layui-col-space15">
-        <form class="layui-form layui-form-pane" action="">
-            <div class="layui-form-item">
-                <div class="layui-inline">
-                    <label class="layui-form-label">员工</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="employee" autocomplete="off" class="layui-input" lay-verify="required">
-                        <input type="text" name="emp_id" id="emp_id" style="display:none;">
-                    </div>
-                </div>
-                <div class="layui-inline">
-                    <label class="layui-form-label">年度</label>
-                    <div class="layui-input-inline">
-                        <input type="text" name="year" id="year" autocomplete="off" class="layui-input" lay-verify="required">
-                    </div>
-                </div>
-
-                <div class="layui-inline">
-                    <button type="submit" class="layui-btn layui-btn-primary" lay-submit lay-filter="data-search-btn" id="btn_serch"><i class="layui-icon"></i> 搜 索</button>
-                    <button type="reset" class="layui-btn layui-btn-primary" id="btn_reset"><i class="layui-icon"></i> 重置</button>
-                </div>
+<div class="report-page">
+    <div class="report-hero">
+        <div class="report-hero-main">
+            <div class="report-eyebrow"><i class="fa fa-users"></i> CUSTOMER INSIGHTS</div>
+            <h1>客户报表</h1>
+            <p>从客户增长、客户结构、销售跟进和成交贡献四个维度，快速看清客户资产的变化与质量。</p>
+            <div class="report-hero-tags">
+                <span>@Model.Year 年度</span>
+                <span>@Model.EmpName</span>
+                <span>数据按当前权限范围统计</span>
             </div>
+        </div>
+        <form class="report-filter" method="get" action="">
+            <div class="report-field">
+                <label>统计年度</label>
+                <select name="year" class="report-select">
+                    @foreach (var y in Model.Years)
+                    {
+                        <option value="@y.Value" selected="@(y.Selected ? "selected" : null)">@y.Text</option>
+                    }
+                </select>
+            </div>
+            <div class="report-field">
+                <label>负责员工</label>
+                <select name="emp_id" class="report-select">
+                    @foreach (var e in Model.Employees)
+                    {
+                        <option value="@e.Value" selected="@(e.Selected ? "selected" : null)">@e.Text</option>
+                    }
+                </select>
+            </div>
+            <button type="submit" class="report-btn"><i class="fa fa-filter"></i> 应用筛选</button>
+            <a class="report-btn ghost" href="?"><i class="fa fa-refresh"></i> 重置</a>
+            <button type="button" class="report-btn ghost" onclick="window.print()"><i class="fa fa-print"></i> 打印</button>
         </form>
     </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-xs12 layui-col-md6">
-            <div id="echarts-year" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md6">
-            <div id="echarts-follow" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
+
+    <div class="report-kpi-grid">
+        @foreach (var kpi in Model.Kpis)
+        {
+            <div class="report-kpi tone-@kpi.Tone">
+                <div class="report-kpi-top">
+                    <span>@kpi.Label</span>
+                    <i class="fa @kpi.Icon"></i>
+                </div>
+                <div class="report-kpi-value">@kpi.Value</div>
+                <div class="report-kpi-hint">@kpi.Hint</div>
+            </div>
+        }
     </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-xs12 layui-col-md3">
-            <div id="echarts-industry" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md3">
-            <div id="echarts-type" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-    
-        <div class="layui-col-xs12 layui-col-md3">
-            <div id="echarts-level" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
-        <div class="layui-col-xs12 layui-col-md3">
-            <div id="echarts-source" style="background-color:#ffffff;min-height:300px;padding: 10px"></div>
-        </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-8">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">客户增长与跟进趋势<small>@Model.Year 年按月统计新增客户与跟进次数</small></h2>
+                <a class="report-link" href="/CRMFollow/Index">跟进明细 <i class="fa fa-angle-right"></i></a>
+            </div>
+            <div id="customerTrend" class="report-chart chart-lg"></div>
+        </section>
+
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">客户行业分布<small>新增客户所属行业</small></h2>
+            </div>
+            @if (Model.Industry.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-pie-chart"></i>暂无行业数据</div>
+            }
+            else
+            {
+                <div id="industryChart" class="report-chart chart-lg"></div>
+            }
+        </section>
     </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">客户级别<small>按客户等级统计</small></h2>
+            </div>
+            @if (Model.Level.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-bar-chart"></i>暂无级别数据</div>
+            }
+            else
+            {
+                <div id="levelChart" class="report-chart chart-sm"></div>
+            }
+        </section>
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">客户来源<small>新增客户来源渠道</small></h2>
+            </div>
+            @if (Model.Source.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-bar-chart"></i>暂无来源数据</div>
+            }
+            else
+            {
+                <div id="sourceChart" class="report-chart chart-sm"></div>
+            }
+        </section>
+        <section class="report-panel span-4">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">客户类型<small>企业客户与渠道客户构成</small></h2>
+            </div>
+            @if (Model.Type.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-bar-chart"></i>暂无类型数据</div>
+            }
+            else
+            {
+                <div id="typeChart" class="report-chart chart-sm"></div>
+            }
+        </section>
+    </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-7">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">重点客户贡献<small>@Model.Year 年成交金额最高的客户</small></h2>
+                <a class="report-link" href="/Customer/Index">客户列表 <i class="fa fa-angle-right"></i></a>
+            </div>
+            @if (Model.TopCustomers.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-handshake-o"></i>当前年度暂无成交客户</div>
+            }
+            else
+            {
+                <div class="table-wrap">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>客户</th>
+                                <th>负责人</th>
+                                <th>订单</th>
+                                <th>成交金额</th>
+                                <th>最近跟进</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.TopCustomers)
+                            {
+                                <tr>
+                                    <td>
+                                        <span class="report-avatar">@(string.IsNullOrEmpty(c.Name) ? "客" : c.Name.Substring(0, 1))</span>
+                                        <span class="cell-name">@c.Name</span>
+                                    </td>
+                                    <td class="cell-owner">@c.Owner</td>
+                                    <td>@c.OrderCount 单</td>
+                                    <td class="cell-money">¥@c.OrderAmount.ToString("N2")</td>
+                                    <td class="cell-muted">@(c.LastFollow?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+
+        <section class="report-panel span-5">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">长期未跟进客户<small>超过 30 天没有沟通记录，建议优先回访</small></h2>
+            </div>
+            @if (Model.SilentCustomers.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-check-circle-o"></i>暂无长期未跟进客户</div>
+            }
+            else
+            {
+                <div class="rank-list">
+                    @foreach (var c in Model.SilentCustomers)
+                    {
+                        <div class="silent-item">
+                            <div class="silent-avatar">@(string.IsNullOrEmpty(c.Name) ? "客" : c.Name.Substring(0, 1))</div>
+                            <div class="silent-main">
+                                <div class="silent-name">@c.Name</div>
+                                <div class="silent-meta">@c.Owner · @(c.LastFollow?.ToString("yyyy-MM-dd") ?? "从未跟进")</div>
+                            </div>
+                            <span class="silent-days">@(c.SilentDays >= 999 ? "从未" : c.SilentDays + " 天")</span>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+
+    <div class="report-grid">
+        <section class="report-panel span-7">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">最近新增客户<small>@Model.Year 年新建客户</small></h2>
+            </div>
+            @if (Model.RecentCustomers.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-user-plus"></i>当前年度暂无新增客户</div>
+            }
+            else
+            {
+                <div class="table-wrap">
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>客户</th>
+                                <th>级别</th>
+                                <th>行业</th>
+                                <th>负责人</th>
+                                <th>创建时间</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var c in Model.RecentCustomers)
+                            {
+                                <tr>
+                                    <td><span class="cell-name">@c.Name</span></td>
+                                    <td><span class="pill info">@c.Level</span></td>
+                                    <td class="cell-muted">@c.Industry</td>
+                                    <td class="cell-owner">@c.Owner</td>
+                                    <td class="cell-muted">@(c.CreateTime?.ToString("yyyy-MM-dd") ?? "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </section>
+
+        <section class="report-panel span-5">
+            <div class="report-panel-head">
+                <h2 class="report-panel-title">员工业绩排行<small>@Model.Year 年成交金额排名</small></h2>
+            </div>
+            @if (Model.EmployeeRanking.Count == 0)
+            {
+                <div class="report-empty"><i class="fa fa-trophy"></i>暂无员工业绩数据</div>
+            }
+            else
+            {
+                <div class="rank-list">
+                    @for (var i = 0; i < Model.EmployeeRanking.Count; i++)
+                    {
+                        var row = Model.EmployeeRanking[i];
+                        <div class="rank-item">
+                            <span class="rank-no">@(i + 1)</span>
+                            <div class="rank-main">
+                                <div class="rank-name">@row.Name</div>
+                                <div class="rank-extra">@row.Extra · @row.Count 单</div>
+                            </div>
+                            <div class="rank-value">¥@row.Amount.ToString("N2")</div>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+
+    <div class="report-footnote">小黄豆 CRM · 客户报表 · 数据实时统计</div>
 </div>
+
 <script type="text/javascript" src="/js/home/echarts.min.js"></script>
 <script>
-layui.use(['table', 'treetable','form', 'tableSelect', 'laydate'], function () {
-    var $ = layui.jquery;
-    var table = layui.table;
-    var treetable = layui.treetable;
-    var form=layui.form;
-    var tableSelect = layui.tableSelect;
-    var laydate = layui.laydate;
+    (function () {
+        var trendData = @Html.Raw(trendJson);
+        var industryData = @Html.Raw(industryJson);
+        var levelData = @Html.Raw(levelJson);
+        var sourceData = @Html.Raw(sourceJson);
+        var typeData = @Html.Raw(typeJson);
+        var charts = [];
+        var palette = ['#2563eb', '#16a34a', '#f59e0b', '#7c3aed', '#0891b2', '#ef4444', '#64748b', '#0ea5e9'];
 
-
-
-    //日期
-    laydate.render({
-        elem: '#year'
-        ,type: 'year'
-    });
-
-
-    tableSelect.render({
-        elem: '#employee',
-        checkedKey: 'id',
-        table: {
-            url: '/HrEmployee/grid',
-            cols: [[
-                { type: 'checkbox' },
-                { field: 'name', width: 150, title: '员工姓名' },
-                { field: 'dep_name', width: 150, title: '部门' ,templet:function(t){
-                    if(t.department)
-                    {
-                        return t.department.dep_name;
-                    }
-                    return "";
-                }},
-                { field: 'position_name', width: 150, title: '职务' ,templet:function(t){
-                    if(t.position)
-                    {
-                        return t.position.position_name;
-                    }
-                    return "";
-                }},
-                ]],
-                limit: 100
-        },
-        done: function (elem, data) {
-            var NEWJSON = [];
-            var ids = [];
-
-            layui.each(data.data, function (index, item) {
-                NEWJSON.push(item.name);
-                ids.push(item.id);
-            })
-            elem.val(NEWJSON.join(","))
-
-            $("#emp_id").val(ids.join(','));
-
-
-        }
-    })
-
-    // 监听搜索操作
-    form.on('submit(data-search-btn)', function (data) {
-        $.ajax({
-            url: "ReportYear",
-            data:data.field,
-            type: "get",
-            dataType: "json",
-            success: function (data) {
-                echarts_1(data);
-            },
-        });
-
-        $.ajax({
-            url: "ReportFollowYear",
-            data:data.field,
-            type: "get",
-            dataType: "json",
-            success: function (data) {
-                echarts_2(data);
-            },
-        });
-
-        $.ajax({
-            url: "ReportIndustry",
-            data:data.field,
-            type: "get",
-            dataType: "json",
-            success: function (data) {
-                echarts_3(data);
-            },
-        });
-
-        $.ajax({
-            url: "ReportType",
-            data:data.field,
-            type: "get",
-            dataType: "json",
-            success: function (data) {
-                echarts_4(data);
-            },
-        });
-
-        $.ajax({
-            url: "ReportLevel",
-            data:data.field,
-            type: "get",
-            dataType: "json",
-            success: function (data) {
-                echarts_5(data);
-            },
-        });
-
-        $.ajax({
-            url: "ReportSource",
-            data:data.field,
-            type: "get",
-            dataType: "json",
-            success: function (data) {
-                echarts_6(data);
-            },
-        });
-
-        return false;
-    });
-
-    function echarts_1(data) {
-
-        var seriesdata=[];
-        for(var i=0;i<data.length;i++)
-        {
-            seriesdata.push(data[i].count);
+        function init(id, option) {
+            var dom = document.getElementById(id);
+            if (!dom || typeof echarts === 'undefined') return;
+            var chart = echarts.init(dom);
+            chart.setOption(option);
+            charts.push(chart);
         }
 
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-year'));
-        option = {
-             
-            title:{
-                text:"客户年度统计图"
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [
-                {
-                    data: seriesdata,
+        function money(v) {
+            var n = Number(v) || 0;
+            return n >= 10000 ? (n / 10000).toFixed(1) + '万' : n.toFixed(0);
+        }
+
+        function donut(id, data, name) {
+            if (!data || !data.length) return;
+            init(id, {
+                color: palette,
+                tooltip: { trigger: 'item', formatter: '{b}<br/>{c} 位客户（{d}%）' },
+                legend: { bottom: 0, type: 'scroll', icon: 'circle', itemWidth: 8, itemHeight: 8, textStyle: { color: '#64748b', fontSize: 11 } },
+                series: [{
+                    name: name,
+                    type: 'pie',
+                    radius: ['44%', '68%'],
+                    center: ['50%', '43%'],
+                    avoidLabelOverlap: true,
+                    itemStyle: { borderColor: '#fff', borderWidth: 3, borderRadius: 6 },
+                    label: { show: false },
+                    data: data
+                }]
+            });
+        }
+
+        function bar(id, data) {
+            if (!data || !data.length) return;
+            var names = data.map(function (x) { return x.name; }).reverse();
+            var values = data.map(function (x) { return x.value; }).reverse();
+            init(id, {
+                color: ['#2563eb'],
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                grid: { left: 76, right: 16, top: 8, bottom: 8 },
+                xAxis: { type: 'value', splitLine: { lineStyle: { color: '#f1f5f9' } }, axisLabel: { color: '#9aa5b5', fontSize: 10 } },
+                yAxis: { type: 'category', data: names, axisTick: { show: false }, axisLine: { show: false }, axisLabel: { color: '#64748b', fontSize: 11 } },
+                series: [{
                     type: 'bar',
-                    showBackground: true,
-                    backgroundStyle: {
-                        color: 'rgba(180, 180, 180, 0.2)'
-                    },
-                    itemStyle:{
-                        normal:{
-                                 color: function(params) {
-                            // build a color map as your need.
-                            var colorList = [
-                              '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                               '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                               '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                            ];
-                            return colorList[params.dataIndex]
-                            }
-                        }
-                    }
-                }
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_2(data) {
-
-        var seriesdata=[];
-        for(var i=0;i<data.length;i++)
-        {
-            seriesdata.push(data[i].count);
-        }
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-follow'));
-        option = {
-            title:{
-                text:"跟进年度统计图"
-            },
-            tooltip: {
-                trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
-                }
-            },
-            xAxis: {
-                type: 'category',
-                data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-            },
-            yAxis: {
-                type: 'value'
-            },
-            series: [
-                {
-                    data: seriesdata,
-                    type: 'bar',
-                    showBackground: true,
-                    backgroundStyle: {
-                        color: 'rgba(180, 180, 180, 0.2)'
-                    },
-                        itemStyle:{
-                            normal:{
-                                     color: function(params) {
-                                // build a color map as your need.
-                                var colorList = [
-                                  '#C1232B','#B5C334','#FCCE10','#E87C25','#27727B',
-                                   '#FE8463','#9BCA63','#FAD860','#F3A43B','#60C0DD',
-                                   '#D7504B','#C6E579','#F4E001','#F0805A','#26C0C0'
-                                ];
-                                return colorList[params.dataIndex]
-                                }
-                            }
-                        }
-                }
-            ]
-        };
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-        window.addEventListener("resize", function () {
-            myChart.resize();
-        });
-    }
-
-    function echarts_3(data) {
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-industry'));
-            option = {
-                    color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                title: {
-                    text: '客户行业分析',
-                    subtext: $("#year").val()+'年度',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'right'
-                },
-                series: [
-                    {
-                        name: '客户行业',
-                        type: 'pie',
-                        radius: ['30%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
+                    data: values,
+                    barWidth: 12,
+                    itemStyle: { borderRadius: [0, 6, 6, 0], color: new echarts.graphic.LinearGradient(0, 0, 1, 0, [{ offset: 0, color: '#93c5fd' }, { offset: 1, color: '#2563eb' }]) }
+                }]
             });
         }
-    function echarts_4(data) {
 
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-type'));
-            option = {
-                    color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                title: {
-                    text: '客户类型分析',
-                    subtext: $("#year").val()+'年度',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'right'
-                },
+        if (document.getElementById('customerTrend')) {
+            init('customerTrend', {
+                color: ['#2563eb', '#16a34a'],
+                tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+                legend: { top: 0, right: 0, icon: 'roundRect', itemWidth: 11, itemHeight: 11, textStyle: { color: '#64748b', fontSize: 11 } },
+                grid: { left: 42, right: 24, top: 38, bottom: 26 },
+                xAxis: { type: 'category', data: trendData.map(function (x) { return x.month; }), axisTick: { show: false }, axisLine: { lineStyle: { color: '#e5e7eb' } }, axisLabel: { color: '#9aa5b5', fontSize: 11 } },
+                yAxis: [
+                    { type: 'value', splitLine: { lineStyle: { color: '#f1f5f9' } }, axisLabel: { color: '#9aa5b5', fontSize: 10 } },
+                    { type: 'value', splitLine: { show: false }, axisLabel: { color: '#9aa5b5', fontSize: 10 } }
+                ],
                 series: [
-                    {
-                        name: '客户类型',
-                        type: 'pie',
-                        radius: ['30%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
+                    { name: '新增客户', type: 'bar', barWidth: 18, data: trendData.map(function (x) { return x.count; }), itemStyle: { borderRadius: [5, 5, 0, 0], color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ offset: 0, color: '#3b82f6' }, { offset: 1, color: '#bfdbfe' }]) } },
+                    { name: '跟进次数', type: 'line', yAxisIndex: 1, smooth: true, symbol: 'circle', symbolSize: 6, data: trendData.map(function (x) { return x.follows; }), lineStyle: { width: 2.5, color: '#16a34a' }, itemStyle: { color: '#16a34a', borderColor: '#fff', borderWidth: 2 }, areaStyle: { color: 'rgba(22,163,74,.08)' } }
                 ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
             });
-    }
+        }
 
-    function echarts_5(data) {
+        donut('industryChart', industryData, '客户行业');
+        bar('levelChart', levelData);
+        bar('sourceChart', sourceData);
+        bar('typeChart', typeData);
 
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-level'));
-            option = {
-                    color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                title: {
-                    text: '客户级别分析',
-                    subtext: $("#year").val()+'年度',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'right'
-                },
-                series: [
-                    {
-                        name: '客户级别',
-                        type: 'pie',
-                        radius: ['30%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-    }
-
-    function echarts_6(data) {
-
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('echarts-source'));
-            option = {
-                    color: ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'],  // 添加这一行
-                title: {
-                    text: '客户来源分析',
-                    subtext: $("#year").val()+'年度',
-                    left: 'center'
-                },
-                tooltip: {
-                    trigger: 'item'
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'right'
-                },
-                series: [
-                    {
-                        name: '客户来源',
-                        type: 'pie',
-                        radius: ['30%', '70%'],
-                        itemStyle: {
-                            borderRadius: 10,
-                            borderColor: '#fff',
-                            borderWidth: 2
-                        },
-                        data: data,
-                        emphasis: {
-                            itemStyle: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
-            };
-
-            // 使用刚指定的配置项和数据显示图表。
-            myChart.setOption(option);
-            window.addEventListener("resize", function () {
-                myChart.resize();
-            });
-    }
-});
+        window.addEventListener('resize', function () {
+            charts.forEach(function (c) { c.resize(); });
+        });
+    })();
 </script>

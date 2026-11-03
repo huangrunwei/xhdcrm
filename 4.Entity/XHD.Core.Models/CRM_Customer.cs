@@ -131,6 +131,12 @@ namespace XHD.Core.Models {
 		public DateTime? lastfollow { get; set; }
 
         /// <summary>
+        /// 客户健康分（0-100，订单、回款、跟进、合同综合计算）
+        /// </summary>
+        [JsonProperty]
+        public int? score { get; set; }
+
+        /// <summary>
 		/// 省份ID
 		/// </summary>
 		[JsonProperty, Column(StringLength = 50)]

@@ -1,0 +1,182 @@
+@using XHD.Core.Models
+@{
+    ViewData["Title"] = "收款计划";
+    var plan = ViewData["plan"] as Sale_order_pay_plan;
+    var order = ViewData["order"] as Sale_order;
+    var orderId = plan?.order_id ?? order?.id ?? "";
+    var orderText = order == null ? "" : $"{order.sn}（{order.customer?.cus_name}）";
+    var payTypeId = plan?.pay_type_id ?? "";
+}
+
+<style>
+    .plan-tip { background: #f0f7ff; border-left: 4px solid #1677ff; padding: 10px 14px; color: #4b5563; margin-bottom: 12px; font-size: 13px; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id", plan?.id)
+    @Html.Hidden("order_id", orderId)
+    @Html.Hidden("pay_type_val", payTypeId)
+
+    <div class="layui-card">
+        <div class="layui-card-header">收款计划</div>
+        <div class="layui-card-body">
+            <div class="plan-tip">
+                <i class="layui-icon layui-icon-tips"></i>
+                保存后会自动把计划日期写入“我的日程”，并挂靠到该订单的成交人员；修改计划时日程会同步更新。
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required">订单</label>
+                    <div class="layui-input-inline" style="width: 320px;">
+                        <input type="text" id="order_no" value="@orderText" placeholder="请选择订单" autocomplete="off" class="layui-input" @(order != null ? "readonly" : "")>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required">计划名称</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="plan_name" name="plan_name" value="@plan?.plan_name" placeholder="如：首付款、第二期" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required">计划金额</label>
+                    <div class="layui-input-inline">
+                        <input type="number" id="plan_amount" name="plan_amount" value="@(plan?.plan_amount ?? 0)" step="0.01" placeholder="0.00" lay-verify="required" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required">计划日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="plan_date" name="plan_date" value="@(plan?.plan_date?.ToString("yyyy-MM-dd"))" placeholder="yyyy-MM-dd" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">收款方式</label>
+                    <div class="layui-input-inline">
+                        <select id="pay_type_id" name="pay_type_id">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">备注</label>
+                <div class="layui-input-block">
+                    <textarea id="remarks" name="remarks" placeholder="收款说明、开票要求等" class="layui-textarea">@plan?.remarks</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'layer', 'laydate', 'tableSelect'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var $ = layui.$;
+        var laydate = layui.laydate;
+        var tableSelect = layui.tableSelect;
+
+        laydate.render({ elem: '#plan_date', trigger: 'click' });
+
+        // 没有订单时，允许选择订单
+        if (!$("#order_id").val()) {
+            tableSelect.render({
+                elem: '#order_no',
+                checkedKey: 'id',
+                table: {
+                    url: '/SaleOrder/grid',
+                    cols: [[
+                        { type: 'radio' },
+                        { field: 'sn', width: 220, title: '订单号' },
+                        {
+                            field: 'cus_name', width: 220, title: '客户', templet: function (t) {
+                                return t.customer ? t.customer.cus_name : "";
+                            }
+                        },
+                        {
+                            field: 'total_amount', width: 150, title: '订单金额', align: 'right', templet: function (t) {
+                                return toMoney(t.total_amount);
+                            }
+                        },
+                        {
+                            field: 'Order_date', width: 120, title: '成交时间', templet: function (t) {
+                                return t.Order_date ? t.Order_date.split(" ")[0] : "";
+                            }
+                        }
+                    ]]
+                },
+                done: function (elem, data) {
+                    var item = data.data[0];
+                    if (!item) return;
+                    elem.val(item.sn);
+                    $("#order_id").val(item.id);
+                }
+            });
+        }
+
+        // 收款方式
+        $.ajax({
+            url: "/SysParam/Combo",
+            data: { type: 'pay_type' },
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                var select = $('#pay_type_id');
+                select.html('<option value="">请选择</option>');
+                layui.each(res.data || [], function (i, item) {
+                    select.append("<option value='" + item.id + "'>" + item.params_name + "</option>");
+                });
+                var val = $("#pay_type_val").val();
+                if (val) select.val(val);
+                form.render('select');
+            }
+        });
+
+        form.on('submit(LAY-user-front-submit)', function (data) {
+            if (!$("#order_id").val()) {
+                layer.msg('请选择订单', { icon: 2 });
+                return false;
+            }
+
+            var loading = layer.load(2);
+            $.ajax({
+                url: 'Save',
+                type: 'post',
+                data: data.field,
+                dataType: 'json',
+                success: function (res) {
+                    layer.close(loading);
+                    if (res.code === 0) {
+                        closeAndReload();
+                    } else {
+                        layer.msg(res.msg || '保存失败', { icon: 2 });
+                    }
+                },
+                error: function () {
+                    layer.close(loading);
+                    layer.msg('请求失败，请稍后重试', { icon: 2 });
+                }
+            });
+            return false;
+        });
+
+        function closeAndReload() {
+            if (window.parent && window.parent !== window && window.parent.layer) {
+                var index = window.parent.layer.getFrameIndex(window.name);
+                window.parent.layer.close(index);
+                window.parent.location.reload();
+            } else {
+                window.location.href = 'Index';
+            }
+        }
+    });
+</script>

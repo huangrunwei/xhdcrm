@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -159,7 +159,17 @@ namespace XHD.Core.View.Controllers
                 return XHDResult.Error("操作失败，系统错误！").ToString();
             }
 
-            return XHDResult.Success().ToString();
+            return JsonConvert.SerializeObject(new
+            {
+                code = 0,
+                msg = "",
+                data = new
+                {
+                    id = model.id,
+                    parentid = string.IsNullOrWhiteSpace(model.parentid) ? "root" : model.parentid,
+                    category_name = model.category_name
+                }
+            });
         }
 
         public async Task<string> Delete(string id)

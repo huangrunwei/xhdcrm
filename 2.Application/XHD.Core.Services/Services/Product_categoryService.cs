@@ -46,7 +46,9 @@ namespace XHD.Core.Services
 
         private JArray getMenuJson(List<Product_category> list, string id)
         {
-            var selectList = list.FindAll(c => c.parentid == id);
+            var selectList = id == "root"
+                ? list.FindAll(c => string.IsNullOrWhiteSpace(c.parentid) || c.parentid == "root")
+                : list.FindAll(c => c.parentid == id);
 
             JArray arr = new JArray();
 

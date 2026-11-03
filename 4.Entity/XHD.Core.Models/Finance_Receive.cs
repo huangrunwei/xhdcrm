@@ -53,6 +53,12 @@ namespace XHD.Core.Models
         public string order_id { get; set; } = string.Empty;
 
         /// <summary>
+        /// 收款计划id（为空表示未关联收款计划）
+        /// </summary>
+        [JsonProperty, Column(StringLength = 50)]
+        public string pay_plan_id { get; set; } = string.Empty;
+
+        /// <summary>
         /// 收款金额
         /// </summary>
         [JsonProperty, Column(DbType = "decimal(18,2)")]
@@ -87,6 +93,12 @@ namespace XHD.Core.Models
         /// </summary>
         [JsonProperty]
         public Sale_order Order { get; set; }
+
+        /// <summary>
+        /// 收款计划
+        /// </summary>
+        [JsonProperty]
+        public Sale_order_pay_plan PayPlan { get; set; }
 
         /// <summary>
         /// 收款人

@@ -1,0 +1,199 @@
+@using XHD.Core.Models
+@{
+    ViewData["Title"] = "售后跟进";
+    var follow = ViewData["follow"] as Sale_order_follow;
+    var order = ViewData["order"] as Sale_order;
+    var orderId = follow?.order_id ?? order?.id ?? "";
+    var orderText = order == null ? "" : $"{order.sn}（{order.customer?.cus_name}）";
+    var serviceTypes = new[] { "咨询答疑", "安装调试", "故障报修", "投诉处理", "回访关怀", "续费增购", "其他" };
+    var statuses = new[] { new { value = 0, text = "待处理" }, new { value = 1, text = "处理中" }, new { value = 2, text = "已解决" }, new { value = 3, text = "已关闭" } };
+    var currentType = follow?.service_type ?? "咨询答疑";
+    var currentStatus = follow?.service_status ?? 0;
+    var followTypeId = follow?.follow_type_id ?? "";
+}
+
+<style>
+    .follow-tip { background: #fff7ed; border-left: 4px solid #f59e0b; padding: 10px 14px; color: #92400e; margin-bottom: 12px; font-size: 13px; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id", follow?.id)
+    @Html.Hidden("order_id", orderId)
+    @Html.Hidden("customer_id", follow?.customer_id)
+    @Html.Hidden("follow_type_val", followTypeId)
+
+    <div class="layui-card">
+        <div class="layui-card-header">售后跟进</div>
+        <div class="layui-card-body">
+            <div class="follow-tip">
+                <i class="layui-icon layui-icon-service"></i>
+                售后跟进用于订单成交后的服务记录，便于追溯问题处理过程与客户关怀。
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label required">订单</label>
+                    <div class="layui-input-inline" style="width: 320px;">
+                        <input type="text" id="order_no" value="@orderText" placeholder="请选择订单" autocomplete="off" class="layui-input" @(order != null ? "readonly" : "")>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required">售后类型</label>
+                    <div class="layui-input-inline">
+                        <select id="service_type" name="service_type" lay-verify="required">
+                            @Html.Raw(string.Join("", serviceTypes.Select(t => $"<option value=\"{Html.Encode(t)}\" {(currentType == t ? "selected" : "")}>{Html.Encode(t)}</option>")))
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label required">处理状态</label>
+                    <div class="layui-input-inline">
+                        <select id="service_status" name="service_status">
+                            @Html.Raw(string.Join("", statuses.Select(s => $"<option value=\"{Html.Encode(s.value)}\" {(currentStatus == s.value ? "selected" : "")}>{Html.Encode(s.text)}</option>")))
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">跟进时间</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="follow_time" name="follow_time" value="@(follow?.follow_time?.ToString("yyyy-MM-dd HH:mm") ?? DateTime.Now.ToString("yyyy-MM-dd HH:mm"))" placeholder="yyyy-MM-dd HH:mm" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">下次跟进</label>
+                    <div class="layui-input-inline">
+                        <input type="text" id="next_time" name="next_time" value="@(follow?.next_time?.ToString("yyyy-MM-dd HH:mm"))" placeholder="yyyy-MM-dd HH:mm" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">跟进方式</label>
+                    <div class="layui-input-inline">
+                        <select id="follow_type_id" name="follow_type_id">
+                            <option value="">请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label required">跟进内容</label>
+                <div class="layui-input-block">
+                    <textarea id="follow_content" name="follow_content" placeholder="客户反馈、处理过程、沟通内容" lay-verify="required" class="layui-textarea">@follow?.follow_content</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">处理结果</label>
+                <div class="layui-input-block">
+                    <textarea id="solution" name="solution" placeholder="处理结果、客户满意度、后续安排" class="layui-textarea">@follow?.solution</textarea>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use(['form', 'layer', 'laydate', 'tableSelect'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var $ = layui.$;
+        var laydate = layui.laydate;
+        var tableSelect = layui.tableSelect;
+
+        laydate.render({ elem: '#follow_time', type: 'datetime', trigger: 'click' });
+        laydate.render({ elem: '#next_time', type: 'datetime', trigger: 'click' });
+
+        if (!$("#order_id").val()) {
+            tableSelect.render({
+                elem: '#order_no',
+                checkedKey: 'id',
+                table: {
+                    url: '/SaleOrder/grid',
+                    cols: [[
+                        { type: 'radio' },
+                        { field: 'sn', width: 220, title: '订单号' },
+                        {
+                            field: 'cus_name', width: 220, title: '客户', templet: function (t) {
+                                return t.customer ? t.customer.cus_name : "";
+                            }
+                        },
+                        {
+                            field: 'total_amount', width: 150, title: '订单金额', align: 'right', templet: function (t) {
+                                return toMoney(t.total_amount);
+                            }
+                        }
+                    ]]
+                },
+                done: function (elem, data) {
+                    var item = data.data[0];
+                    if (!item) return;
+                    elem.val(item.sn);
+                    $("#order_id").val(item.id);
+                }
+            });
+        }
+
+        // 跟进方式（参数字典）
+        $.ajax({
+            url: "/SysParam/Combo",
+            data: { type: 'follow_type' },
+            type: "post",
+            dataType: "json",
+            success: function (res) {
+                var select = $('#follow_type_id');
+                select.html('<option value="">请选择</option>');
+                layui.each(res.data || [], function (i, item) {
+                    select.append("<option value='" + item.id + "'>" + item.params_name + "</option>");
+                });
+                var val = $("#follow_type_val").val();
+                if (val) select.val(val);
+                form.render('select');
+            }
+        });
+
+        form.on('submit(LAY-user-front-submit)', function (data) {
+            if (!$("#order_id").val()) {
+                layer.msg('请选择订单', { icon: 2 });
+                return false;
+            }
+
+            var loading = layer.load(2);
+            $.ajax({
+                url: 'Save',
+                type: 'post',
+                data: data.field,
+                dataType: 'json',
+                success: function (res) {
+                    layer.close(loading);
+                    if (res.code === 0) {
+                        closeAndReload();
+                    } else {
+                        layer.msg(res.msg || '保存失败', { icon: 2 });
+                    }
+                },
+                error: function () {
+                    layer.close(loading);
+                    layer.msg('请求失败，请稍后重试', { icon: 2 });
+                }
+            });
+            return false;
+        });
+
+        function closeAndReload() {
+            if (window.parent && window.parent !== window && window.parent.layer) {
+                var index = window.parent.layer.getFrameIndex(window.name);
+                window.parent.layer.close(index);
+                window.parent.location.reload();
+            } else {
+                window.location.href = 'Index';
+            }
+        }
+    });
+</script>

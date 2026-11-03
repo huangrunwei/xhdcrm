@@ -1,0 +1,317 @@
+@using XHD.Core.Models
+@using System.Linq
+@{
+    ViewData["Title"] = "收款单";
+    var plan = ViewData["plan"] as Sale_order_pay_plan;
+    var order = plan?.Order;
+    var customer = order?.customer;
+    var receipts = ViewData["receipts"] as List<Finance_Receive> ?? new List<Finance_Receive>();
+    var paidAmount = (decimal)(ViewData["paidAmount"] ?? 0m);
+    var remainAmount = (decimal)(ViewData["remainAmount"] ?? 0m);
+    var amountUpper = ViewData["amountUpper"]?.ToString();
+    var paidUpper = ViewData["paidUpper"]?.ToString();
+    var companyName = ViewData["companyName"]?.ToString();
+    var companyLogo = ViewData["companyLogo"]?.ToString();
+    var statusText = ViewData["planStatusText"]?.ToString();
+    var statusClass = plan?.plan_status == 2 ? "ok" : plan?.plan_status == 3 ? "danger" : plan?.plan_status == 1 ? "warn" : "info";
+}
+
+<style>
+    body { background: #eef2f7; }
+    .receipt-toolbar { max-width: 900px; margin: 18px auto 12px; display: flex; gap: 10px; justify-content: flex-end; }
+    .receipt-paper { width: 900px; margin: 0 auto 30px; background: #fff; padding: 46px 54px 40px; box-shadow: 0 10px 30px rgba(15, 23, 42, .12); position: relative; }
+    .receipt-head { display: flex; align-items: center; border-bottom: 3px double #1f2937; padding-bottom: 16px; position: relative; }
+    .receipt-logo { width: 64px; height: 64px; margin-right: 16px; display: flex; align-items: center; justify-content: center; }
+    .receipt-logo img { max-width: 64px; max-height: 64px; }
+    .company-name { font-size: 26px; font-weight: 700; color: #111827; letter-spacing: 2px; }
+    .company-sub { color: #6b7280; font-size: 12px; margin-top: 6px; letter-spacing: 3px; }
+    .doc-title { position: absolute; right: 0; top: 4px; font-size: 30px; font-weight: 700; letter-spacing: 10px; color: #1e3a8a; }
+    .doc-meta { display: flex; justify-content: space-between; margin: 16px 0 10px; color: #4b5563; font-size: 13px; }
+    table.receipt-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    table.receipt-table th, table.receipt-table td { border: 1px solid #cbd5e1; padding: 10px 12px; font-size: 14px; color: #1f2937; box-sizing: border-box; }
+    table.receipt-table th { background: #f8fafc; font-weight: 600; width: 120px; text-align: left; color: #475569; }
+    .amount-cell { font-size: 22px; font-weight: 700; color: #b91c1c; }
+    .amount-upper { color: #1e3a8a; font-weight: 600; letter-spacing: 1px; }
+    .badge { display: inline-block; padding: 2px 12px; border-radius: 12px; font-size: 12px; color: #fff; }
+    .badge.ok { background: #16a34a; }
+    .badge.warn { background: #f59e0b; }
+    .badge.danger { background: #ef4444; }
+    .badge.info { background: #1677ff; }
+    .section-title { margin: 24px 0 8px; font-size: 15px; font-weight: 700; color: #1f2937; padding-left: 10px; border-left: 4px solid #1677ff; }
+    .empty-tip { color: #9ca3af; text-align: center; padding: 14px; border: 1px dashed #cbd5e1; font-size: 13px; }
+    .signature-row { display: flex; justify-content: space-between; margin-top: 46px; color: #374151; font-size: 14px; }
+    .signature-row span { min-width: 200px; border-bottom: 1px solid #9ca3af; padding-bottom: 6px; }
+    .receipt-footer { margin-top: 28px; text-align: center; color: #9ca3af; font-size: 12px; }
+    .stamp { position: absolute; right: 48px; bottom: 42px; width: 96px; height: 96px; border: 3px solid rgba(220, 38, 38, .35); border-radius: 50%; color: rgba(220, 38, 38, .45); display: flex; align-items: center; justify-content: center; text-align: center; font-size: 12px; transform: rotate(-14deg); line-height: 1.4; opacity: .55; pointer-events: none; }
+    @@page { size: A4 portrait; margin: 8mm 10mm; }
+
+    @@media print {
+        html, body { width: auto; margin: 0; padding: 0; background: #fff; }
+        .no-print { display: none !important; }
+        .receipt-paper { width: 188mm !important; max-width: 188mm !important; margin: 0 auto !important; padding: 0 !important; box-shadow: none; }
+
+        .receipt-head { padding-bottom: 3mm; }
+        .receipt-logo { width: 16mm; height: 16mm; margin-right: 4mm; }
+        .receipt-logo img { max-width: 16mm; max-height: 16mm; }
+        .company-name { font-size: 16pt; letter-spacing: 1pt; }
+        .company-sub { font-size: 8pt; margin-top: 1mm; letter-spacing: 2pt; }
+        .doc-title { font-size: 20pt; letter-spacing: 6pt; top: 0; }
+        .doc-meta { margin: 3mm 0 2mm; font-size: 9pt; }
+
+        table.receipt-table { width: 100%; table-layout: fixed; margin-top: 2mm; }
+        table.receipt-table th,
+        table.receipt-table td { padding: 2mm 2.2mm; font-size: 9.5pt; line-height: 1.45; word-break: break-all; box-sizing: border-box; }
+        table.receipt-table th { width: 27mm; }
+        .amount-cell { font-size: 13pt; }
+        .amount-upper { font-size: 9.5pt; }
+        .badge { padding: 0.5mm 3mm; font-size: 8pt; }
+
+        .section-title { margin: 4mm 0 2mm; font-size: 11pt; padding-left: 2mm; }
+        .signature-row { margin-top: 10mm; font-size: 9.5pt; }
+        .signature-row span { min-width: 40mm; padding-bottom: 1.5mm; }
+        .receipt-footer { margin-top: 4mm; font-size: 7.5pt; }
+        .stamp { display: none; }
+
+        .record-table th,
+        .record-table td { padding: 1.6mm 1.5mm; font-size: 8.5pt; word-break: break-all; overflow-wrap: anywhere; }
+        .record-table th { width: auto; }
+        .record-table th:nth-child(1) { width: 5%; }
+        .record-table th:nth-child(2) { width: 24%; }
+        .record-table th:nth-child(3) { width: 13%; }
+        .record-table th:nth-child(4) { width: 15%; }
+        .record-table th:nth-child(5) { width: 12%; }
+        .record-table th:nth-child(6) { width: 13%; }
+        .record-table th:nth-child(7) { width: 18%; }
+    }
+</style>
+
+<div class="receipt-toolbar no-print">
+    <button class="layui-btn layui-btn-normal" onclick="printReceipt()"><i class="layui-icon layui-icon-print"></i> 打印收款单</button>
+    <button class="layui-btn layui-btn-green" onclick="openRegister()"><i class="layui-icon layui-icon-rmb"></i> 登记收款</button>
+    <button class="layui-btn layui-btn-primary" onclick="closeReceipt()">关闭</button>
+</div>
+
+<div class="receipt-paper" id="receiptPaper">
+    <div class="receipt-head">
+        <div class="receipt-logo">
+            @if (!string.IsNullOrWhiteSpace(companyLogo))
+            {
+                <img src="@companyLogo" alt="logo" />
+            }
+        </div>
+        <div>
+            <div class="company-name">@companyName</div>
+            <div class="company-sub">收款凭证 · 计划收款</div>
+        </div>
+        <div class="doc-title">收款单</div>
+    </div>
+
+    <div class="doc-meta">
+        <div>单据编号：@plan?.plan_no</div>
+        <div>开单日期：@DateTime.Now.ToString("yyyy-MM-dd")</div>
+    </div>
+
+    <table class="receipt-table info-table">
+        <tr>
+            <th>付款单位</th>
+            <td colspan="3">@customer?.cus_name</td>
+        </tr>
+        <tr>
+            <th>订单编号</th>
+            <td>@order?.sn</td>
+            <th>收款计划</th>
+            <td>@plan?.plan_name</td>
+        </tr>
+        <tr>
+            <th>收款方式</th>
+            <td>@(plan?.PayType?.params_name ?? "未指定")</td>
+            <th>计划收款日期</th>
+            <td>@(plan?.plan_date?.ToString("yyyy-MM-dd") ?? "未指定")</td>
+        </tr>
+        <tr>
+            <th>计划收款金额</th>
+            <td class="amount-cell">¥ @((plan?.plan_amount ?? 0m).ToString("N2"))</td>
+            <th>收款状态</th>
+            <td><span class="badge @statusClass">@statusText</span></td>
+        </tr>
+        <tr>
+            <th>已收金额</th>
+            <td style="color:#16a34a;font-weight:600;">¥ @paidAmount.ToString("N2")</td>
+            <th>未收金额</th>
+            <td style="color:#b91c1c;font-weight:600;">¥ @remainAmount.ToString("N2")</td>
+        </tr>
+        <tr>
+            <th>金额大写</th>
+            <td colspan="3" class="amount-upper">@amountUpper</td>
+        </tr>
+        <tr>
+            <th>成交人员</th>
+            <td>@(order?.employee?.name ?? "")</td>
+            <th>客户联系电话</th>
+            <td>@customer?.cus_tel</td>
+        </tr>
+        <tr>
+            <th>备注</th>
+            <td colspan="3">@plan?.remarks</td>
+        </tr>
+    </table>
+
+    <div class="section-title">收款记录</div>
+    @if (receipts.Count == 0)
+    {
+        <div class="empty-tip">暂无收款记录，可点击右上角“登记收款”进行收款。</div>
+    }
+    else
+    {
+        <table class="receipt-table record-table">
+            <thead>
+                <tr>
+                    <th style="width:50px;">序号</th>
+                    <th>收款单号</th>
+                    <th>收款日期</th>
+                    <th>收款金额</th>
+                    <th>收款方式</th>
+                    <th>收款人</th>
+                    <th>备注</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ var index = 0; }
+                @foreach (var item in receipts)
+                {
+                    index++;
+                    <tr>
+                        <td>@index</td>
+                        <td>@item.Receive_num</td>
+                        <td>@(item.Receive_date?.ToString("yyyy-MM-dd"))</td>
+                        <td style="color:#16a34a;font-weight:600;">¥ @((item.Receive_amount ?? 0m).ToString("N2"))</td>
+                        <td>@(item.PayType?.params_name ?? "")</td>
+                        <td>@(item.Payee?.name ?? "")</td>
+                        <td>@item.Remarks</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="3" style="text-align:right;">合计</th>
+                    <td colspan="4" style="font-weight:700;color:#16a34a;">¥ @paidAmount.ToString("N2")　（@paidUpper）</td>
+                </tr>
+            </tfoot>
+        </table>
+    }
+
+    <div class="signature-row">
+        <span>收款人：</span>
+        <span>审核人：</span>
+        <span>客户签收：</span>
+    </div>
+
+    <div class="stamp">财务专用章<br />（模拟）</div>
+
+    <div class="receipt-footer">
+        本收款单由小黄豆CRM系统生成，收款计划与订单、日程自动联动。打印时间：@DateTime.Now.ToString("yyyy-MM-dd HH:mm")
+    </div>
+</div>
+
+<div id="regBox" style="display:none; padding: 20px;">
+    <form class="layui-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">计划名称</label>
+            <div class="layui-input-block">
+                <input type="text" class="layui-input" value="@plan?.plan_name" readonly>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label required">收款金额</label>
+            <div class="layui-input-block">
+                <input type="number" id="reg_amount" step="0.01" value="@remainAmount.ToString("0.00")" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">收款日期</label>
+            <div class="layui-input-block">
+                <input type="text" id="reg_date" value="@DateTime.Today.ToString("yyyy-MM-dd")" class="layui-input">
+            </div>
+        </div>
+        <div class="layui-form-item layui-form-text">
+            <label class="layui-form-label">备注</label>
+            <div class="layui-input-block">
+                <textarea id="reg_remarks" class="layui-textarea" placeholder="收款说明"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    var planId = '@plan?.id';
+
+    function printReceipt() {
+        window.print();
+    }
+
+    function closeReceipt() {
+        if (window.parent && window.parent !== window && window.parent.layer) {
+            var index = window.parent.layer.getFrameIndex(window.name);
+            window.parent.layer.close(index);
+        } else {
+            window.location.href = 'Index';
+        }
+    }
+
+    layui.use(['layer', 'laydate', 'form'], function () {
+        var layer = layui.layer;
+        var laydate = layui.laydate;
+        var $ = layui.$;
+
+        laydate.render({ elem: '#reg_date', trigger: 'click' });
+
+        window.openRegister = function () {
+            layer.open({
+                title: '登记收款',
+                type: 1,
+                area: ['480px', '420px'],
+                content: $('#regBox'),
+                btn: ['确认收款', '取消'],
+                yes: function (index) {
+                    var amount = parseFloat($('#reg_amount').val());
+                    if (!amount || amount <= 0) {
+                        layer.msg('请输入正确的收款金额', { icon: 2 });
+                        return false;
+                    }
+                    var loading = layer.load(2);
+                    $.ajax({
+                        url: '/SaleOrderPayPlan/RegisterReceive',
+                        type: 'post',
+                        data: {
+                            plan_id: planId,
+                            amount: amount,
+                            receive_date: $('#reg_date').val(),
+                            remarks: $('#reg_remarks').val()
+                        },
+                        dataType: 'json',
+                        success: function (res) {
+                            layer.close(loading);
+                            if (res.code === 0) {
+                                layer.msg('收款登记成功', { icon: 1 });
+                                setTimeout(function () {
+                                    if (window.parent && window.parent !== window) {
+                                        window.parent.location.reload();
+                                    } else {
+                                        window.location.reload();
+                                    }
+                                }, 600);
+                            } else {
+                                layer.msg(res.msg, { icon: 2 });
+                            }
+                        },
+                        error: function () {
+                            layer.close(loading);
+                            layer.msg('请求失败', { icon: 2 });
+                        }
+                    });
+                    return false;
+                }
+            });
+        };
+    });
+</script>

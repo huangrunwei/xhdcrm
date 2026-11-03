@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Add";
 }
 
@@ -13,12 +13,95 @@
     body .layui-layer-content { overflow: visible; }
 
     #toolbar { padding: 5px 0; }
+
+    /* 客户画像 */
+    .cust-hero { display: flex; align-items: center; background: linear-gradient(135deg, #0f766e 0%, #0ea5e9 100%); color: #fff; border-radius: 10px; padding: 20px 24px; margin-bottom: 14px; box-shadow: 0 8px 22px rgba(14, 165, 233, .22); }
+    .cust-avatar { width: 62px; height: 62px; border-radius: 50%; background: rgba(255,255,255,.2); display: flex; align-items: center; justify-content: center; font-size: 26px; font-weight: 700; margin-right: 18px; }
+    .cust-main { flex: 1; }
+    .cust-name { font-size: 24px; font-weight: 700; letter-spacing: 1px; }
+    .cust-tags { margin-top: 8px; }
+    .cust-tag { display: inline-block; padding: 1px 10px; margin: 0 6px 4px 0; border-radius: 10px; background: rgba(255,255,255,.18); font-size: 12px; }
+    .cust-sub { margin-top: 6px; font-size: 13px; opacity: .9; }
+    .cust-health { text-align: center; min-width: 120px; }
+    .cust-health .score { font-size: 36px; font-weight: 800; line-height: 1; }
+    .cust-health .label { font-size: 12px; opacity: .9; margin-top: 6px; }
+
+    /* KPI */
+    .crm-kpi-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+    .crm-kpi { flex: 1 1 150px; background: #fff; border-radius: 8px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(15,23,42,.06); border-top: 3px solid #1677ff; }
+    .crm-kpi .label { color: #6b7280; font-size: 12px; }
+    .crm-kpi .value { font-size: 21px; font-weight: 700; color: #111827; margin-top: 5px; font-variant-numeric: tabular-nums; }
+    .crm-kpi .sub { color: #9ca3af; font-size: 11px; margin-top: 3px; }
+    .crm-kpi.green { border-top-color: #16a34a; }
+    .crm-kpi.red { border-top-color: #ef4444; }
+    .crm-kpi.purple { border-top-color: #7c3aed; }
+    .crm-kpi.orange { border-top-color: #f59e0b; }
+    .crm-kpi.cyan { border-top-color: #0ea5e9; }
+
+    .analysis-panel { background: #fff; border-radius: 8px; padding: 16px 18px; box-shadow: 0 1px 4px rgba(15,23,42,.06); margin-bottom: 14px; }
+    .analysis-title { font-size: 15px; font-weight: 700; color: #1f2937; margin-bottom: 10px; padding-left: 10px; border-left: 4px solid #0ea5e9; }
+    .insight-list { list-style: none; margin: 0; padding: 0; }
+    .insight-list li { padding: 9px 0; border-bottom: 1px dashed #e5e7eb; color: #4b5563; font-size: 13px; }
+    .insight-list li:last-child { border-bottom: none; }
+    .insight-list li i { color: #0ea5e9; margin-right: 6px; }
+    .analysis-timeline { position: relative; margin-left: 8px; padding-left: 18px; border-left: 2px solid #e5e7eb; }
+    .analysis-timeline .item { position: relative; padding-bottom: 14px; }
+    .analysis-timeline .item::before { content: ''; position: absolute; left: -25px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: #0ea5e9; }
+    .analysis-timeline .item .t-title { font-weight: 600; color: #1f2937; font-size: 13px; }
+    .analysis-timeline .item .t-desc { color: #4b5563; font-size: 13px; margin-top: 3px; }
+    .analysis-timeline .item .t-time { color: #9ca3af; font-size: 12px; margin-top: 3px; }
 </style>
 
 
 <div class="layui-form layui-form-pane" action="">
     @Html.Hidden("id")
     @Html.Hidden("emp_id")
+
+    <div class="cust-hero" id="custHero">
+        <div class="cust-avatar" id="heroAvatar">客</div>
+        <div class="cust-main">
+            <div class="cust-name" id="heroName">客户详情</div>
+            <div class="cust-tags" id="heroTags"></div>
+            <div class="cust-sub" id="heroSub">正在加载客户资料…</div>
+        </div>
+        <div class="cust-health">
+            <div class="score" id="heroHealthScore">--</div>
+            <div class="label" id="heroHealthLabel">客户健康分</div>
+        </div>
+    </div>
+
+    <div class="crm-kpi-row">
+        <div class="crm-kpi">
+            <div class="label">累计订单金额</div>
+            <div class="value" id="kpiOrderAmount">¥0.00</div>
+            <div class="sub" id="kpiOrderCount">共 0 笔订单</div>
+        </div>
+        <div class="crm-kpi green">
+            <div class="label">累计回款</div>
+            <div class="value" id="kpiReceived">¥0.00</div>
+            <div class="sub" id="kpiPayRate">回款率 0%</div>
+        </div>
+        <div class="crm-kpi red">
+            <div class="label">应收余额</div>
+            <div class="value" id="kpiArrears">¥0.00</div>
+            <div class="sub" id="kpiOverdue">逾期计划 0 期</div>
+        </div>
+        <div class="crm-kpi purple">
+            <div class="label">合同金额</div>
+            <div class="value" id="kpiContractAmount">¥0.00</div>
+            <div class="sub" id="kpiContractCount">共 0 份合同</div>
+        </div>
+        <div class="crm-kpi orange">
+            <div class="label">跟进次数</div>
+            <div class="value" id="kpiFollowCount">0</div>
+            <div class="sub" id="kpiLastFollow">最近跟进：--</div>
+        </div>
+        <div class="crm-kpi cyan">
+            <div class="label">平均客单价</div>
+            <div class="value" id="kpiAvgOrder">¥0.00</div>
+            <div class="sub" id="kpiRepeat">复购 0 次</div>
+        </div>
+    </div>
 
 
     <div class="layui-card">
@@ -179,10 +262,14 @@
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
     <a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>
 </script>
+<script src="~/js/home/echarts.min.js"></script>
 <script>
     var id = null;
     var customer_id = null;
     var customer_name = null;
+    var currentTab = "analysis";
+    var analysisData = null;
+    var analysisResizeBound = false;
     layui.use(['tree', 'form', 'layer', 'tableSelect', 'table', 'laydate', 'element','openTable'], function () {
         var form = layui.form,
             tree = layui.tree,
@@ -220,6 +307,9 @@
 
                     customer_id = edit.id;
                     customer_name = edit.cus_name;
+
+                    renderHero(edit);
+                    loadAnalysis();
                 }
                 form.render();
             },
@@ -245,26 +335,30 @@
             var id = this.getAttribute('lay-id');
 
             console.log(id);
+            currentTab = id;
 
             switch (id) {
+                case "analysis": create_analysis(); break;
                 case "contact": create_contact(); break;
                 case "follow": create_follow(); break;
                 case "order": create_order(); break;
                 case "contract": create_contract(); break;
+                case "receive": create_receive(); break;
                 case "atta": create_atta(); break;
                 case "log": create_log(); break;
             }
         });
-        active.tabAdd("日志", "log");
+        active.tabAdd("客户分析", "analysis");
         active.tabAdd("联系人", "contact");
         active.tabAdd("跟进", "follow");
         active.tabAdd("订单", "order");
         active.tabAdd("合同", "contract");
-        //active.tabAdd("附件", "atta");
-        //active.tabAdd("收款", "receive");
-        //active.tabAdd("发票", "invoice");
-        //active.tabAdd("任务", "task");
-        active.tabChange("log");
+        active.tabAdd("收款", "receive");
+        active.tabAdd("日志", "log");
+        active.tabChange("analysis");
+        setTimeout(function () {
+            if (currentTab === "analysis") create_analysis();
+        }, 60);
 
 
         function create_log()
@@ -409,7 +503,7 @@
             function contact_del(id) {
                 $.ajax({
                     type: 'POST',
-                    url: "CRM_Contact/del",
+                    url: "/CRM_Contact/Delete",
                     data: { id: id },
                     dataType: "json",
                     success: function (res) {//res为相应体,function为回调函数
@@ -599,7 +693,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "/CRMFollow/del",
+                    url: "/CRMFollow/Delete",
                     data: { id: id },
                     dataType: "json",
                     success: function (res) {//res为相应体,function为回调函数
@@ -728,7 +822,7 @@
                     },
                     {
                         field: 'Order_status_id', width: 120, title: '订单状态', templet: function (item) {
-                            if (item.PayType) {
+                            if (item.OrderStatus) {
                                 return item.OrderStatus.params_name;
                             }
                         }
@@ -750,7 +844,13 @@
                             return "";
                         }
                     },
-                    { templet: '#auth-state', width: 200, align: 'center', fixed: 'right', title: '操作' }
+                    {
+                        templet: function (d) {
+                            return '<a class="layui-btn layui-btn-xs" lay-event="info">详情</a>' +
+                                '<a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>' +
+                                '<a class="layui-btn layui-btn-danger layui-btn-xs" lay-event="del">删除</a>';
+                        }, width: 230, align: 'center', fixed: 'right', title: '操作'
+                    }
                 ]],
                 limits: [10, 15, 20, 25, 50, 100],
                 limit: 15,
@@ -786,6 +886,20 @@
                 else if (layEvent === 'edit') {
                     order_add(data);
                 }
+                else if (layEvent === 'info') {
+                    if (top.openTab) {
+                        top.openTab('/SaleOrder/Info?id=' + data.id, '【订单】' + data.sn);
+                    } else {
+                        layer.open({
+                            title: '订单详情',
+                            type: 2,
+                            area: ['92%', '88%'],
+                            maxmin: true,
+                            content: '/SaleOrder/Info?id=' + data.id,
+                            btn: ['关闭']
+                        });
+                    }
+                }
 
             });
 
@@ -793,7 +907,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "/SaleOrder/del",
+                    url: "/SaleOrder/Delete",
                     data: { id: id },
                     dataType: "json",
                     success: function (res) {//res为相应体,function为回调函数
@@ -861,7 +975,7 @@
 
                             $.ajax({
                                 type: 'POST',
-                                url: '/Sale_Order/Save',
+                                url: '/SaleOrder/Save',
                                 data: data.field,
                                 dataType: "json",
                                 success: function (res) {//res为相应体,function为回调函数
@@ -991,7 +1105,7 @@
 
                 $.ajax({
                     type: 'POST',
-                    url: "/SaleContract/del",
+                    url: "/SaleContract/Delete",
                     data: { id: id },
                     dataType: "json",
                     success: function (res) {//res为相应体,function为回调函数
@@ -1059,7 +1173,7 @@
 
                             $.ajax({
                                 type: 'POST',
-                                url: 'Save',
+                                url: '/SaleContract/Save',
                                 data: data.field,
                                 dataType: "json",
                                 success: function (res) {//res为相应体,function为回调函数
@@ -1098,6 +1212,263 @@
         }
 
 
+
+        function renderHero(edit) {
+            var name = edit.cus_name || "客户";
+            $("#heroName").text(name);
+            $("#heroAvatar").text(name.substring(0, 1));
+
+            var tags = [];
+            if (edit.cus_industry) tags.push(edit.cus_industry.params_name);
+            if (edit.cus_type) tags.push(edit.cus_type.params_name);
+            if (edit.cus_level) tags.push(edit.cus_level.params_name);
+            if (edit.cus_source) tags.push(edit.cus_source.params_name);
+            tags.push(edit.isPrivate == 1 ? "公客" : "私客");
+            $("#heroTags").html(tags.map(function (t) {
+                return '<span class="cust-tag">' + t + '</span>';
+            }).join(""));
+
+            var region = [];
+            if (edit.Provinces) region.push(edit.Provinces.Provinces);
+            if (edit.City) region.push(edit.City.City);
+
+            var sub = [];
+            sub.push("归属：" + (edit.Employee ? edit.Employee.name : "未分配"));
+            if (edit.cus_tel) sub.push("电话：" + edit.cus_tel);
+            if (region.length) sub.push("地区：" + region.join(" / "));
+            if (edit.lastfollow) sub.push("最近跟进：" + String(edit.lastfollow).split(" ")[0]);
+            $("#heroSub").html(sub.join(" &nbsp;·&nbsp; "));
+        }
+
+        function loadAnalysis() {
+            $.ajax({
+                url: "Analysis",
+                data: { id: getparastr("id") },
+                type: "get",
+                dataType: "json",
+                success: function (res) {
+                    if (res.code === 0 && res.data && res.data[0]) {
+                        analysisData = res.data[0];
+                        renderKpi(analysisData);
+                        if (currentTab === "analysis") create_analysis();
+                    }
+                }
+            });
+        }
+
+        function renderKpi(d) {
+            var k = d.kpi;
+            $("#kpiOrderAmount").text("¥" + toMoney(k.orderAmount));
+            $("#kpiOrderCount").text("共 " + k.orderCount + " 笔订单");
+            $("#kpiReceived").text("¥" + toMoney(k.received));
+            $("#kpiPayRate").text("回款率 " + k.payRate + "%");
+            $("#kpiArrears").text("¥" + toMoney(k.arrears));
+            $("#kpiOverdue").text("逾期计划 " + k.overdueCount + " 期");
+            $("#kpiContractAmount").text("¥" + toMoney(k.contractAmount));
+            $("#kpiContractCount").text("共 " + k.contractCount + " 份合同");
+            $("#kpiFollowCount").text(k.followCount);
+            $("#kpiLastFollow").text("最近跟进：" + (k.lastFollowTime || "--"));
+            $("#kpiAvgOrder").text("¥" + toMoney(k.avgOrder));
+            $("#kpiRepeat").text("复购 " + k.repeatOrders + " 次");
+
+            $("#heroHealthScore").text(d.health.score).css("color", d.health.color);
+            $("#heroHealthLabel").text(d.health.label);
+        }
+
+        function create_analysis() {
+            if ($("#analysisPane").length === 0) {
+                var html = '' +
+                    '<div id="analysisPane">' +
+                    '  <div class="layui-row layui-col-space14">' +
+                    '    <div class="layui-col-md4">' +
+                    '      <div class="analysis-panel"><div class="analysis-title">客户健康分</div><div id="custHealthChart" style="height:260px;"></div></div>' +
+                    '    </div>' +
+                    '    <div class="layui-col-md8">' +
+                    '      <div class="analysis-panel"><div class="analysis-title">订单与回款趋势（近12个月）</div><div id="custTrendChart" style="height:300px;"></div></div>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <div class="layui-row layui-col-space14">' +
+                    '    <div class="layui-col-md4"><div class="analysis-panel"><div class="analysis-title">收款方式分布</div><div id="custPayTypeChart" style="height:280px;"></div></div></div>' +
+                    '    <div class="layui-col-md4"><div class="analysis-panel"><div class="analysis-title">产品偏好</div><div id="custProductChart" style="height:280px;"></div></div></div>' +
+                    '    <div class="layui-col-md4"><div class="analysis-panel"><div class="analysis-title">客户洞察</div><ul class="insight-list" id="custInsights"></ul></div></div>' +
+                    '  </div>' +
+                    '  <div class="analysis-panel"><div class="analysis-title">最近动态</div><div class="analysis-timeline" id="custTimeline"></div></div>' +
+                    '</div>';
+                $(".layui-show").append(html);
+            }
+
+            if (!analysisData || typeof echarts === "undefined") return;
+
+            var d = analysisData;
+            var healthDom = document.getElementById("custHealthChart");
+            if (healthDom) {
+                var healthChart = echarts.getInstanceByDom(healthDom) || echarts.init(healthDom);
+                healthChart.setOption({
+                    series: [{
+                        type: 'gauge',
+                        startAngle: 210,
+                        endAngle: -30,
+                        min: 0,
+                        max: 100,
+                        radius: '92%',
+                        progress: { show: true, width: 16, itemStyle: { color: d.health.color } },
+                        axisLine: { lineStyle: { width: 16, color: [[1, '#eef2f7']] } },
+                        pointer: { show: false },
+                        axisTick: { show: false },
+                        splitLine: { show: false },
+                        axisLabel: { show: false },
+                        title: { offsetCenter: [0, '30%'], fontSize: 13, color: '#6b7280' },
+                        detail: { valueAnimation: true, offsetCenter: [0, '-5%'], fontSize: 40, fontWeight: 'bold', color: d.health.color, formatter: '{value}' },
+                        data: [{ value: d.health.score, name: d.health.label }]
+                    }]
+                }, true);
+            }
+
+            var trendDom = document.getElementById("custTrendChart");
+            if (trendDom) {
+                var trendChart = echarts.getInstanceByDom(trendDom) || echarts.init(trendDom);
+                trendChart.setOption({
+                    tooltip: { trigger: 'axis', valueFormatter: function (v) { return '¥' + Number(v).toLocaleString(); } },
+                    legend: { data: ['订单金额', '回款金额'], top: 0 },
+                    grid: { left: 60, right: 24, top: 40, bottom: 30 },
+                    xAxis: { type: 'category', boundaryGap: false, data: d.trend.months },
+                    yAxis: { type: 'value' },
+                    series: [
+                        { name: '订单金额', type: 'line', smooth: true, symbolSize: 6, data: d.trend.orderAmount, itemStyle: { color: '#1677ff' }, areaStyle: { opacity: .12 } },
+                        { name: '回款金额', type: 'line', smooth: true, symbolSize: 6, data: d.trend.receiveAmount, itemStyle: { color: '#16a34a' }, areaStyle: { opacity: .12 } }
+                    ]
+                }, true);
+            }
+
+            var payDom = document.getElementById("custPayTypeChart");
+            if (payDom) {
+                var payChart = echarts.getInstanceByDom(payDom) || echarts.init(payDom);
+                var colors = ['#1677ff', '#16a34a', '#f59e0b', '#ef4444', '#7c3aed', '#0ea5e9'];
+                payChart.setOption({
+                    tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
+                    legend: { bottom: 0, type: 'scroll' },
+                    series: [{
+                        type: 'pie',
+                        radius: ['32%', '62%'],
+                        center: ['50%', '45%'],
+                        data: (d.payTypes || []).map(function (p, i) {
+                            return { name: p.name, value: p.value, itemStyle: { color: colors[i % colors.length] } };
+                        })
+                    }]
+                }, true);
+            }
+
+            var productDom = document.getElementById("custProductChart");
+            if (productDom) {
+                var productChart = echarts.getInstanceByDom(productDom) || echarts.init(productDom);
+                var pcolors = ['#0ea5e9', '#16a34a', '#f59e0b', '#ef4444', '#7c3aed', '#1677ff', '#ec4899', '#84cc16'];
+                productChart.setOption({
+                    tooltip: { trigger: 'item', formatter: '{b}: ¥{c} ({d}%)' },
+                    legend: { bottom: 0, type: 'scroll' },
+                    series: [{
+                        type: 'pie',
+                        radius: '62%',
+                        center: ['50%', '45%'],
+                        data: (d.products || []).map(function (p, i) {
+                            return { name: p.name, value: p.value, itemStyle: { color: pcolors[i % pcolors.length] } };
+                        })
+                    }]
+                }, true);
+            }
+
+            // 客户洞察
+            var k = d.kpi;
+            var insights = [];
+            if (k.arrears > 0) insights.push("尚有 ¥" + toMoney(k.arrears) + " 未回款，建议优先跟进回款节点。");
+            if (k.overdueCount > 0) insights.push("有 " + k.overdueCount + " 期收款计划已逾期，请核对收款安排。");
+            if (k.lastFollowDays < 0) insights.push("暂无跟进记录，建议尽快建立首次联系。");
+            else if (k.lastFollowDays > 30) insights.push("已 " + k.lastFollowDays + " 天未跟进，建议安排回访。");
+            else insights.push("最近 " + k.lastFollowDays + " 天内有过跟进，客户关系维护良好。");
+            if (k.repeatOrders > 0) insights.push("客户已复购 " + k.repeatOrders + " 次，属于重点维护客户。");
+            if (k.orderCount === 0) insights.push("客户尚未成交，建议加强需求挖掘与方案沟通。");
+            if (k.payRate >= 100 && k.orderCount > 0) insights.push("回款率 100%，客户付款信用良好。");
+            insights.push("合作天数：" + k.cooperationDays + " 天，平均客单价：¥" + toMoney(k.avgOrder));
+
+            $("#custInsights").html(insights.map(function (t) {
+                return '<li><i class="layui-icon layui-icon-tips"></i>' + t + '</li>';
+            }).join(""));
+
+            // 最近动态
+            var timeline = d.timeline || [];
+            if (timeline.length === 0) {
+                $("#custTimeline").html('<div style="color:#9ca3af;padding:10px 0;">暂无客户动态</div>');
+            } else {
+                $("#custTimeline").html(timeline.map(function (t) {
+                    return '<div class="item">' +
+                        '<div class="t-title" style="color:' + (t.color || '#0ea5e9') + ';">' + t.type + ' · ' + t.title + '</div>' +
+                        '<div class="t-desc">' + (t.desc || '') + '</div>' +
+                        '<div class="t-time">' + t.time + '</div>' +
+                        '</div>';
+                }).join(""));
+            }
+
+            if (!analysisResizeBound) {
+                analysisResizeBound = true;
+                window.addEventListener("resize", function () {
+                    ["custHealthChart", "custTrendChart", "custPayTypeChart", "custProductChart"].forEach(function (chartId) {
+                        var dom = document.getElementById(chartId);
+                        if (!dom) return;
+                        var chart = echarts.getInstanceByDom(dom);
+                        if (chart) chart.resize();
+                    });
+                });
+            }
+        }
+
+        function create_receive() {
+            if ($("#table_receive").length == 0) {
+                $(".layui-show").append("<div id='table_receive' lay-filter='table_receive_Filter'></div>");
+            }
+
+            layer.load(2);
+            table.render({
+                elem: '#table_receive',
+                url: '/FinanceReceive/Grid?customer_id=' + getparastr("id"),
+                id: 'table_receive',
+                page: true,
+                defaultToolbar: ['filter'],
+                cols: [[
+                    { type: 'numbers', fixed: 'left', title: '序号' },
+                    { field: 'Receive_num', width: 200, title: '收款单号' },
+                    {
+                        field: 'Order', width: 210, title: '订单号', templet: function (t) {
+                            return t.Order ? t.Order.sn : "";
+                        }
+                    },
+                    {
+                        field: 'Receive_date', width: 120, title: '收款日期', templet: function (t) {
+                            return t.Receive_date ? t.Receive_date.split(' ')[0] : "";
+                        }
+                    },
+                    {
+                        field: 'Receive_amount', width: 130, title: '收款金额', align: 'right', templet: function (t) {
+                            return '<span style="color:#16a34a;font-weight:600;">¥' + toMoney(t.Receive_amount) + '</span>';
+                        }
+                    },
+                    {
+                        field: 'PayType', width: 120, title: '收款方式', templet: function (t) {
+                            return t.PayType ? t.PayType.params_name : "";
+                        }
+                    },
+                    {
+                        field: 'Payee', width: 120, title: '收款人', templet: function (t) {
+                            return t.Payee ? t.Payee.name : "";
+                        }
+                    },
+                    { field: 'Remarks', minWidth: 180, title: '备注' }
+                ]],
+                limits: [10, 15, 20, 50, 100],
+                limit: 15,
+                done: function () {
+                    layer.closeAll('loading');
+                }
+            });
+        }
 
         f_reload = function (id) {
             table.reload(id, {

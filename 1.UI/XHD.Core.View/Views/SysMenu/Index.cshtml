@@ -1,14 +1,12 @@
-﻿@{
+@{
     ViewData["Title"] = "Index";
 }
-
 <div class="layuimini-container">
     <div class="layuimini-main">
         <div>
-            <button class="layui-btn layui-btn layui-btn-normal" id="btn-menu">添加目录</button>
+            <button class="layui-btn layui-btn-normal" id="btn-menu">添加目录</button>
             @*<button class="layui-btn layui-btn layui-btn-normal" id="btn-button">添加按钮</button>*@
             <div class="layui-btn-group">
-
                 <button class="layui-btn" id="btn-expand">全部展开</button>
                 <button class="layui-btn" id="btn-fold">全部折叠</button>
             </div>
@@ -16,6 +14,7 @@
         </div>
     </div>
 </div>
+
 <!-- 操作列 -->
 <script type="text/html" id="auth-state">
     <a class="layui-btn layui-btn-primary layui-btn-xs" lay-event="edit">修改</a>
@@ -23,71 +22,68 @@
 </script>
 
 <script>
-    layui.use(['table', 'treetable'], function () {
+    layui.use(['table', 'treeTable'], function () {
         var $ = layui.jquery;
         var table = layui.table;
-        var treetable = layui.treetable;
+        var treeTable = layui.treeTable;
 
-        // 渲染表格
+        // 渲染原生treeTable
         layer.load(2);
-        treetable.render({
-            treeColIndex: 1,
-            treeSpid: 'root',
-            treeIdName: 'Menu_id',
-            treePidName: 'parentid',
+        treeTable.render({
             elem: '#munu-table',
-            url: 'Grid',
+            url: 'GridTree',
             page: false,
+            // 原生treeTable树配置【重点】
+            id:"mainGrid4",
+            tree: {
+                customName: {
+                    id: 'id',           // 唯一标识字段
+                    pid: 'parentid',    // 父级标识字段
+                    //children: 'children', // 子节点字段（自动生成，无需数据中预先包含）
+                    name: 'title',        // 节点名称字段（用于图标旁的文本，但非必须）
+                    //isParent: 'isParent' // 自动计算
+                    icon:''
+                },
+                view:{
+                    showIcon:false
+                }
+            },
             cols: [[
                 { type: 'numbers' },
-                { field: 'title', minWidth: 200, title: '目录名称' },
+                { field: 'title', minWidth: 300, title: '目录名称', treeNode: true },
+                { field: 'id', width: 200, title: 'ID' },
                 {
                     field: 'btn', width: 300, title: '按钮', templet: function (t) {
                         var list = t.btn;
                         var html = [];
-
                         for (var i = 0; i < list.length; i++) {
                             var btn = list[i];
                             html.push('<a class="layui-btn layui-btn-xs">' + btn.title + '</a>');
                         }
-
                         return html.join('');
                     }
                 },
-                //{field: 'authority', title: '权限标识'},
                 { field: 'href', title: '菜单url' },
                 { field: 'order', width: 80, align: 'center', title: '序号' },
                 {
                     field: 'icon', width: 80, align: 'center', title: '图标', templet: function (d) {
-                        return "<i class='fa " + d.icon + "'>";
+                        return "<i class='fa " + d.icon + "'></i>";
                     }
                 },
-                //{
-                //    field: 'isMenu', width: 80, align: 'center', templet: function (d) {
-                //        if (d.isMenu == 1) {
-                //            return '<span class="layui-badge layui-bg-gray">按钮</span>';
-                //        }
-                //        if (d.parentId == "root") {
-                //            return '<span class="layui-badge layui-bg-blue">目录</span>';
-                //        } else {
-                //            return '<span class="layui-badge-rim">菜单</span>';
-                //        }
-                //    }, title: '类型'
-                //},
-                //{ field: 'Btn_List', width: 180, align: 'center', title: '按钮'},
-                { templet: '#auth-state', width: 120, align: 'center', title: '操作' }
+                { templet: '#auth-state', width: 120, align: 'center', fixed:"right",title: '操作' }
             ]],
             done: function () {
                 layer.closeAll('loading');
             }
         });
 
+        // 全部展开
         $('#btn-expand').click(function () {
-            treetable.expandAll('#munu-table');
+            treeTable.expandAll("mainGrid4", true)
         });
-
+        // 全部折叠
         $('#btn-fold').click(function () {
-            treetable.foldAll('#munu-table');
+             treeTable.expandAll("mainGrid4", false)
         });
 
         $('#btn-menu').click(function () {
@@ -98,7 +94,6 @@
             addButton();
         });
 
-
         //监听工具条
         table.on('tool(munu-table)', function (obj) {
             var data = obj.data;
@@ -106,29 +101,26 @@
 
             if (layEvent === 'del') {
                 layer.confirm('确定删除此菜单？', { icon: 3, title: '提示信息' }, function (index) {
-                    
-                        del( data.id);
-                   
+                    del(data.id, obj);
+                    layer.close(index);
                 });
-
-                //layer.msg('删除' + data.id);
             }
             else if (layEvent === 'edit') {
-                
-                addMenu(data);
+                addMenu(data, obj); // 把obj传进去，编辑保存后用来单行更新
             }
         });
 
-        function del(id) {           
-
+        // 删除节点：删除后需要重载treeTable（删除无法单行更新）
+        function del(id, obj) {
             $.ajax({
                 type: 'POST',
                 url: 'Delete',
                 data: { id: id },
                 dataType: "json",
-                success: function (res) {//res为相应体,function为回调函数
+                success: function (res) {
                     if (res.code == 0) {
-                        window.location.reload();
+                        // 删除成功：只移除当前树节点，不重载整张表
+                        obj.del();
                     }
                     else {
                         layer.alert(res.msg, { icon: 5 });
@@ -140,9 +132,19 @@
             });
         }
 
+        function cleanTreeData(nodes) {
+            if (!nodes) return;
+            for (var i = 0; i < nodes.length; i++) {
+                var node = nodes[i];
+                delete node.LAY_DATA_INDEX;
+                delete node.LAY_DATA_INDEX_HISTORY;
+                delete node.LAY_PARENT_INDEX;
+                if (node.children && node.children.length) cleanTreeData(node.children);
+            }
+        }
 
-        //添加目录
-        function addMenu(edit) {
+        //添加/编辑菜单，增加 obj 参数【关键】
+        function addMenu(edit, obj) {
             var tit = "添加菜单";
             if (edit) {
                 tit = "编辑菜单";
@@ -164,64 +166,135 @@
                         body.find("#Menu_order").val(edit.order);
                         body.find("#Menu_icon").val(edit.icon);
                         body.find("#Menu_url").val(edit.href);
-
                         body.find("#parentid").val(edit.parentid);
 
                         var btn = edit.btn;
-
                         if (btn) {
                             for (var i = 0; i < btn.length; i++) {
-
                                 var arr = btn[i].id.split("|");
-
                                 var id = "btn_" + arr[1];
-
-
-                                body.find("#" + id).attr("checked", true);
+                                body.find("#" + id).prop("checked", true);
                             }
                         }
+                        iframe.layui.form.render('checkbox');
                     }
                 },
                 yes: function (index, layero) {
-                    //var res = window["layui-layer-iframe" + index].callbackdata();
-                    ////打印返回的值，看是否有我们想返回的值。
-                    //console.log(res);
-                    //layer.close(index);
                     var iframeWindow = window['layui-layer-iframe' + index]
                         , submitID = 'LAY-user-front-submit'
                         , submit = layero.find('iframe').contents().find('#' + submitID);
 
-                    //监听提交
                     iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
-                        var field = data.field; //获取提交的字段
-
-                        console.log(data.field);
-
+                        
                         layer.close(index); //关闭弹层
+
+                        var field = data.field;
+
+                        // 按 GridTree 的 btn 结构重建按钮数据：
+                        // { id: "菜单ID|handler", title: "按钮名", parentid: "菜单ID", order: 排序 }
+                        var btnDefs = [
+                            { key: 'btn_add', handler: 'add', title: '新增', order: 10 },
+                            { key: 'btn_edit', handler: 'edit', title: '修改', order: 20 },
+                            { key: 'btn_del', handler: 'del', title: '删除', order: 30 },
+                            { key: 'btn_import', handler: 'import', title: '导入', order: 40 },
+                            { key: 'btn_export', handler: 'export', title: '导出', order: 50 },
+                            { key: 'btn_auth', handler: 'auth', title: '权限', order: 60 },
+                            { key: 'btn_pwd', handler: 'pwd', title: '修改密码', order: 70 }
+                        ];
+                        var buttons = [];
+                        for (var b = 0; b < btnDefs.length; b++) {
+                            var def = btnDefs[b];
+                            if (field[def.key]) {
+                                buttons.push({
+                                    id: field.id + '|' + def.handler,
+                                    title: def.title,
+                                    parentid: field.id,
+                                    order: def.order
+                                });
+                            }
+                        }
+
+                        var newdata = {
+                            title: field.Menu_name,
+                            order: field.Menu_order,
+                            icon: field.Menu_icon,
+                            href: field.Menu_url,
+                            parentid: field.parentid,
+                            id: field.id,
+                            btn: buttons
+                        };
+
+                        console.log(field);
+                        console.log(newdata);
 
                         $.ajax({
                             type: 'POST',
                             url: 'Save',
                             data: data.field,
                             dataType: "json",
-                            success: function (res) {//res为相应体,function为回调函数
-                                window.location.reload();
+                            success: function (res) {
+                                if (res.code === 0) {
+                                    if (edit && obj) {
+                                        var oldParentId = edit.parentid || 'root';
+                                        var newParentId = newdata.parentid || 'root';
+                                        if (oldParentId !== newParentId) {
+                                            // 父级变化：用原生 removeNode + addNodes 把节点连同子节点移动到新父级
+                                            var oldNode = treeTable.getNodeById('mainGrid4', newdata.id);
+                                            if (oldNode) {
+                                                var parentNode = newParentId === 'root'
+                                                    ? null
+                                                    : treeTable.getNodeById('mainGrid4', newParentId);
+                                                if (parentNode && (parentNode.dataIndex === oldNode.dataIndex
+                                                    || String(parentNode.dataIndex).indexOf(oldNode.dataIndex + '-') === 0)) {
+                                                    layer.alert('不能移动到自己的子节点下！', { icon: 5 });
+                                                } else {
+                                                    var moved = $.extend(true, {}, oldNode.data);
+                                                    $.extend(true, moved, newdata);
+                                                    moved.parentid = newParentId;
+                                                    // 清除 treeTable 内部索引，交给 addNodes 重新生成，避免重复节点
+                                                    cleanTreeData([moved]);
+                                                    treeTable.removeNode('mainGrid4', oldNode.data);
+                                                    // 删除后重新取父节点，避免父节点在旧节点后面时 dataIndex 偏移
+                                                    var targetParent = newParentId === 'root'
+                                                        ? null
+                                                        : treeTable.getNodeById('mainGrid4', newParentId);
+                                                    treeTable.addNodes('mainGrid4', {
+                                                        parentIndex: targetParent ? targetParent.dataIndex : null,
+                                                        data: moved,
+                                                        focus: true
+                                                    });
+                                                }
+                                            }
+                                        } else if (typeof obj.update === 'function') {
+                                            obj.update(newdata);
+                                        }
+                                    } else {
+                                        newdata.children = [];
+                                        var parentId = field.parentid || 'root';
+                                        var parentNode = parentId === 'root'
+                                            ? null
+                                            : treeTable.getNodeById('mainGrid4', parentId);
+                                        treeTable.addNodes('mainGrid4', {
+                                            parentIndex: parentNode ? parentNode.dataIndex : null,
+                                            data: newdata,
+                                            focus: true
+                                        });
+                                    }
+                                } else {
+                                    layer.alert(res.msg, { icon: 5 });
+                                }
                             },
                             error: function (XMLHttpRequest, textStatus, errorThrown) {
                                 layer.alert('操作失败！！！' + XMLHttpRequest.status + "|" + XMLHttpRequest.readyState + "|" + textStatus, { icon: 5 });
                             }
                         });
                     });
-
                     submit.trigger('click');
                 },
                 btn2: function (index, layero) {
                     layer.close(index);
                 }
-
             });
         }
-
-        
     });
 </script>

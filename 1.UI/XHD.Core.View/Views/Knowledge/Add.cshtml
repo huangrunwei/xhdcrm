@@ -1,0 +1,164 @@
+@using XHD.Core.Models
+@{
+    ViewData["Title"] = "知识编辑";
+    var knowledge = ViewData["knowledge"] as Crm_Knowledge;
+    var categories = new[] { "产品知识", "销售话术", "售后支持", "制度流程", "其他" };
+    var currentCategory = knowledge?.category ?? "产品知识";
+}
+
+<style>
+    .kb-form-tip { background: #eef2ff; border-left: 4px solid #4f46e5; padding: 10px 14px; color: #4338ca; margin-bottom: 12px; font-size: 13px; }
+    #w-text { background: #fff; }
+</style>
+
+<div class="layui-form layui-form-pane" action="">
+    @Html.Hidden("id", knowledge?.id)
+
+    <div class="layui-card">
+        <div class="layui-card-header">知识信息</div>
+        <div class="layui-card-body">
+            <div class="kb-form-tip">
+                <i class="layui-icon layui-icon-tips"></i>
+                支持富文本编辑，可插入图片、表格；知识会归入工作台“知识库”，供团队检索复用。
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline" style="width: 62%;">
+                    <label class="layui-form-label required">标题</label>
+                    <div class="layui-input-block" style="margin-left: 110px;">
+                        <input type="text" name="title" id="title" value="@knowledge?.title" placeholder="请输入知识标题" lay-verify="required" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">分类</label>
+                    <div class="layui-input-inline">
+                        <select id="category" name="category">
+                            @Html.Raw(string.Join("", categories.Select(c => $"<option value=\"{Html.Encode(c)}\" {(currentCategory == c ? "selected" : "")}>{Html.Encode(c)}</option>")))
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-inline" style="width: 62%;">
+                    <label class="layui-form-label">关键词</label>
+                    <div class="layui-input-block" style="margin-left: 110px;">
+                        <input type="text" name="keywords" id="keywords" value="@knowledge?.keywords" placeholder="多个关键词用逗号分隔，便于搜索" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">置顶</label>
+                    <div class="layui-input-inline">
+                        <input type="checkbox" name="is_top" lay-skin="switch" lay-text="置顶|普通" value="1" @(knowledge?.is_top == 1 ? "checked" : "")>
+                    </div>
+                </div>
+            </div>
+
+            <div class="layui-form-item layui-form-text">
+                <label class="layui-form-label">摘要</label>
+                <div class="layui-input-block">
+                    <textarea name="summary" id="summary" placeholder="一句话说明这篇知识解决什么问题" class="layui-textarea" style="height:70px;">@knowledge?.summary</textarea>
+                </div>
+            </div>
+
+            <textarea name="content" id="content" style="display:none;">@knowledge?.content</textarea>
+
+            <div class="layui-form-item layui-hide">
+                <input type="button" lay-submit lay-filter="LAY-user-front-submit" id="LAY-user-front-submit" value="确认">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="layui-card">
+    <div class="layui-card-body">
+        <div id="w-toolbar"></div>
+        <div id="w-text" style="height:460px;"></div>
+    </div>
+</div>
+
+<script>
+    var editor = null;
+    layui.use(['form', 'layer', 'wangEditor'], function () {
+        var form = layui.form;
+        var layer = layui.layer;
+        var $ = layui.$;
+        var wangEditor = layui.wangEditor;
+
+        editor = new wangEditor('#w-text');
+        editor.customConfig.menus = [
+            'head', 'bold', 'fontSize', 'fontName', 'italic', 'underline', 'strikeThrough',
+            'foreColor', 'backColor', 'list', 'justify', 'image', 'table', 'undo', 'redo'
+        ];
+        editor.customConfig.uploadImgServer = '/Upload/Image';
+        editor.customConfig.uploadFileName = 'file';
+        editor.customConfig.uploadImgMaxSize = 5 * 1024 * 1024;
+        editor.customConfig.uploadImgHooks = {
+            timeout: function () { layer.msg('图片上传超时！'); },
+            customInsert: function (insertImg, result) {
+                if (result.location) {
+                    insertImg(result.location);
+                } else {
+                    layer.msg('图片上传失败');
+                }
+            }
+        };
+        editor.create();
+
+        var initContent = sanitizeRichHtml($('#content').val() || '');
+        if (initContent) {
+            editor.txt.html(initContent);
+        }
+
+        form.on('submit(LAY-user-front-submit)', function (data) {
+            var html = sanitizeRichHtml(editor.txt.html());
+            $('#content').val(html);
+
+            var payload = {
+                id: $('#id').val(),
+                title: $('#title').val(),
+                category: $('#category').val(),
+                keywords: $('#keywords').val(),
+                summary: $('#summary').val(),
+                is_top: $('input[name="is_top"]').prop('checked') ? 1 : 0,
+                content: html
+            };
+
+            if (!payload.title) {
+                layer.msg('标题不能为空', { icon: 2 });
+                return false;
+            }
+
+            var loading = layer.load(2);
+            $.ajax({
+                url: 'Save',
+                type: 'post',
+                data: payload,
+                dataType: 'json',
+                success: function (res) {
+                    layer.close(loading);
+                    if (res.code === 0) {
+                        closeAndReload();
+                    } else {
+                        layer.msg(res.msg || '保存失败', { icon: 2 });
+                    }
+                },
+                error: function () {
+                    layer.close(loading);
+                    layer.msg('请求失败，请稍后重试', { icon: 2 });
+                }
+            });
+            return false;
+        });
+
+        function closeAndReload() {
+            if (window.parent && window.parent !== window && window.parent.layer) {
+                var index = window.parent.layer.getFrameIndex(window.name);
+                window.parent.layer.close(index);
+                window.parent.location.reload();
+            } else {
+                window.location.href = 'Index';
+            }
+        }
+    });
+</script>

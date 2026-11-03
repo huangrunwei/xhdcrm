@@ -118,7 +118,6 @@ namespace XHD.Core.Services
         public async Task<JObject> Login(hr_employee model)
         {
             Expression<Func<hr_employee, bool>> expression = a => a.uid == model.uid && a.pwd == Common.DEncrypt.MD5Comm.MD5Hash(model.pwd);
-            //Expression<Func<hr_employee, bool>> expression = a => a.uid == model.uid && a.pwd.ToLower() == model.pwd.ToLower();
 
             var result = await _irepository.GridAsync(expression);
 

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,7 +24,9 @@ using XHD.Core.Models;
 using System.Linq.Expressions;
 using Newtonsoft.Json.Converters;
 using System.Collections;
+using FreeSql;
 using XHD.Core.View.Configs;
+using XHD.Core.View.Services;
 
 
 
@@ -39,14 +41,15 @@ namespace XHD.Core.View.Controllers
         private readonly IDBAuthService _dBAuthService;
         private readonly SysLogExt<CRM_follow> logext = new SysLogExt<CRM_follow>();
         private readonly ICRM_CustomerService _customerService;
-        
+        private readonly IFreeSql _fsql;
 
         public CRMFollowController(
             ILogger<CRMFollowController> logger,
             ICRM_followService service, 
             ISys_logService LogService, 
             IDBAuthService dBAuthService, 
-            ICRM_CustomerService customerService
+            ICRM_CustomerService customerService,
+            IFreeSql fsql
             )
         {
             _service = service;
@@ -54,6 +57,7 @@ namespace XHD.Core.View.Controllers
             _LogService = LogService;
             _dBAuthService = dBAuthService;
             _customerService = customerService;
+            _fsql = fsql;
         }
 
         public IActionResult Index()
@@ -185,12 +189,14 @@ namespace XHD.Core.View.Controllers
                 return XHDResult.Error("操作失败，系统错误！").ToString();
             }
 
+            await CustomerScoreService.RecalculateAsync(_fsql, model.customer_id);
             return XHDResult.Success().ToString();
         }
 
         public async Task<string> Delete(string id)
         {
             var result = 0;
+            var deletedCustomerId = string.Empty;
 
             //权限
             var authbtn = await _dBAuthService.GetAuth(User.FindFirst(ClaimTypes.Sid).Value, "CRM_Follow|del");
@@ -206,6 +212,7 @@ namespace XHD.Core.View.Controllers
                     return XHDResult.Error("找不到此数据！").ToString();
                 }
 
+                deletedCustomerId = checkdata.data[0].customer_id;
                 result = await _service.DeleteAsync(id);
 
                 //日志
@@ -239,6 +246,11 @@ namespace XHD.Core.View.Controllers
             if (result == 0)
             {
                 return XHDResult.Error("删除失败！").ToString();
+            }
+
+            if (!string.IsNullOrWhiteSpace(deletedCustomerId))
+            {
+                await CustomerScoreService.RecalculateAsync(_fsql, deletedCustomerId);
             }
 
             return XHDResult.Success().ToString();

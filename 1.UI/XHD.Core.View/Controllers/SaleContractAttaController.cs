@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -33,6 +33,14 @@ namespace XHD.Core.View.Controllers
     [Authorize]
     public class SaleContractAttaController : Controller
     {
+        private static readonly HashSet<string> BlockedAttachmentExtensions = new(StringComparer.OrdinalIgnoreCase)
+        {
+            ".html", ".htm", ".xhtml", ".shtml", ".svg", ".xml", ".js", ".mjs",
+            ".php", ".asp", ".aspx", ".jsp", ".exe", ".dll", ".bat", ".cmd",
+            ".ps1", ".sh", ".jar", ".msi", ".scr", ".com", ".pif", ".cpl",
+            ".hta", ".vbs", ".wsf", ".wsh"
+        };
+
         private readonly ILogger<SaleContractAttaController> _logger;
         private readonly ISale_contractService _service;
         private readonly ISale_contract_attaService _detailservice;
@@ -91,15 +99,17 @@ namespace XHD.Core.View.Controllers
 
                     if (Request.Form.Any(a => a.Key == "chunk"))
                     {
-                        //分片上传
-                        //var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/upload/contract/{ Request.Form["guid"] }-{Request.Form["id"]}/");
-                        var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/wwwroot/upload/contract/{Request.Form["guid"]}-{Request.Form["id"]}/");
+                        //分片上传：guid/id/chunk 均只取文件名，防止路径穿越
+                        var chunkGuid = Path.GetFileName(Request.Form["guid"].ToString());
+                        var chunkId = Path.GetFileName(Request.Form["id"].ToString());
+                        var chunkName = Path.GetFileName(Request.Form["chunk"].ToString());
+                        var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "contract", $"{chunkGuid}-{chunkId}");
 
                         if (!Directory.Exists(basePath))
                         {
                             Directory.CreateDirectory(basePath);
                         }
-                        var filePath = basePath + "/" + Request.Form["chunk"];
+                        var filePath = Path.Combine(basePath, chunkName);
                         using (var stream = new FileStream(filePath, FileMode.Create))
                         {
                             await formFile.CopyToAsync(stream);
@@ -108,14 +118,19 @@ namespace XHD.Core.View.Controllers
                     else
                     {
                         //普通上传
-                        var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/wwwroot/upload/contract/{ Request.Form["contract_id"] }/");
-                        
+                        var contractId = Path.GetFileName(Request.Form["contract_id"].ToString());
+                        var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "contract", contractId);
+
                         if (!Directory.Exists(basePath))
                         {
                             Directory.CreateDirectory(basePath);
                         }
                         string fileName = Request.Form["name"];//文件名
                         string fileExt = Path.GetExtension(fileName);//获取文件后缀
+                        if (BlockedAttachmentExtensions.Contains(fileExt))
+                        {
+                            return XHDResult.Error("不支持的文件类型！").ToString();
+                        }
 
                         byte[] buffer = Guid.NewGuid().ToByteArray();
                         var out_trad_id = BitConverter.ToInt64(buffer, 0).ToString();
@@ -128,7 +143,7 @@ namespace XHD.Core.View.Controllers
 
                             Sale_contract_atta model = new Sale_contract_atta();
                             model.id = UUIDNext.Uuid.NewSequential().ToString();
-                            model.contract_id = Request.Form["contract_id"];
+                            model.contract_id = contractId;
                             model.file_name = fileName;
                             model.real_name = $"{ out_trad_id }{fileExt}";
                             model.file_size = (int)(stream.Length / 1024);
@@ -157,9 +172,12 @@ namespace XHD.Core.View.Controllers
             var emp_name = claimIdentity.FindFirst(ClaimTypes.Name).Value;
             var uid = claimIdentity.FindFirst("uid").Value;
 
-            //var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/upload/contract/{ Request.Form["guid"] }/{Request.Form["id"]}/");
-            var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/wwwroot/upload/contract/");
-            var savePath = Path.GetDirectoryName($"{basePath}/{Request.Form["contract_id"]}/");
+            //分片合并：只允许在合同附件目录内操作
+            var mergeContractId = Path.GetFileName(Request.Form["contract_id"].ToString());
+            var mergeGuid = Path.GetFileName(Request.Form["guid"].ToString());
+            var mergeId = Path.GetFileName(Request.Form["id"].ToString());
+            var uploadRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "contract");
+            var savePath = Path.Combine(uploadRoot, mergeContractId);
 
 
 
@@ -170,7 +188,7 @@ namespace XHD.Core.View.Controllers
                     Directory.CreateDirectory(savePath);
                 }
 
-                var temporary = Path.GetDirectoryName($"{basePath}/{ Request.Form["guid"] }-{Request.Form["id"]}/");//临时文件夹
+                var temporary = Path.Combine(uploadRoot, $"{mergeGuid}-{mergeId}");//临时文件夹
 
                 if (!Directory.Exists(savePath))
                 {
@@ -180,6 +198,10 @@ namespace XHD.Core.View.Controllers
 
                 string fileName = Request.Form["name"];//文件名
                 string fileExt = Path.GetExtension(fileName);//获取文件后缀
+                if (BlockedAttachmentExtensions.Contains(fileExt))
+                {
+                    return XHDResult.Error("不支持的文件类型！").ToString();
+                }
                 var files = Directory.GetFiles(temporary);//获得下面的所有文件
 
                 byte[] buffer = Guid.NewGuid().ToByteArray();
@@ -201,7 +223,7 @@ namespace XHD.Core.View.Controllers
 
                     Sale_contract_atta model = new Sale_contract_atta();
                     model.id = UUIDNext.Uuid.NewSequential().ToString();
-                    model.contract_id = Request.Form["contract_id"];
+                    model.contract_id = mergeContractId;
                     model.file_name = fileName;
                     model.real_name = $"{ out_trad_id }{fileExt}";
                     model.file_size = (int)(fs.Length / 1024);
@@ -228,11 +250,20 @@ namespace XHD.Core.View.Controllers
 
             var data = await _detailservice.GridAsync(exp);
 
+            if (data.count == 0)
+            {
+                return XHDResult.Error("文件不存在！").ToString();
+            }
+
             await _detailservice.DeleteAsync(exp);
 
-            var basePath = Path.GetDirectoryName($"{Directory.GetCurrentDirectory()}/wwwroot/upload/contract/");
-            var savePath = Path.GetDirectoryName($"{basePath}/{Request.Form["contract_id"]}/");
-            var filePath = Path.Combine(savePath, data.data[0].real_name);
+            var uploadRoot = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "upload", "contract"));
+            var filePath = Path.GetFullPath(Path.Combine(uploadRoot, data.data[0].contract_id ?? string.Empty, data.data[0].real_name ?? string.Empty));
+
+            if (!filePath.StartsWith(uploadRoot + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase))
+            {
+                return XHDResult.Error("文件不存在！").ToString();
+            }
 
             try
             {

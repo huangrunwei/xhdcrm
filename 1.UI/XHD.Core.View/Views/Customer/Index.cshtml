@@ -1,4 +1,4 @@
-﻿@{
+@{
     ViewData["Title"] = "Index";
 }
 
@@ -145,6 +145,19 @@
                         </div>
                     </div>
                     <div class="layui-inline">
+                        <label class="layui-form-label " style="padding-left:0px;">评分</label>
+                        <div class="layui-input-inline">
+                            <select id="score_level" name="score_level">
+                                <option value="">请选择</option>
+                                <option value="high">80分以上（红色）</option>
+                                <option value="good">60-79分（绿色）</option>
+                                <option value="potential">40-59分（黄色）</option>
+                                <option value="low">40分以下（白色）</option>
+                                <option value="none">未评分</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-inline">
                         <label class="layui-form-label " style="padding-left:0px;">归属</label>
                         <div class="layui-input-inline">
                             <input type="text" name="employee" id="employee" placeholder="归属" autocomplete="off" class="layui-input">
@@ -280,6 +293,19 @@
                             return t.cus_level.params_name;
                         }
                         return "";
+                    }
+                },
+                {
+                    field: 'score', width: 120, title: '客户评分', align: 'center', templet: function (t) {
+                        if (t.score === null || t.score === undefined) {
+                            return '<div style="height:28px;line-height:26px;background:#FFF;color:#333;border:1px solid #d2d2d2;box-sizing:border-box;font-size:12px;font-weight:700;text-align:center;">未评分</div>';
+                        }
+                        var score = Number(t.score);
+                        var bg = score >= 80 ? '#F00' : score >= 60 ? '#0F0' : score >= 40 ? '#FF0' : '#FFF';
+                        var color = score >= 80 ? '#FFF' : '#000';
+                        var border = score < 40 ? 'border:1px solid #d2d2d2;box-sizing:border-box;' : '';
+                        var label = score >= 80 ? '高价值' : score >= 60 ? '优质' : score >= 40 ? '潜力' : '待激活';
+                        return '<div title="' + label + '" style="height:28px;line-height:28px;background:' + bg + ';color:' + color + ';' + border + 'font-size:13px;font-weight:700;text-align:center;">' + score + '</div>';
                     }
                 },
                 { field: 'lastfollow', width: 180, title: '最后跟进' },
